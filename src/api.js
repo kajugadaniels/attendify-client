@@ -216,3 +216,33 @@ export const addField = async (data) => {
             : new Error('An error occurred while adding the field.');
     }
 };
+
+export const fetchFieldById = async (id) => {
+    try {
+        const response = await api.get(`/field/${id}/`, {
+            headers: {
+                Authorization: `Token ${localStorage.getItem('token')}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response
+            ? error.response.data
+            : new Error('An error occurred while fetching the field.');
+    }
+};
+
+export const updateField = async (id, data) => {
+    try {
+        const response = await api.put(`/field/${id}/`, data, {
+            headers: {
+                Authorization: `Token ${localStorage.getItem('token')}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response
+            ? error.response.data
+            : new Error('An error occurred while updating the field.');
+    }
+};

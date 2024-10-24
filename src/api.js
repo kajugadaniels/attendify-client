@@ -276,3 +276,18 @@ export const fetchDepartments = async () => {
             : new Error('An error occurred while fetching departments.');
     }
 };
+
+export const addDepartment = async (data) => {
+    try {
+        const response = await api.post('/departments/', data, {
+            headers: {
+                Authorization: `Token ${localStorage.getItem('token')}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response
+            ? error.response.data
+            : new Error('An error occurred while adding the department.');
+    }
+};

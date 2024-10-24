@@ -15,3 +15,7 @@ export { default as EditEmployee } from './employees/EditEmployee'
 export { default as GetFields } from './fields/GetFields'
 export { default as AddField } from './fields/AddField'
 export { default as EditField } from './fields/EditField'
+
+export { default as GetDepartments } from './departments/GetDepartments'
+export { default as AddDepartment } from './departments/AddDepartment'
+export { default as EditDepartment } from './departments/EditDepartment'

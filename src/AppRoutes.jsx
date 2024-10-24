@@ -1,5 +1,5 @@
 import React from 'react'
-import { AddDepartment, AddEmployee, AddField, AddUser, Dashboard, EditDepartment, EditEmployee, EditField, EditUser, GetDepartments, GetEmployees, GetFields, GetUsers, Login, Profile } from './pages'
+import { AddAssignment, AddDepartment, AddEmployee, AddField, AddUser, Dashboard, EditAssignment, EditDepartment, EditEmployee, EditField, EditUser, GetAssignments, GetDepartments, GetEmployees, GetFields, GetUsers, Login, Profile } from './pages'
 import UserLayout from './layouts/UserLayout'
 import { Route, Routes } from 'react-router-dom'
 
@@ -27,6 +27,10 @@ const AppRoutes = () => {
                 <Route path="/departments" element={<GetDepartments />} />
                 <Route path="/department/add" element={<AddDepartment />} />
                 <Route path="/department/edit/:id" element={<EditDepartment />} />
+
+                <Route path="/assignments" element={<GetAssignments />} />
+                <Route path="/assignment/add" element={<AddAssignment />} />
+                <Route path="/assignment/edit/:id" element={<EditAssignment />} />
             </Route>
         </Routes>
     )

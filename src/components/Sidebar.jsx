@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Briefcase, FileUser, House, Tractor, User } from 'lucide-react';
+import { Briefcase, FileUser, House, Pickaxe, Tractor, User } from 'lucide-react';
 
 const Sidebar = () => {
     const location = useLocation();
@@ -65,6 +65,12 @@ const Sidebar = () => {
                         <Link to="/fields" className="side-menu__link">
                             <Tractor className="stroke-[1] w-5 h-5 side-menu__link__icon" />
                             <div className="side-menu__link__title">Fields</div>
+                        </Link>
+                    </li>
+                    <li className={isActive('/assignments') ? 'bg-white text-primary/10 border rounded-lg border-primary/10' : ''}>
+                        <Link to="/assignments" className="side-menu__link">
+                            <Pickaxe className="stroke-[1] w-5 h-5 side-menu__link__icon" />
+                            <div className="side-menu__link__title">Assignments</div>
                         </Link>
                     </li>
                 </ul>

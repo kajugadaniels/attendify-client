@@ -81,3 +81,16 @@ export const updateUser = async (data) => {
         throw error.response ? error.response.data : new Error('Failed to update account.');
     }
 };
+
+export const fetchUsers = async () => {
+    try {
+        const response = await api.get('/users/', {
+            headers: {
+                Authorization: `Token ${localStorage.getItem('token')}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response ? error.response.data : new Error('An error occurred while fetching users.');
+    }
+};

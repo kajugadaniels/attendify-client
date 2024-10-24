@@ -91,6 +91,23 @@ export const fetchUsers = async () => {
         });
         return response.data;
     } catch (error) {
-        throw error.response ? error.response.data : new Error('An error occurred while fetching users.');
+        throw error.response 
+            ? error.response.data 
+            : new Error('An error occurred while fetching users.');
+    }
+};
+
+export const addUser = async (data) => {
+    try {
+        const response = await api.post('/auth/register/', data, {
+            headers: {
+                Authorization: `Token ${localStorage.getItem('token')}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response
+            ? error.response.data
+            : new Error('An error occurred while adding the user.');
     }
 };

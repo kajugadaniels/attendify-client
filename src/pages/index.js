@@ -10,3 +10,4 @@ export { default as EditUser } from './users/EditUser'
 
 export { default as GetEmployees } from './employees/GetEmployees'
 export { default as AddEmployee } from './employees/AddEmployee'
+export { default as EditEmployee } from './employees/EditEmployee'

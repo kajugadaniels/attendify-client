@@ -246,7 +246,7 @@ const AddEmployee = () => {
                                             ) : (
                                                 <Save className="-ml-2 mr-2 h-4 w-4 stroke-[1.3]" />
                                             )}
-                                            {loading ? 'Saving...' : 'Add New Employe'}
+                                            {loading ? 'Saving...' : 'Add New Employee'}
                                         </button>
                                     </div>
                                 </form>

@@ -10,12 +10,10 @@ const EditEmployee = () => {
         name: '',
         email: '',
         phone_number: '',
-        password: '',
-        confirmPassword: '',
-        role: '',
-        status: 'Active',
-        is_active: true,
-        is_staff: false,
+        address: '',
+        tag_id: '',
+        nid: '',
+        rssb_number: '',
     });
     const [healthFacilities, setHealthFacilities] = useState([]);
     const [loading, setLoading] = useState(false);

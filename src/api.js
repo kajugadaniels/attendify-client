@@ -171,3 +171,18 @@ export const updateEmployee = async (id, data) => {
             : new Error('An error occurred while updating the employee.');
     }
 };
+
+export const deleteEmployee = async (id) => {
+    try {
+        const response = await api.delete(`/employee/${id}/`, {
+            headers: {
+                Authorization: `Token ${localStorage.getItem('token')}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response 
+        ? error.response.data 
+        : new Error('An error occurred while deleting the employee.');
+    }
+};

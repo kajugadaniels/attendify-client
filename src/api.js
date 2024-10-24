@@ -261,3 +261,18 @@ export const deleteField = async (id) => {
         : new Error('An error occurred while deleting the field.');
     }
 };
+
+export const fetchDepartments = async () => {
+    try {
+        const response = await api.get('/departments/', {
+            headers: {
+                Authorization: `Token ${localStorage.getItem('token')}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response 
+            ? error.response.data 
+            : new Error('An error occurred while fetching departments.');
+    }
+};

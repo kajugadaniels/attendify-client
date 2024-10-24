@@ -141,3 +141,18 @@ export const addEmployee = async (data) => {
             : new Error('An error occurred while adding the employee.');
     }
 };
+
+export const fetchEmployeeById = async (id) => {
+    try {
+        const response = await api.get(`/employee/${id}/`, {
+            headers: {
+                Authorization: `Token ${localStorage.getItem('token')}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response
+            ? error.response.data
+            : new Error('An error occurred while fetching the employee.');
+    }
+};

@@ -1,5 +1,5 @@
 import React from 'react'
-import { AddEmployee, AddUser, Dashboard, EditEmployee, EditUser, GetEmployees, GetUsers, Login, Profile } from './pages'
+import { AddEmployee, AddField, AddUser, Dashboard, EditEmployee, EditField, EditUser, GetEmployees, GetFields, GetUsers, Login, Profile } from './pages'
 import UserLayout from './layouts/UserLayout'
 import { Route, Routes } from 'react-router-dom'
 
@@ -19,6 +19,10 @@ const AppRoutes = () => {
                 <Route path="/employees" element={<GetEmployees />} />
                 <Route path="/employee/add" element={<AddEmployee />} />
                 <Route path="/employee/edit/:id" element={<EditEmployee />} />
+
+                <Route path="/fields" element={<GetFields />} />
+                <Route path="/field/add" element={<AddField />} />
+                <Route path="/field/edit/:id" element={<EditField />} />
             </Route>
         </Routes>
     )

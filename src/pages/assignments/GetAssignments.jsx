@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, EllipsisVertical, KeySquare, ListChecks, PenLine, Search, Trash2 } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
-import {  } from '../../api'
+import { fetchAssignments } from '../../api'
 import { toast } from 'react-toastify'
 
 const GetAssignments = () => {
@@ -69,11 +69,11 @@ const GetAssignments = () => {
     };
 
     // Pagination logic
-    const indexOfLastassignment = currentPage * assignmentsPerPage;
-    const indexOfFirstassignment = indexOfLastassignment - assignmentsPerPage;
-    const currentassignments = filteredassignments.slice(indexOfFirstassignment, indexOfLastassignment);
+    const indexOfLastAssignment = currentPage * assignmentsPerPage;
+    const indexOfFirstAssignment = indexOfLastAssignment - assignmentsPerPage;
+    const currentAssignments = filteredAssignments.slice(indexOfFirstAssignment, indexOfLastAssignment);
 
-    const totalPages = Math.ceil(filteredassignments.length / assignmentsPerPage);
+    const totalPages = Math.ceil(filteredAssignments.length / assignmentsPerPage);
 
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 

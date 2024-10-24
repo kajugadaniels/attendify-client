@@ -36,7 +36,7 @@ const GetFields = () => {
         if (term) {
             const filtered = fields.filter((field) =>
                 field.name.toLowerCase().includes(term.toLowerCase()) ||
-                field.adrress?.toLowerCase().includes(term.toLowerCase())
+                field.address?.toLowerCase().includes(term.toLowerCase())
             );
             setFilteredFields(filtered);
             setCurrentPage(1); // Reset to the first page when searching

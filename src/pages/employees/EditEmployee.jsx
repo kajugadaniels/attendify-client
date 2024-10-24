@@ -15,7 +15,6 @@ const EditEmployee = () => {
         nid: '',
         rssb_number: '',
     });
-    const [healthFacilities, setHealthFacilities] = useState([]);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 

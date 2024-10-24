@@ -1,5 +1,5 @@
 import React from 'react'
-import { AddUser, Dashboard, EditUser, GetUsers, Login, Profile } from './pages'
+import { AddEmployee, AddUser, Dashboard, EditUser, GetEmployees, GetUsers, Login, Profile } from './pages'
 import UserLayout from './layouts/UserLayout'
 import { Route, Routes } from 'react-router-dom'
 
@@ -15,6 +15,9 @@ const AppRoutes = () => {
                 <Route path="/users" element={<GetUsers />} />
                 <Route path="/user/add" element={<AddUser />} />
                 <Route path="/user/edit/:id" element={<EditUser />} />
+
+                <Route path="/employees" element={<GetEmployees />} />
+                <Route path="/employee/add" element={<AddEmployee />} />
             </Route>
         </Routes>
     )

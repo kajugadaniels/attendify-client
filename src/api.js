@@ -201,3 +201,18 @@ export const fetchFields = async () => {
             : new Error('An error occurred while fetching fields.');
     }
 };
+
+export const addField = async (data) => {
+    try {
+        const response = await api.post('/fields/', data, {
+            headers: {
+                Authorization: `Token ${localStorage.getItem('token')}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response
+            ? error.response.data
+            : new Error('An error occurred while adding the field.');
+    }
+};

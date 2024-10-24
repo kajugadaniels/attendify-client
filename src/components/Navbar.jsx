@@ -93,7 +93,7 @@ const Navbar = ({ toggleSidebar }) => {
                                 aria-expanded={dropdownOpen}
                                 className="cursor-pointer image-fit h-[36px] w-[36px] overflow-hidden rounded-full border-[3px] border-white/[0.15]"
                             >
-                                <img src="/src/assets/logo/logo-icon.jpg" alt="MediSoft App" />
+                                <img src="https://static.vecteezy.com/system/resources/thumbnails/002/318/271/small/user-profile-icon-free-vector.jpg" alt="EPS" />
                             </button>
                         </div>
                         <div

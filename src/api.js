@@ -70,14 +70,14 @@ export const updateUser = async (data) => {
 
     console.log('Sanitized data to be sent:', sanitizedData);
     try {
-        const response = await api.put('/auth/update-account/', sanitizedData, {
+        const response = await api.put('/auth/profile-update/', sanitizedData, {
             headers: {
                 Authorization: `Token ${localStorage.getItem('token')}`,
             },
         });
         return response.data;
     } catch (error) {
-        console.log('Error response from server:', error.response); 
+        console.log('Error response from server:', error.response);
         throw error.response ? error.response.data : new Error('Failed to update account.');
     }
 };

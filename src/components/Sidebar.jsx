@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Accessibility, Hospital, House, Key, UserCog } from 'lucide-react';
+import { House, User } from 'lucide-react';
 
 const Sidebar = () => {
     const location = useLocation();
@@ -41,6 +41,12 @@ const Sidebar = () => {
                         <Link to="/dashboard" className="side-menu__link">
                             <House className="stroke-[1] w-5 h-5 side-menu__link__icon" />
                             <div className="side-menu__link__title">Dashboard</div>
+                        </Link>
+                    </li>
+                    <li className={isActive('/users') ? 'bg-white text-primary/10 border rounded-lg border-primary/10' : ''}>
+                        <Link to="/users" className="side-menu__link">
+                            <User className="stroke-[1] w-5 h-5 side-menu__link__icon" />
+                            <div className="side-menu__link__title">User</div>
                         </Link>
                     </li>
                 </ul>

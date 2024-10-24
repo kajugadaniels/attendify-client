@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, EllipsisVertical, KeySquare, ListChecks, PenLine, Search, Trash2 } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
-import { fetchDepartments } from '../../api'
+import { deleteDepartment, fetchDepartments } from '../../api'
 import { toast } from 'react-toastify'
 
 const GetDepartments = () => {

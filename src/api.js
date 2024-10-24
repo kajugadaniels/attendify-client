@@ -291,3 +291,33 @@ export const addDepartment = async (data) => {
             : new Error('An error occurred while adding the department.');
     }
 };
+
+export const fetchDepartmentById = async (id) => {
+    try {
+        const response = await api.get(`/department/${id}/`, {
+            headers: {
+                Authorization: `Token ${localStorage.getItem('token')}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response
+            ? error.response.data
+            : new Error('An error occurred while fetching the department.');
+    }
+};
+
+export const updateDepartment = async (id, data) => {
+    try {
+        const response = await api.put(`/department/${id}/`, data, {
+            headers: {
+                Authorization: `Token ${localStorage.getItem('token')}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response
+            ? error.response.data
+            : new Error('An error occurred while updating the department.');
+    }
+};

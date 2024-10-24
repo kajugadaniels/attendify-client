@@ -246,3 +246,18 @@ export const updateField = async (id, data) => {
             : new Error('An error occurred while updating the field.');
     }
 };
+
+export const deleteField = async (id) => {
+    try {
+        const response = await api.delete(`/field/${id}/`, {
+            headers: {
+                Authorization: `Token ${localStorage.getItem('token')}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response 
+        ? error.response.data 
+        : new Error('An error occurred while deleting the field.');
+    }
+};

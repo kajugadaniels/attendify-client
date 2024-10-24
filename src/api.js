@@ -28,3 +28,30 @@ export const login = async (email, password) => {
         };
     }
 };
+
+export const logout = async (token) => {
+    try {
+        const response = await api.post(
+            '/auth/logout/',
+            {},
+            {
+                headers: {
+                    Authorization: `Token ${token}`,
+                },
+            }
+        );
+        return {
+            success: true,
+            message: response.data.message,
+        };
+    } catch (error) {
+        let message = 'An error occurred during logout. Please try again.';
+        if (error.response) {
+            message = error.response.data.error || error.response.data.detail || message;
+        }
+        return {
+            success: false,
+            message,
+        };
+    }
+};

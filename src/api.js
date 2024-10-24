@@ -126,3 +126,18 @@ export const fetchEmployees = async () => {
             : new Error('An error occurred while fetching employees.');
     }
 };
+
+export const AddEmployee = async (data) => {
+    try {
+        const response = await api.post('/employees/', data, {
+            headers: {
+                Authorization: `Token ${localStorage.getItem('token')}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response
+            ? error.response.data
+            : new Error('An error occurred while adding the employee.');
+    }
+};

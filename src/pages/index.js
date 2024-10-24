@@ -7,3 +7,6 @@ export { default as Profile } from './Profile'
 export { default as GetUsers } from './users/GetUsers'
 export { default as AddUser } from './users/AddUser'
 export { default as EditUser } from './users/EditUser'
+
+export { default as GetEmployees } from './employees/GetEmployees'
+export { default as AddEmployee } from './employees/AddEmployee'

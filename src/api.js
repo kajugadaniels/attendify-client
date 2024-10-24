@@ -127,7 +127,7 @@ export const fetchEmployees = async () => {
     }
 };
 
-export const AddEmployee = async (data) => {
+export const addEmployee = async (data) => {
     try {
         const response = await api.post('/employees/', data, {
             headers: {

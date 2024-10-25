@@ -8,7 +8,7 @@ const EndAssignment = () => {
     const { id } = useParams();
     const [assignmentData, setAssignmentData] = useState({
         end_date: '',
-        note: '',
+        reason: '',
     });
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -37,10 +37,10 @@ const EndAssignment = () => {
         setLoading(true);
         try {
             await endAssignmentById(id, assignmentData);
-            toast.success('Assignment updated successfully.');
+            toast.success('Assignment ended successfully.');
             navigate('/assignments');
         } catch (error) {
-            toast.error(error.message || 'An error occurred while updating the assignment.');
+            toast.error(error.message || 'An error occurred while ending the assignment.');
         } finally {
             setLoading(false);
         }
@@ -101,20 +101,20 @@ const EndAssignment = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    {/* Note */}
+                                    {/* Reason */}
                                     <div className="flex-col block pt-5 mt-5 sm:flex xl:flex-row xl:items-center">
                                         <div className="inline-block mb-2 sm:mb-0 sm:mr-5 sm:text-right xl:mr-14 xl:w-60">
                                             <div className="text-left">
                                                 <div className="flex items-center">
                                                     <div className="font-medium">
-                                                        Note
+                                                        Reason
                                                     </div>
                                                     <div className="ml-2.5 rounded-md border border-slate-200 bg-slate-100 px-2 py-0.5 text-xs text-slate-500">
                                                         Required
                                                     </div>
                                                 </div>
                                                 <div className="mt-1.5 text-xs leading-relaxed text-slate-500/80 xl:mt-3">
-                                                    Provide note on how assignment was performed.
+                                                    Provide reason on how assignment was performed.
                                                 </div>
                                             </div>
                                         </div>
@@ -122,10 +122,10 @@ const EndAssignment = () => {
                                             <div className="flex flex-col items-center md:flex-row">
                                                 <textarea
                                                     type="text"
-                                                    name="note"
-                                                    value={assignmentData.note}
+                                                    name="reason"
+                                                    value={assignmentData.reason}
                                                     onChange={handleInputChange}
-                                                    placeholder="Enter note"
+                                                    placeholder="Enter reason"
                                                     className="w-full text-sm transition duration-200 ease-in-out rounded-md shadow-sm border-slate-200 placeholder:text-slate-400/90 focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus:border-primary"
                                                     rows="6"
                                                     required

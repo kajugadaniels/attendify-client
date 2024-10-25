@@ -25,3 +25,5 @@ export { default as AddAssignment } from './assignments/AddAssignment'
 export { default as EditAssignment } from './assignments/EditAssignment'
 export { default as EndAssignment } from './assignments/EndAssignment'
 export { default as ShowAssignment } from './assignments/ShowAssignment'
+
+export { default as GetAttendances } from './attendance/GetAttendances'

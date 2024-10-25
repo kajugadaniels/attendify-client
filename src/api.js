@@ -1,7 +1,9 @@
 import axios from 'axios';
 
-// const API_BASE_URL = 'http://127.0.0.1:8000/api';
-const API_BASE_URL = 'https://eps-api.onrender.com/api';
+const API_BASE_URL =
+    window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'
+        ? 'http://127.0.0.1:8000/api'
+        : 'https://eps-api.onrender.com/api';
 
 const api = axios.create({
     baseURL: API_BASE_URL,

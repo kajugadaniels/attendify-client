@@ -386,7 +386,7 @@ export const fetchAssignmentById = async (id) => {
 
 export const endAssignmentById = async (id, data) => {
     try {
-        const response = await api.put(`/assignment/${id}/end`, data, {
+        const response = await api.post(`/assignment/${id}/end`, data, {
             headers: {
                 Authorization: `Token ${localStorage.getItem('token')}`,
             },
@@ -395,6 +395,6 @@ export const endAssignmentById = async (id, data) => {
     } catch (error) {
         throw error.response
             ? error.response.data
-            : new Error('An error occurred while updating the assignment.');
+            : new Error('An error occurred while ending the assignment.');
     }
 };

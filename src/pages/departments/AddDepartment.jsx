@@ -7,7 +7,7 @@ import { addDepartment } from '../../api'
 const AddDepartment = () => {
     const [departmentData, setDepartmentData] = useState({
         name: '',
-        address: '',
+        day_salary: '',
     });
 
     const [loading, setLoading] = useState(false);
@@ -24,10 +24,6 @@ const AddDepartment = () => {
 
     const handleAddDepartment = async (e) => {
         e.preventDefault();
-        if (departmentData.password !== departmentData.confirmPassword) {
-            toast.error('Passwords do not match.');
-            return;
-        }
         setLoading(true);
         try {
             const payload = { ...departmentData };
@@ -89,7 +85,7 @@ const AddDepartment = () => {
                                                     </div>
                                                 </div>
                                                 <div className="mt-1.5 text-xs leading-relaxed text-slate-500/80 xl:mt-3">
-                                                    Provide name of the department.
+                                                    Provide name of the department and day salary.
                                                 </div>
                                             </div>
                                         </div>
@@ -101,6 +97,15 @@ const AddDepartment = () => {
                                                     value={departmentData.name}
                                                     onChange={handleInputChange}
                                                     placeholder="Enter Name"
+                                                    className="w-full text-sm transition duration-200 ease-in-out rounded-md shadow-sm border-slate-200 placeholder:text-slate-400/90 focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus:border-primary"
+                                                    required
+                                                />
+                                                <input
+                                                    type="number"
+                                                    name="day_salary"
+                                                    value={departmentData.day_salary}
+                                                    onChange={handleInputChange}
+                                                    placeholder="Enter Day Salary"
                                                     className="w-full text-sm transition duration-200 ease-in-out rounded-md shadow-sm border-slate-200 placeholder:text-slate-400/90 focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus:border-primary"
                                                     required
                                                 />

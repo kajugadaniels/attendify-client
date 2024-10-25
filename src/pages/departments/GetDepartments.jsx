@@ -35,7 +35,8 @@ const GetDepartments = () => {
         setSearchTerm(term);
         if (term) {
             const filtered = departments.filter((department) =>
-                department.name.toLowerCase().includes(term.toLowerCase())
+                department.name.toLowerCase().includes(term.toLowerCase()) ||
+                department.day_salary.toLowerCase().includes(term.toLowerCase())
             );
             setFilteredDepartments(filtered);
             setCurrentPage(1); // Reset to the first page when searching
@@ -119,6 +120,9 @@ const GetDepartments = () => {
                                                     <td className="px-5 py-4 font-medium border-t border-b bg-slate-50 text-slate-500">
                                                         Name
                                                     </td>
+                                                    <td className="px-5 py-4 font-medium border-t border-b bg-slate-50 text-slate-500">
+                                                        Day Salary
+                                                    </td>
                                                     <td className="w-20 px-5 py-4 font-medium text-center border-t border-b bg-slate-50 text-slate-500">
                                                         Action
                                                     </td>
@@ -132,6 +136,9 @@ const GetDepartments = () => {
                                                         </td>
                                                         <td className="px-5 py-4 border-b border-dashed">
                                                             {department.name || 'N/A'}
+                                                        </td>
+                                                        <td className="px-5 py-4 border-b border-dashed">
+                                                            {department.day_salary || 'N/A'}
                                                         </td>
                                                         <td className="relative px-5 py-4 border-b border-dashed">
                                                             <div className="flex items-center justify-center">

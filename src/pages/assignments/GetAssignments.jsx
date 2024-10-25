@@ -20,9 +20,9 @@ const GetAssignments = () => {
             try {
                 const data = await fetchAssignments();
                 // Ensure data is an array
-                const assignmentsArray = Array.isArray(data) ? data : 
-                                       Array.isArray(data.results) ? data.results : [];
-                                       
+                const assignmentsArray = Array.isArray(data) ? data :
+                    Array.isArray(data.results) ? data.results : [];
+
                 setAssignments(assignmentsArray);
                 setFilteredAssignments(assignmentsArray);
             } catch (error) {
@@ -40,7 +40,7 @@ const GetAssignments = () => {
     const handleSearch = (e) => {
         const term = e.target.value;
         setSearchTerm(term);
-        
+
         if (!Array.isArray(assignments)) {
             console.error('Assignments is not an array');
             return;
@@ -87,7 +87,7 @@ const GetAssignments = () => {
 
     // Ensure filteredAssignments is an array before pagination
     const safeFilteredAssignments = Array.isArray(filteredAssignments) ? filteredAssignments : [];
-    
+
     // Pagination logic
     const indexOfLastAssignment = currentPage * assignmentsPerPage;
     const indexOfFirstAssignment = indexOfLastAssignment - assignmentsPerPage;
@@ -154,6 +154,9 @@ const GetAssignments = () => {
                                                     <td className="px-5 py-4 font-medium border-t border-b bg-slate-50 text-slate-500">
                                                         Employees
                                                     </td>
+                                                    <td className="px-5 py-4 font-medium border-t border-b bg-slate-50 text-slate-500">
+                                                        Status
+                                                    </td>
                                                     <td className="w-20 px-5 py-4 font-medium text-center border-t border-b bg-slate-50 text-slate-500">
                                                         Action
                                                     </td>
@@ -183,6 +186,14 @@ const GetAssignments = () => {
                                                                 <div className="ml-1.5 max-w-[200px] overflow-hidden whitespace-normal">
                                                                     {assignment.employee_assignments.map((employee) => employee.employee_name).join(', ')}
                                                                 </div>
+                                                            </div>
+                                                        </td>
+                                                        <td className="px-5 py-4 border-b border-dashed">
+                                                            <div className={`px-2 py-1 rounded-full text-xs font-medium inline-block ${assignment.is_active
+                                                                    ? 'bg-success/20 text-success'
+                                                                    : 'bg-danger/20 text-danger'
+                                                                }`}>
+                                                                {assignment.is_active ? 'In Progress' : 'Ended'}
                                                             </div>
                                                         </td>
                                                         <td className="relative px-5 py-4 border-b border-dashed">

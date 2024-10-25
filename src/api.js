@@ -351,3 +351,18 @@ export const fetchAssignments = async () => {
             : new Error('An error occurred while fetching assignments.');
     }
 };
+
+export const addAssignment = async (data) => {
+    try {
+        const response = await api.post('/assignments/', data, {
+            headers: {
+                Authorization: `Token ${localStorage.getItem('token')}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response
+            ? error.response.data
+            : new Error('An error occurred while adding the assignment.');
+    }
+};

@@ -386,13 +386,14 @@ export const fetchAssignmentById = async (id) => {
 
 export const endAssignmentById = async (id, data) => {
     try {
-        const response = await api.post(`/assignment/${id}/end`, data, {
+        const response = await api.post(`/assignment/${id}/end/`, data, {
             headers: {
                 Authorization: `Token ${localStorage.getItem('token')}`,
             },
         });
         return response.data;
     } catch (error) {
+        console.error("End Assignment Error:", error); // Add this line
         throw error.response
             ? error.response.data
             : new Error('An error occurred while ending the assignment.');

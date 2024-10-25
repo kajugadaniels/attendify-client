@@ -215,34 +215,38 @@ const GetAssignments = () => {
                                                                     </button>
                                                                     <div className={`dropdown-menu absolute right-0 mt-2 z-[9999] ${dropdownOpen === assignment.id ? 'block' : 'hidden'}`}>
                                                                         <div className="w-40 p-2 bg-white rounded-md shadow-lg dropdown-content">
-                                                                            <button
-                                                                                onClick={() => handleEndAssignment(assignment.id)}
-                                                                                className="flex items-center p-2 transition duration-300 ease-in-out rounded-md cursor-pointer hover:bg-slate-200/60 text-warning"
-                                                                            >
-                                                                                <Hourglass className="stroke-[1] mr-2 h-4 w-4" />
-                                                                                End Task
-                                                                            </button>
-                                                                            <button
-                                                                                onClick={() => handleView(assignment.id)}
-                                                                                className="flex items-center p-2 transition duration-300 ease-in-out rounded-md cursor-pointer hover:bg-slate-200/60 text-success"
-                                                                            >
-                                                                                <Eye className="stroke-[1] mr-2 h-4 w-4" />
-                                                                                View
-                                                                            </button>
-                                                                            <button
-                                                                                onClick={() => handleEdit(assignment.id)}
-                                                                                className="flex items-center p-2 transition duration-300 ease-in-out rounded-md cursor-pointer hover:bg-slate-200/60 text-primary"
-                                                                            >
-                                                                                <ListChecks className="stroke-[1] mr-2 h-4 w-4" />
-                                                                                Edit
-                                                                            </button>
-                                                                            <button
-                                                                                onClick={() => handleDelete(assignment.id)}
-                                                                                className="flex items-center p-2 transition duration-300 ease-in-out rounded-md cursor-pointer hover:bg-slate-200/60 text-danger"
-                                                                            >
-                                                                                <Trash2 className="stroke-[1] mr-2 h-4 w-4" />
-                                                                                Delete
-                                                                            </button>
+                                                                        {assignment.is_active && (
+                                                                            <>
+                                                                                <button
+                                                                                    onClick={() => handleEndAssignment(assignment.id)}
+                                                                                    className="flex items-center p-2 transition duration-300 ease-in-out rounded-md cursor-pointer hover:bg-slate-200/60 text-warning"
+                                                                                >
+                                                                                    <Hourglass className="stroke-[1] mr-2 h-4 w-4" />
+                                                                                    End Task
+                                                                                </button>
+                                                                                <button
+                                                                                    onClick={() => handleEdit(assignment.id)}
+                                                                                    className="flex items-center p-2 transition duration-300 ease-in-out rounded-md cursor-pointer hover:bg-slate-200/60 text-primary"
+                                                                                >
+                                                                                    <ListChecks className="stroke-[1] mr-2 h-4 w-4" />
+                                                                                    Edit
+                                                                                </button>
+                                                                                <button
+                                                                                    onClick={() => handleDelete(assignment.id)}
+                                                                                    className="flex items-center p-2 transition duration-300 ease-in-out rounded-md cursor-pointer hover:bg-slate-200/60 text-danger"
+                                                                                >
+                                                                                    <Trash2 className="stroke-[1] mr-2 h-4 w-4" />
+                                                                                    Delete
+                                                                                </button>
+                                                                            </>
+                                                                        )}
+                                                                        <button
+                                                                            onClick={() => handleView(assignment.id)}
+                                                                            className="flex items-center p-2 transition duration-300 ease-in-out rounded-md cursor-pointer hover:bg-slate-200/60 text-success"
+                                                                        >
+                                                                            <Eye className="stroke-[1] mr-2 h-4 w-4" />
+                                                                            View
+                                                                        </button>
                                                                         </div>
                                                                     </div>
                                                                 </div>

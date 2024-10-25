@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, EllipsisVertical, KeySquare, ListChecks, PenLine, Search, Trash2, User2 } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, EllipsisVertical, Hourglass, KeySquare, ListChecks, PenLine, Search, Trash2, User2 } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { fetchAssignments } from '../../api'
 import { toast } from 'react-toastify'
@@ -69,6 +69,10 @@ const GetAssignments = () => {
 
     const handleEdit = (assignmentId) => {
         navigate(`/assignment/edit/${assignmentId}`);
+    };
+
+    const handleEndAssignment = (assignmentId) => {
+        navigate(`/assignment/${assignmentId}/end`);
     };
 
     const handleDelete = async (assignmentId) => {
@@ -207,6 +211,13 @@ const GetAssignments = () => {
                                                                     </button>
                                                                     <div className={`dropdown-menu absolute right-0 mt-2 z-[9999] ${dropdownOpen === assignment.id ? 'block' : 'hidden'}`}>
                                                                         <div className="w-40 p-2 bg-white rounded-md shadow-lg dropdown-content">
+                                                                            <button
+                                                                                onClick={() => handleEndAssignment(assignment.id)}
+                                                                                className="flex items-center p-2 transition duration-300 ease-in-out rounded-md cursor-pointer hover:bg-slate-200/60"
+                                                                            >
+                                                                                <Hourglass className="stroke-[1] mr-2 h-4 w-4" />
+                                                                                EndAssignment
+                                                                            </button>
                                                                             <button
                                                                                 onClick={() => handleEdit(assignment.id)}
                                                                                 className="flex items-center p-2 transition duration-300 ease-in-out rounded-md cursor-pointer hover:bg-slate-200/60"

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Eye, Save } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -7,11 +7,10 @@ import { addAssignment, fetchEmployees, fetchFields, fetchDepartments } from '..
 const AddAssignment = () => {
     const [formData, setFormData] = useState({
         name: '',
+        supervisor: '',
         field: '',
         department: '',
-        supervisor: '',
-        notes: '',
-        end_date: '',
+        employees: '',
     });
     const [loading, setLoading] = useState(false);
     const [employees, setEmployees] = useState([]);
@@ -20,11 +19,16 @@ const AddAssignment = () => {
     const [departments, setDepartments] = useState([]);
     const [selectedSupervisor, setSelectedSupervisor] = useState(null);
     const [showSupervisorDropdown, setShowSupervisorDropdown] = useState(false);
+    const [showEmployeeDropdown, setShowEmployeeDropdown] = useState(false);
     const [searchTerms, setSearchTerms] = useState({
         employees: '',
         supervisor: ''
     });
+
     const navigate = useNavigate();
+
+    const supervisorDropdownRef = useRef(null);
+    const employeeDropdownRef = useRef(null);
 
     useEffect(() => {
         const loadInitialData = async () => {
@@ -45,6 +49,20 @@ const AddAssignment = () => {
         loadInitialData();
     }, []);
 
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (supervisorDropdownRef.current && !supervisorDropdownRef.current.contains(event.target)) {
+                setShowSupervisorDropdown(false);
+            }
+            if (employeeDropdownRef.current && !employeeDropdownRef.current.contains(event.target)) {
+                setShowEmployeeDropdown(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({
@@ -59,7 +77,7 @@ const AddAssignment = () => {
         try {
             const payload = {
                 ...formData,
-                employee_ids: employees.map(emp => emp.id)
+                employee_ids: [...employees.map(emp => emp.id), selectedSupervisor.id] // Include supervisor ID
             };
             await addAssignment(payload);
             toast.success('Assignment added successfully');
@@ -72,10 +90,11 @@ const AddAssignment = () => {
     };
 
     const handleEmployeeSelect = (employee) => {
-        if (!employees.some(emp => emp.id === employee.id)) {
+        if (!employees.some(emp => emp.id === employee.id) && employee.id !== selectedSupervisor?.id) {
             setEmployees([...employees, employee]);
         }
         setSearchTerms(prev => ({ ...prev, employees: '' }));
+        setShowEmployeeDropdown(false);
     };
 
     const handleEmployeeRemove = (id) => {
@@ -87,6 +106,9 @@ const AddAssignment = () => {
         setFormData(prev => ({ ...prev, supervisor: supervisor.id }));
         setSearchTerms(prev => ({ ...prev, supervisor: supervisor.name }));
         setShowSupervisorDropdown(false);
+        
+        // Remove supervisor from employees list if already selected
+        setEmployees(prev => prev.filter(emp => emp.id !== supervisor.id));
     };
 
     const handleSearchChange = (type, value) => {
@@ -99,18 +121,23 @@ const AddAssignment = () => {
         }
     };
 
+    const handleEmployeeFieldFocus = () => {
+        setShowEmployeeDropdown(true);
+        setSearchTerms(prev => ({ ...prev, employees: '' }));
+    };
+
     const filteredEmployees = allEmployees
         .filter(emp =>
             emp.name.toLowerCase().includes(searchTerms.employees.toLowerCase()) &&
-            emp.id !== formData.supervisor // Exclude selected supervisor from employees list
-        )
-        .slice(0, 4); // Limit to 4 results
+            emp.id !== selectedSupervisor?.id && // Exclude selected supervisor
+            !employees.some(selectedEmp => selectedEmp.id === emp.id) // Exclude already selected employees
+        );
 
     const filteredSupervisors = allEmployees
         .filter(sup =>
             sup.name.toLowerCase().includes(searchTerms.supervisor.toLowerCase())
         )
-        .slice(0, 4); // Limit to 4 results
+        .slice(0, 4);
 
     return (
         <div className="px-5 mt-16">
@@ -219,9 +246,10 @@ const AddAssignment = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="flex-1 w-full mt-3 xl:mt-0">
+                                        <div className="flex-1 w-full mt-3 xl:mt-0" ref={supervisorDropdownRef}>
                                             <input
                                                 type="text"
+                                                name="supervisor"
                                                 placeholder="Search supervisor..."
                                                 value={searchTerms.supervisor}
                                                 onChange={(e) => handleSearchChange('supervisor', e.target.value)}
@@ -234,8 +262,7 @@ const AddAssignment = () => {
                                                         filteredSupervisors.map((sup) => (
                                                             <div
                                                                 key={sup.id}
-                                                                className={`p-2 cursor-pointer hover:bg-gray-100 ${selectedSupervisor?.id === sup.id ? 'bg-primary text-white' : ''
-                                                                    }`}
+                                                                className={`p-2 cursor-pointer hover:bg-gray-100 ${selectedSupervisor?.id === sup.id ? 'bg-primary text-white' : ''}`}
                                                                 onClick={() => handleSupervisorSelect(sup)}
                                                             >
                                                                 {sup.name}
@@ -258,45 +285,51 @@ const AddAssignment = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="flex-1 w-full mt-3 xl:mt-0">
+                                        <div className="flex-1 w-full mt-3 xl:mt-0" ref={employeeDropdownRef}>
                                             <div className="relative">
                                                 <input
                                                     type="text"
+                                                    name="employees"
                                                     placeholder="Search employees..."
                                                     value={searchTerms.employees}
                                                     onChange={(e) => handleSearchChange('employees', e.target.value)}
+                                                    onFocus={handleEmployeeFieldFocus}
                                                     className="w-full text-sm transition duration-200 ease-in-out rounded-md shadow-sm border-slate-200 focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus:border-primary"
-                                                    onClick={() => setSearchTerms(prev => ({ ...prev, employees: '' }))} // Clear and show initial suggestions on click
                                                 />
-                                                <div className="mt-2 overflow-y-auto border rounded-md shadow-sm max-h-40 bg-white absolute z-40 w-full">
-                                                    {filteredEmployees.map((emp) => {
-                                                        const isSelected = employees.some(selectedEmp => selectedEmp.id === emp.id);
-                                                        return (
-                                                            <div
-                                                                key={emp.id}
-                                                                className={`p-2 cursor-pointer hover:bg-gray-100 ${isSelected ? 'bg-primary/20' : ''
-                                                                    }`}
-                                                                onClick={() => handleEmployeeSelect(emp)}
-                                                            >
-                                                                {emp.name}
-                                                                {isSelected && (
-                                                                    <span className="ml-2 text-primary">✓</span>
-                                                                )}
-                                                            </div>
-                                                        );
-                                                    })}
-                                                    {!filteredEmployees.length && (
-                                                        <div className="p-2 text-gray-500">No matching employees found</div>
-                                                    )}
-                                                </div>
+                                                {showEmployeeDropdown && (
+                                                    <div className="mt-2 overflow-y-auto border rounded-md shadow-sm max-h-60 bg-white absolute z-40 w-full">
+                                                        {filteredEmployees.length > 0 ? (
+                                                            filteredEmployees.map((emp) => (
+                                                                <div
+                                                                    key={emp.id}
+                                                                    className={`p-2 cursor-pointer hover:bg-gray-100 ${employees.some(selectedEmp => selectedEmp.id === emp.id) ? 'bg-primary/20' : ''}`}
+                                                                    onClick={() => handleEmployeeSelect(emp)}
+                                                                >
+                                                                    {emp.name}
+                                                                    {employees.some(selectedEmp => selectedEmp.id === emp.id) && (
+                                                                        <span className="ml-2 text-primary">✓</span>
+                                                                    )}
+                                                                </div>
+                                                            ))
+                                                        ) : (
+                                                            <div className="p-2 text-gray-500">No matching employees found</div>
+                                                        )}
+                                                    </div>
+                                                )}
                                             </div>
 
                                             {/* Selected Employees Tags */}
-                                            <div className="mt-2">
+                                            <div className="mt-2 flex flex-wrap gap-2">
+                                                {selectedSupervisor && (
+                                                    <div className="inline-flex items-center px-2 py-1 text-sm text-white rounded-full bg-primary/80">
+                                                        {selectedSupervisor.name}
+                                                        <span className="ml-1 text-xs">(Supervisor)</span>
+                                                    </div>
+                                                )}
                                                 {employees.map((emp) => (
                                                     <div
                                                         key={emp.id}
-                                                        className="inline-flex items-center px-2 py-1 mb-2 mr-2 text-sm text-white rounded-full bg-primary"
+                                                        className="inline-flex items-center px-2 py-1 text-sm text-white rounded-full bg-primary"
                                                     >
                                                         {emp.name}
                                                         <button
@@ -312,55 +345,12 @@ const AddAssignment = () => {
                                         </div>
                                     </div>
 
-                                    {/* Notes Field */}
-                                    <div className="flex-col block pt-5 mt-5 first:mt-0 first:pt-0 sm:flex xl:flex-row xl:items-center">
-                                        <div className="inline-block mb-2 sm:mb-0 sm:mr-5 sm:text-right xl:mr-14 xl:w-60">
-                                            <div className="text-left">
-                                                <div className="flex items-center">
-                                                    <div className="font-medium">Notes</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="flex-1 w-full mt-3 xl:mt-0">
-                                            <textarea
-                                                name="notes"
-                                                value={formData.notes}
-                                                onChange={handleInputChange}
-                                                className="w-full text-sm transition duration-200 ease-in-out rounded-md shadow-sm border-slate-200 focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus:border-primary"
-                                                rows="4"
-                                            />
-                                        </div>
-                                    </div>
-
-                                    {/* End Date Field */}
-                                    <div className="flex-col block pt-5 mt-5 first:mt-0 first:pt-0 sm:flex xl:flex-row xl:items-center">
-                                        <div className="inline-block mb-2 sm:mb-0 sm:mr-5 sm:text-right xl:mr-14 xl:w-60">
-                                            <div className="text-left">
-                                                <div className="flex items-center">
-                                                    <div className="font-medium">End Date</div>
-                                                </div>
-                                                <div className="mt-1.5 text-xs leading-relaxed text-slate-500/80 xl:mt-3">
-                                                    Optional end date for the assignment
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="flex-1 w-full mt-3 xl:mt-0">
-                                            <input
-                                                type="date"
-                                                name="end_date"
-                                                value={formData.end_date}
-                                                onChange={handleInputChange}
-                                                className="w-full text-sm transition duration-200 ease-in-out rounded-md shadow-sm border-slate-200 focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus:border-primary"
-                                            />
-                                        </div>
-                                    </div>
-
                                     {/* Submit Button */}
                                     <div className="flex py-5 border-t border-slate-200/80 px-7 md:justify-end mt-5">
                                         <button
                                             type="submit"
                                             className={`inline-flex items-center justify-center w-full px-10 py-2 font-medium transition duration-200 border rounded-md shadow-sm cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 text-primary border-primary md:w-auto ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                            disabled={loading}
+                                            disabled={loading || !selectedSupervisor || !formData.name || !formData.field || !formData.department}
                                         >
                                             {loading ? (
                                                 <svg

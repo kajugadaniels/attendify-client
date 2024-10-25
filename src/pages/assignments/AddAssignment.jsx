@@ -10,7 +10,7 @@ const AddAssignment = () => {
         supervisor: '',
         field: '',
         department: '',
-        employees: '',
+        employees: [],
     });
     const [loading, setLoading] = useState(false);
     const [employees, setEmployees] = useState([]);
@@ -75,14 +75,32 @@ const AddAssignment = () => {
         e.preventDefault();
         setLoading(true);
         try {
+            if (!selectedSupervisor) {
+                toast.error('Please select a supervisor');
+                return;
+            }
+
+            // Create array of employee IDs including selected employees AND supervisor
+            const employeeIds = [
+                selectedSupervisor.id,  // Add supervisor ID first
+                ...employees.map(emp => emp.id)  // Then add other employee IDs
+            ];
+
             const payload = {
-                ...formData,
-                employee_ids: [...employees.map(emp => emp.id), selectedSupervisor.id] // Include supervisor ID
+                name: formData.name,
+                supervisor: selectedSupervisor.id,
+                field: formData.field,
+                department: formData.department,
+                employees: employeeIds // Now includes supervisor ID
             };
+
+            console.log('Submitting payload:', payload); // For debugging
+
             await addAssignment(payload);
             toast.success('Assignment added successfully');
             navigate('/assignments');
         } catch (error) {
+            console.error('Error adding assignment:', error);
             toast.error(error.message || 'Failed to add assignment');
         } finally {
             setLoading(false);
@@ -91,23 +109,47 @@ const AddAssignment = () => {
 
     const handleEmployeeSelect = (employee) => {
         if (!employees.some(emp => emp.id === employee.id) && employee.id !== selectedSupervisor?.id) {
-            setEmployees([...employees, employee]);
+            setEmployees(prev => [...prev, employee]);
+            // Update formData with new employee ID
+            setFormData(prev => ({
+                ...prev,
+                employees: [...prev.employees, employee.id]
+            }));
         }
         setSearchTerms(prev => ({ ...prev, employees: '' }));
         setShowEmployeeDropdown(false);
     };
 
     const handleEmployeeRemove = (id) => {
-        setEmployees(employees.filter(emp => emp.id !== id));
+        // Prevent removing if it's the supervisor
+        if (id === selectedSupervisor?.id) {
+            return;
+        }
+        setEmployees(prev => prev.filter(emp => emp.id !== id));
+        setFormData(prev => ({
+            ...prev,
+            employees: prev.employees.filter(empId => empId !== id)
+        }));
     };
 
     const handleSupervisorSelect = (supervisor) => {
+        // If there was a previous supervisor, remove their ID from employees array
+        if (selectedSupervisor) {
+            setFormData(prev => ({
+                ...prev,
+                employees: prev.employees.filter(empId => empId !== selectedSupervisor.id)
+            }));
+        }
+
         setSelectedSupervisor(supervisor);
-        setFormData(prev => ({ ...prev, supervisor: supervisor.id }));
+        setFormData(prev => ({
+            ...prev,
+            supervisor: supervisor.id,
+        }));
         setSearchTerms(prev => ({ ...prev, supervisor: supervisor.name }));
         setShowSupervisorDropdown(false);
-        
-        // Remove supervisor from employees list if already selected
+
+        // Remove new supervisor from employees list if they were previously selected
         setEmployees(prev => prev.filter(emp => emp.id !== supervisor.id));
     };
 
@@ -138,6 +180,12 @@ const AddAssignment = () => {
             sup.name.toLowerCase().includes(searchTerms.supervisor.toLowerCase())
         )
         .slice(0, 4);
+
+    // Validation for submit button
+    const isFormValid = formData.name &&
+        formData.field &&
+        formData.department &&
+        selectedSupervisor;
 
     return (
         <div className="px-5 mt-16">
@@ -349,8 +397,9 @@ const AddAssignment = () => {
                                     <div className="flex py-5 border-t border-slate-200/80 px-7 md:justify-end mt-5">
                                         <button
                                             type="submit"
-                                            className={`inline-flex items-center justify-center w-full px-10 py-2 font-medium transition duration-200 border rounded-md shadow-sm cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 text-primary border-primary md:w-auto ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                            disabled={loading || !selectedSupervisor || !formData.name || !formData.field || !formData.department}
+                                            className={`inline-flex items-center justify-center w-full px-10 py-2 font-medium transition duration-200 border rounded-md shadow-sm cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 text-primary border-primary md:w-auto ${loading || !isFormValid ? 'opacity-50 cursor-not-allowed' : ''
+                                                }`}
+                                            disabled={loading || !isFormValid}
                                         >
                                             {loading ? (
                                                 <svg
@@ -376,7 +425,7 @@ const AddAssignment = () => {
                                             ) : (
                                                 <Save className="-ml-2 mr-2 h-4 w-4 stroke-[1.3]" />
                                             )}
-                                            {loading ? 'Adding Assignment...' : 'Add Assignment'}
+                                            {loading ? 'Saving...' : 'Add Assignment'}
                                         </button>
                                     </div>
                                 </form>

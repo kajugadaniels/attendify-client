@@ -1,5 +1,5 @@
 import React from 'react'
-import { AddAssignment, AddDepartment, AddEmployee, AddField, AddUser, Dashboard, EditAssignment, EditDepartment, EditEmployee, EditField, EditUser, EndAssignment, GetAssignments, GetDepartments, GetEmployees, GetFields, GetUsers, Login, Profile, ShowAssignment } from './pages'
+import { AddAssignment, AddDepartment, AddEmployee, AddField, AddUser, Dashboard, EditAssignment, EditDepartment, EditEmployee, EditField, EditUser, EndAssignment, GetAssignments, GetAttendances, GetDepartments, GetEmployees, GetFields, GetUsers, Login, Profile, ShowAssignment } from './pages'
 import UserLayout from './layouts/UserLayout'
 import { Route, Routes } from 'react-router-dom'
 
@@ -33,6 +33,8 @@ const AppRoutes = () => {
                 <Route path="/assignment/edit/:id" element={<EditAssignment />} />
                 <Route path="/assignment/:id/end" element={<EndAssignment />} />
                 <Route path="/assignment/:id" element={<ShowAssignment />} />
+
+                <Route path="/attendance" element={<GetAttendances />} />
             </Route>
         </Routes>
     )

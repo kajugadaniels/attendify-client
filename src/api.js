@@ -399,3 +399,18 @@ export const endAssignmentById = async (id, data) => {
             : new Error('An error occurred while ending the assignment.');
     }
 };
+
+export const fetchAttendance = async () => {
+    try {
+        const response = await api.get('/attendances/', {
+            headers: {
+                Authorization: `Token ${localStorage.getItem('token')}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response
+            ? error.response.data 
+            : new Error('An error occurred while fetching attendances.');
+    }
+};

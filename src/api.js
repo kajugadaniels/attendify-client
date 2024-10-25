@@ -368,3 +368,33 @@ export const addAssignment = async (data) => {
             : new Error('An error occurred while adding the assignment.');
     }
 };
+
+export const fetchAssignmentById = async (id) => {
+    try {
+        const response = await api.get(`/assignment/${id}/`, {
+            headers: {
+                Authorization: `Token ${localStorage.getItem('token')}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response
+            ? error.response.data
+            : new Error('An error occurred while fetching the assignment.');
+    }
+};
+
+export const endAssignmentById = async (id, data) => {
+    try {
+        const response = await api.put(`/assignment/${id}/end`, data, {
+            headers: {
+                Authorization: `Token ${localStorage.getItem('token')}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response
+            ? error.response.data
+            : new Error('An error occurred while updating the assignment.');
+    }
+};

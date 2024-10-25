@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, EllipsisVertical, Hourglass, KeySquare, ListChecks, PenLine, Search, Trash2, User2 } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, EllipsisVertical, Eye, Hourglass, KeySquare, ListChecks, PenLine, Search, Trash2, User2 } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { fetchAssignments } from '../../api'
 import { toast } from 'react-toastify'
@@ -73,6 +73,10 @@ const GetAssignments = () => {
 
     const handleEndAssignment = (assignmentId) => {
         navigate(`/assignment/${assignmentId}/end`);
+    };
+
+    const handleView = (assignmentId) => {
+        navigate(`/assignment/${assignmentId}/`);
     };
 
     const handleDelete = async (assignmentId) => {
@@ -213,14 +217,21 @@ const GetAssignments = () => {
                                                                         <div className="w-40 p-2 bg-white rounded-md shadow-lg dropdown-content">
                                                                             <button
                                                                                 onClick={() => handleEndAssignment(assignment.id)}
-                                                                                className="flex items-center p-2 transition duration-300 ease-in-out rounded-md cursor-pointer hover:bg-slate-200/60"
+                                                                                className="flex items-center p-2 transition duration-300 ease-in-out rounded-md cursor-pointer hover:bg-slate-200/60 text-warning"
                                                                             >
                                                                                 <Hourglass className="stroke-[1] mr-2 h-4 w-4" />
-                                                                                EndAssignment
+                                                                                End Task
+                                                                            </button>
+                                                                            <button
+                                                                                onClick={() => handleView(assignment.id)}
+                                                                                className="flex items-center p-2 transition duration-300 ease-in-out rounded-md cursor-pointer hover:bg-slate-200/60 text-success"
+                                                                            >
+                                                                                <Eye className="stroke-[1] mr-2 h-4 w-4" />
+                                                                                View
                                                                             </button>
                                                                             <button
                                                                                 onClick={() => handleEdit(assignment.id)}
-                                                                                className="flex items-center p-2 transition duration-300 ease-in-out rounded-md cursor-pointer hover:bg-slate-200/60"
+                                                                                className="flex items-center p-2 transition duration-300 ease-in-out rounded-md cursor-pointer hover:bg-slate-200/60 text-primary"
                                                                             >
                                                                                 <ListChecks className="stroke-[1] mr-2 h-4 w-4" />
                                                                                 Edit

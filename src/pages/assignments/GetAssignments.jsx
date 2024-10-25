@@ -49,7 +49,7 @@ const GetAssignments = () => {
         if (term) {
             const filtered = assignments.filter((assignment) =>
                 (assignment?.name || '').toLowerCase().includes(term.toLowerCase()) ||
-                (assignment?.supervisor?.name || '').toLowerCase().includes(term.toLowerCase()) ||
+                (assignment?.supervisor_name || '').toLowerCase().includes(term.toLowerCase()) ||
                 (assignment?.field_name || '').toLowerCase().includes(term.toLowerCase()) ||
                 (assignment?.department_name || '').toLowerCase().includes(term.toLowerCase()) ||
                 (assignment?.employee_assignments || []).some((employee) =>
@@ -169,7 +169,7 @@ const GetAssignments = () => {
                                                             {assignment.name || 'N/A'}
                                                         </td>
                                                         <td className="px-5 py-4 border-b border-dashed">
-                                                            {assignment.supervisor || 'N/A'}
+                                                            {assignment.supervisor_name || 'N/A'}
                                                         </td>
                                                         <td className="px-5 py-4 border-b border-dashed">
                                                             {assignment.field_name || 'N/A'}

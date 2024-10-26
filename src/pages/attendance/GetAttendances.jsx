@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react'
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, EllipsisVertical, KeySquare, ListChecks, PenLine, Search, Trash2 } from 'lucide-react'
-import { Link, useNavigate } from 'react-router-dom'
-import { fetchAttendance } from '../../api'
-import { toast } from 'react-toastify'
+import React, { useState, useEffect } from 'react';
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Search } from 'lucide-react';
+import { fetchAttendance } from '../../api';
+import { toast } from 'react-toastify';
 
 const GetAttendances = () => {
     const [attendances, setAttendances] = useState([]);
@@ -11,16 +10,56 @@ const GetAttendances = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [attendancesPerPage] = useState(10);
     const [loading, setLoading] = useState(false);
-    const [dropdownOpen, setDropdownOpen] = useState(null);
-    const navigate = useNavigate();
 
     useEffect(() => {
         const loadAttendances = async () => {
             setLoading(true);
             try {
                 const data = await fetchAttendance();
-                setAttendances(data);
-                setFilteredAttendances(data);
+                
+                // Process the data to handle duplicates and calculate totals
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                // Get next 4 days
+                const futureDates = Array.from({ length: 4 }, (_, i) => {
+                    const date = new Date(today);
+                    date.setDate(date.getDate() + i);
+                    return date.toISOString().split('T')[0];
+                });
+
+                // Group by employee_id and process data
+                const processedData = Object.values(data.reduce((acc, curr) => {
+                    const dateObj = new Date(curr.date);
+                    dateObj.setHours(0, 0, 0, 0);
+                    const dateStr = dateObj.toISOString().split('T')[0];
+
+                    // Only include current date and future dates (up to 4 days)
+                    if (!futureDates.includes(dateStr)) {
+                        return acc;
+                    }
+
+                    if (!acc[curr.employee_id]) {
+                        acc[curr.employee_id] = {
+                            id: curr.employee_id,
+                            employee_id: curr.employee_id,
+                            employee_name: curr.employee_name,
+                            department_name: curr.department_name,
+                            total_day_salary: parseFloat(curr.day_salary || 0),
+                            attendance: {}
+                        };
+                    } else {
+                        acc[curr.employee_id].total_day_salary += parseFloat(curr.day_salary || 0);
+                    }
+
+                    // Store attendance for each date
+                    acc[curr.employee_id].attendance[dateStr] = curr.attended;
+
+                    return acc;
+                }, {}));
+
+                setAttendances(processedData);
+                setFilteredAttendances(processedData);
             } catch (error) {
                 toast.error('Failed to load attendances.');
             } finally {
@@ -31,33 +70,39 @@ const GetAttendances = () => {
     }, []);
 
     const handleSearch = (e) => {
-        const term = e.target.value;
+        const term = e.target.value.toLowerCase();
         setSearchTerm(term);
+        
         if (term) {
             const filtered = attendances.filter((attendance) =>
-                attendance.employee_name.toLowerCase().includes(term.toLowerCase()) ||
-                attendance.department_name.toLowerCase().includes(term.toLowerCase()) ||
-                attendance.day_salary.toLowerCase().includes(term.toLowerCase()) ||
-                attendance.attended?.toLowerCase().includes(term.toLowerCase())
+                attendance.employee_name.toLowerCase().includes(term) ||
+                attendance.total_day_salary.toString().includes(term)
             );
             setFilteredAttendances(filtered);
-            setCurrentPage(1); // Reset to the first page when searching
+            setCurrentPage(1);
         } else {
             setFilteredAttendances(attendances);
         }
     };
 
-    const toggleDropdown = (attendanceId) => {
-        setDropdownOpen(dropdownOpen === attendanceId ? null : attendanceId);
+    // Get dates for column headers
+    const getDateColumns = () => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return Array.from({ length: 5 }, (_, i) => {
+            const date = new Date(today);
+            date.setDate(date.getDate() + i);
+            return date.toISOString().split('T')[0];
+        });
     };
+
+    const dateColumns = getDateColumns();
 
     // Pagination logic
     const indexOfLastAttendance = currentPage * attendancesPerPage;
     const indexOfFirstAttendance = indexOfLastAttendance - attendancesPerPage;
     const currentAttendances = filteredAttendances.slice(indexOfFirstAttendance, indexOfLastAttendance);
-
     const totalPages = Math.ceil(filteredAttendances.length / attendancesPerPage);
-
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     return (
@@ -67,7 +112,7 @@ const GetAttendances = () => {
                     <div className="col-span-12">
                         <div className="flex flex-col gap-y-3 md:h-10 md:flex-row md:items-center">
                             <div className="text-base font-medium group-[.mode--light]:text-white">
-                                Attendance
+                                Attendance Tracking
                             </div>
                         </div>
                         <div className="mt-3.5 flex flex-col gap-8">
@@ -93,52 +138,39 @@ const GetAttendances = () => {
                                         <table className="w-full text-left border-b border-slate-200/60">
                                             <thead>
                                                 <tr>
-                                                    <td className="w-5 px-5 py-4 font-medium border-t border-b bg-slate-50 text-slate-500">
-                                                        <input type="checkbox" className="transition-all duration-100 ease-in-out rounded shadow-sm cursor-pointer border-slate-200 focus:ring-4 focus:ring-primary focus:ring-opacity-20" />
-                                                    </td>
                                                     <td className="px-5 py-4 font-medium border-t border-b bg-slate-50 text-slate-500">
                                                         Employee Name
                                                     </td>
                                                     <td className="px-5 py-4 font-medium border-t border-b bg-slate-50 text-slate-500">
-                                                        Department Name
+                                                        Total Salary
                                                     </td>
-                                                    <td className="px-5 py-4 font-medium border-t border-b bg-slate-50 text-slate-500">
-                                                        Day Salary
-                                                    </td>
-                                                    <td className="px-5 py-4 font-medium border-t border-b bg-slate-50 text-slate-500">
-                                                        Date
-                                                    </td>
-                                                    <td className="px-5 py-4 font-medium border-t border-b bg-slate-50 text-slate-500">
-                                                        Attended
-                                                    </td>
+                                                    {dateColumns.map((date) => (
+                                                        <td key={date} className="px-5 py-4 font-medium border-t border-b bg-slate-50 text-slate-500">
+                                                            {new Date(date).toLocaleDateString()}
+                                                        </td>
+                                                    ))}
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 {currentAttendances.map((attendance) => (
-                                                    <tr key={attendance.id} className="[&_td]:last:border-b-0">
+                                                    <tr key={attendance.employee_id} className="[&_td]:last:border-b-0">
                                                         <td className="px-5 py-4 border-b border-dashed">
-                                                            <input type="checkbox" className="transition-all duration-100 ease-in-out rounded shadow-sm cursor-pointer border-slate-200 focus:ring-4 focus:ring-primary focus:ring-opacity-20" />
+                                                            {attendance.employee_name}
                                                         </td>
                                                         <td className="px-5 py-4 border-b border-dashed">
-                                                            {attendance.employee_name || 'N/A'}
+                                                            {attendance.total_day_salary.toFixed(2)} RWF
                                                         </td>
-                                                        <td className="px-5 py-4 border-b border-dashed">
-                                                            {attendance.department_name || 'N/A'}
-                                                        </td>
-                                                        <td className="px-5 py-4 border-b border-dashed">
-                                                            {attendance.day_salary || 'N/A'}
-                                                        </td>
-                                                        <td className="px-5 py-4 border-b border-dashed">
-                                                            {attendance.date || 'N/A'}
-                                                        </td>
-                                                        <td className="px-5 py-4 border-b border-dashed">
-                                                            <div className={`px-2 py-1 rounded-full text-xs font-medium inline-block ${attendance.attended
-                                                                    ? 'bg-success/20 text-success'
-                                                                    : 'bg-danger/20 text-danger'
+                                                        {dateColumns.map((date) => (
+                                                            <td key={date} className="px-5 py-4 border-b border-dashed">
+                                                                <div className={`px-2 py-1 rounded-full text-xs font-medium inline-block ${
+                                                                    attendance.attendance[date]
+                                                                        ? 'bg-success/20 text-success'
+                                                                        : 'bg-danger/20 text-danger'
                                                                 }`}>
-                                                                {attendance.attended ? 'Attended' : 'Not Attended'}
-                                                            </div>
-                                                        </td>
+                                                                    {attendance.attendance[date] ? 'Attended' : 'Future Dates'}
+                                                                </div>
+                                                            </td>
+                                                        ))}
                                                     </tr>
                                                 ))}
                                             </tbody>

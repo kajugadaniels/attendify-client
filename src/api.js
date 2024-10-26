@@ -430,3 +430,19 @@ export const fetchTodayAttendance = async () => {
             : new Error('An error occurred while fetching today\'s attendance.');
     }
 };
+
+// Get department attendance
+export const fetchDepartmentAttendance = async (departmentId) => {
+    try {
+        const response = await api.get(`/department-attendance/${departmentId}/`, {
+            headers: {
+                Authorization: `Token ${localStorage.getItem('token')}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response
+            ? error.response.data
+            : new Error('An error occurred while fetching department attendance.');
+    }
+};

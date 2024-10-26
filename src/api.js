@@ -415,7 +415,6 @@ export const fetchAttendance = async () => {
     }
 };
 
-// Get today's attendance
 export const fetchTodayAttendance = async () => {
     try {
         const response = await api.get('/today-attendance/', {
@@ -431,7 +430,6 @@ export const fetchTodayAttendance = async () => {
     }
 };
 
-// Get department attendance
 export const fetchDepartmentAttendance = async (departmentId) => {
     try {
         const response = await api.get(`/department-attendance/${departmentId}/`, {
@@ -444,5 +442,20 @@ export const fetchDepartmentAttendance = async (departmentId) => {
         throw error.response
             ? error.response.data
             : new Error('An error occurred while fetching department attendance.');
+    }
+};
+
+export const fetchEmployeeAttendance = async (employeeId) => {
+    try {
+        const response = await api.get(`/employee-attendance/${employeeId}/`, {
+            headers: {
+                Authorization: `Token ${localStorage.getItem('token')}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response
+            ? error.response.data
+            : new Error('An error occurred while fetching employee attendance history.');
     }
 };

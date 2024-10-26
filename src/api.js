@@ -414,3 +414,19 @@ export const fetchAttendance = async () => {
             : new Error('An error occurred while fetching attendances.');
     }
 };
+
+// Get today's attendance
+export const fetchTodayAttendance = async () => {
+    try {
+        const response = await api.get('/today-attendance/', {
+            headers: {
+                Authorization: `Token ${localStorage.getItem('token')}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response
+            ? error.response.data
+            : new Error('An error occurred while fetching today\'s attendance.');
+    }
+};

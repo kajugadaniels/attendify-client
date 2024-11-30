@@ -30,7 +30,7 @@ const Sidebar = () => {
                         <img src='https://static.vecteezy.com/system/resources/thumbnails/002/318/271/small/user-profile-icon-free-vector.jpg' alt="EPS Logo" />
                     </div>
                     <div className="ml-3.5 font-medium transition-opacity group-[.side-menu--collapsed.side-menu--on-hover]:xl:opacity-100 group-[.side-menu--collapsed]:xl:opacity-0">
-                        EPS
+                        CAPS
                     </div>
                 </Link>
             </div>

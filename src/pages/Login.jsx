@@ -51,7 +51,7 @@ const Login = () => {
                         <div>
                             <div className="text-2xl font-medium">Sign In</div>
                             <div className="mt-2.5 text-slate-600">
-                                Welcome to EPS.
+                                Welcome to CAPS.
                             </div>
                             <form onSubmit={handleLogin} className="mt-6">
                                 <label className="inline-block mb-2 group-[.form-inline]:mb-2 group-[.form-inline]:sm:mb-0 group-[.form-inline]:sm:mr-5 group-[.form-inline]:sm:text-right">Email

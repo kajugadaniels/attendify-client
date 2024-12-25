@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login } from '../api';
 import { toast } from 'react-toastify';
+import { login } from '../api';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -93,10 +93,10 @@ const Login = () => {
                 <div className="h-full col-span-7 2xl:col-span-8 lg:relative before:content-[''] before:absolute before:lg:-ml-10 before:left-0 before:inset-y-0 before:bg-gradient-to-b before:from-theme-1 before:to-theme-2 before:w-screen before:lg:w-[800%]">
                     <div className="sticky top-0 z-10 flex-col justify-center hidden h-screen ml-16 lg:flex xl:ml-28 2xl:ml-36">
                         <div className="text-[2.6rem] font-medium leading-[1.4] text-white xl:text-5xl xl:leading-[1.2]">
-                            Digital Attendance <br /> Software
+                        CASUALS ATTENDANCE AND PAYMENT SYSTEM
                         </div>
                         <div className="mt-5 text-base leading-relaxed text-white/70 xl:text-lg">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                        The Casuals Attendance and Payment System is a digital solution designed to track the attendance of casual workers and automate their payment processing. 
                         </div>
                     </div>
                 </div>

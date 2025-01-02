@@ -77,7 +77,7 @@ const Navbar = ({ toggleSidebar }) => {
                 <nav aria-label="breadcrumb" className="flex flex-1">
                     <ol className="flex items-center text-theme-1 text-white/90">
                         <li>
-                            <Link to="/">Dashboard</Link>
+                            <Link to="/dashboard">Dashboard</Link>
                         </li>
                     </ol>
                 </nav>
@@ -107,13 +107,14 @@ const Navbar = ({ toggleSidebar }) => {
                                     <UserRoundPen className="stroke-[1] mr-2 h-4 w-4" />
                                     Profile Info
                                 </Link>
-                                <button
-                                    onClick={handleLogout}
+                                <Link
+                                    to='/'
+                                    // onClick={handleLogout}
                                     className="flex items-center w-full p-2 transition duration-300 ease-in-out rounded-md hover:bg-gray-100"
                                 >
                                     <LogOut className="stroke-[1] mr-2 h-4 w-4" />
                                     Logout
-                                </button>
+                                </Link>
                             </div>
                         </div>
                     </div>

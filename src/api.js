@@ -153,9 +153,10 @@ export const fetchEmployeeById = async (id) => {
         });
         return response.data;
     } catch (error) {
-        throw error.response
-            ? error.response.data
-            : new Error('An error occurred while fetching the employee.');
+        if (error.response && error.response.data) {
+            throw error.response.data;
+        }
+        throw new Error('An error occurred while fetching the employee.');
     }
 };
 
@@ -168,9 +169,10 @@ export const updateEmployee = async (id, data) => {
         });
         return response.data;
     } catch (error) {
-        throw error.response
-            ? error.response.data
-            : new Error('An error occurred while updating the employee.');
+        if (error.response && error.response.data) {
+            throw error.response.data;
+        }
+        throw new Error('An error occurred while updating the employee.');
     }
 };
 

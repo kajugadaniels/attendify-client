@@ -24,7 +24,13 @@ const EditEmployee = () => {
                 const data = await fetchEmployeeById(id);
                 setEmployeeData(data);
             } catch (error) {
-                toast.error('Failed to load employee details.');
+                // Display detailed error messages if available
+                if (typeof error === 'object') {
+                    const errorMessages = Object.values(error).flat().join(' ');
+                    toast.error(`Failed to load employee details: ${errorMessages}`);
+                } else {
+                    toast.error('Failed to load employee details.');
+                }
                 navigate('/employees');
             }
         };
@@ -45,7 +51,13 @@ const EditEmployee = () => {
             toast.success('Employee updated successfully.');
             navigate('/employees');
         } catch (error) {
-            toast.error(error.message || 'An error occurred while updating the employee.');
+            // Display detailed error messages if available
+            if (typeof error === 'object') {
+                const errorMessages = Object.values(error).flat().join(' ');
+                toast.error(`Update failed: ${errorMessages}`);
+            } else {
+                toast.error(error.message || 'An error occurred while updating the employee.');
+            }
         } finally {
             setLoading(false);
         }
@@ -58,7 +70,7 @@ const EditEmployee = () => {
                     <div className="col-span-12 sm:col-span-10 sm:col-start-2">
                         <div className="flex flex-col gap-y-3 md:h-10 md:flex-row md:items-center">
                             <div className="text-base font-medium group-[.mode--light]:text-white">
-                                Add New Employee
+                                Edit Employee
                             </div>
                             <div className="flex flex-col gap-x-3 gap-y-2 sm:flex-row md:ml-auto">
                                 <Link
@@ -92,24 +104,24 @@ const EditEmployee = () => {
                                         </div>
                                         <div className="flex-1 w-full mt-3 xl:mt-0">
                                             <div className="flex flex-col items-center md:flex-row">
-                                            <input
-                                                type="text"
-                                                name="name"
-                                                value={employeeData.name}
-                                                onChange={handleInputChange}
-                                                placeholder="Enter full name"
-                                                className="w-full text-sm transition duration-200 ease-in-out rounded-md shadow-sm border-slate-200 placeholder:text-slate-400/90 focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus:border-primary"
-                                                required
-                                            />
-                                            <input
-                                                type="number"
-                                                name="nid"
-                                                value={employeeData.nid}
-                                                onChange={handleInputChange}
-                                                placeholder="Enter National ID"
-                                                className="w-full text-sm transition duration-200 ease-in-out rounded-md shadow-sm border-slate-200 placeholder:text-slate-400/90 focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus:border-primary"
-                                                required
-                                            />
+                                                <input
+                                                    type="text"
+                                                    name="name"
+                                                    value={employeeData.name}
+                                                    onChange={handleInputChange}
+                                                    placeholder="Enter full name"
+                                                    className="w-full text-sm transition duration-200 ease-in-out rounded-md shadow-sm border-slate-200 placeholder:text-slate-400/90 focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus:border-primary"
+                                                    required
+                                                />
+                                                <input
+                                                    type="text" // Changed from "number" to "text"
+                                                    name="nid"
+                                                    value={employeeData.nid}
+                                                    onChange={handleInputChange}
+                                                    placeholder="Enter National ID"
+                                                    className="w-full text-sm transition duration-200 ease-in-out rounded-md shadow-sm border-slate-200 placeholder:text-slate-400/90 focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus:border-primary"
+                                                    required
+                                                />
                                             </div>
                                         </div>
                                     </div>
@@ -143,7 +155,7 @@ const EditEmployee = () => {
                                                     required
                                                 />
                                                 <input
-                                                    type="number"
+                                                    type="text" // Changed from "number" to "text"
                                                     name="phone_number"
                                                     value={employeeData.phone_number}
                                                     onChange={handleInputChange}
@@ -161,14 +173,14 @@ const EditEmployee = () => {
                                             <div className="text-left">
                                                 <div className="flex items-center">
                                                     <div className="font-medium">
-                                                        TAG ID & Address and RSSB Number
+                                                        TAG ID, Address & RSSB Number
                                                     </div>
                                                     <div className="ml-2.5 rounded-md border border-slate-200 bg-slate-100 px-2 py-0.5 text-xs text-slate-500">
                                                         Required
                                                     </div>
                                                 </div>
                                                 <div className="mt-1.5 text-xs leading-relaxed text-slate-500/80 xl:mt-3">
-                                                    Provide the employee's TAG ID, address and insurance number(RSSB Number).
+                                                    Provide the employee's TAG ID, address, and RSSB Number.
                                                 </div>
                                             </div>
                                         </div>
@@ -193,7 +205,7 @@ const EditEmployee = () => {
                                                     required
                                                 />
                                                 <input
-                                                    type="number"
+                                                    type="text" // Changed from "number" to "text"
                                                     name="rssb_number"
                                                     value={employeeData.rssb_number}
                                                     onChange={handleInputChange}

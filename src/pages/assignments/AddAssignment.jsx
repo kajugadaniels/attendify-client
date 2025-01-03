@@ -117,7 +117,7 @@ const AddAssignment = () => {
             }));
         }
         setSearchTerms(prev => ({ ...prev, employees: '' }));
-        setShowEmployeeDropdown(false);
+        // Do not close the dropdown to allow multiple selections
     };
 
     const handleEmployeeRemove = (id) => {
@@ -324,7 +324,7 @@ const AddAssignment = () => {
                                         </div>
                                     </div>
 
-                                    {/* Employees Selection with Search */}
+                                    {/* Employees Selection with Enhanced Multi-Select and Scroll */}
                                     <div className="flex-col block pt-5 mt-5 first:mt-0 first:pt-0 sm:flex xl:flex-row xl:items-center">
                                         <div className="inline-block mb-2 sm:mb-0 sm:mr-5 sm:text-right xl:mr-14 xl:w-60">
                                             <div className="text-left">
@@ -334,6 +334,31 @@ const AddAssignment = () => {
                                             </div>
                                         </div>
                                         <div className="flex-1 w-full mt-3 xl:mt-0" ref={employeeDropdownRef}>
+
+                                        {/* Selected Employees Tags */}
+                                        <div className="mt-2 flex flex-wrap gap-2 mb-5">
+                                            {selectedSupervisor && (
+                                                <div className="inline-flex items-center px-2 py-1 text-sm text-white rounded-full bg-primary/80">
+                                                    {selectedSupervisor.name}
+                                                    <span className="ml-1 text-xs">(Supervisor)</span>
+                                                </div>
+                                            )}
+                                            {employees.map((emp) => (
+                                                <div
+                                                    key={emp.id}
+                                                    className="inline-flex items-center px-2 py-1 text-sm text-white rounded-full bg-primary"
+                                                >
+                                                    {emp.name}
+                                                    <button
+                                                        type="button"
+                                                        className="ml-2 text-xs hover:text-white/80"
+                                                        onClick={() => handleEmployeeRemove(emp.id)}
+                                                    >
+                                                        ✕
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
                                             <div className="relative">
                                                 <input
                                                     type="text"
@@ -345,50 +370,30 @@ const AddAssignment = () => {
                                                     className="w-full text-sm transition duration-200 ease-in-out rounded-md shadow-sm border-slate-200 focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus:border-primary"
                                                 />
                                                 {showEmployeeDropdown && (
-                                                    <div className="mt-2 overflow-y-auto border rounded-md shadow-sm max-h-60 bg-white absolute z-40 w-full">
+                                                    <div className="mt-2 overflow-y-auto border rounded-md shadow-sm max-h-60 bg-white absolute z-40 w-full" style={{ height: '160px' }}>
                                                         {filteredEmployees.length > 0 ? (
-                                                            filteredEmployees.map((emp) => (
-                                                                <div
-                                                                    key={emp.id}
-                                                                    className={`p-2 cursor-pointer hover:bg-gray-100 ${employees.some(selectedEmp => selectedEmp.id === emp.id) ? 'bg-primary/20' : ''}`}
-                                                                    onClick={() => handleEmployeeSelect(emp)}
-                                                                >
-                                                                    {emp.name}
-                                                                    {employees.some(selectedEmp => selectedEmp.id === emp.id) && (
-                                                                        <span className="ml-2 text-primary">✓</span>
-                                                                    )}
-                                                                </div>
-                                                            ))
+                                                            filteredEmployees.map((emp) => {
+                                                                const isSelected = employees.some(selectedEmp => selectedEmp.id === emp.id);
+                                                                return (
+                                                                    <div
+                                                                        key={emp.id}
+                                                                        className={`p-2 cursor-pointer hover:bg-gray-100 ${isSelected ? 'bg-primary/20 text-gray-500 cursor-not-allowed' : ''}`}
+                                                                        onClick={() => {
+                                                                            if (!isSelected) handleEmployeeSelect(emp);
+                                                                        }}
+                                                                    >
+                                                                        {emp.name}
+                                                                        {isSelected && (
+                                                                            <span className="ml-2 text-primary">✓</span>
+                                                                        )}
+                                                                    </div>
+                                                                );
+                                                            })
                                                         ) : (
                                                             <div className="p-2 text-gray-500">No matching employees found</div>
                                                         )}
                                                     </div>
                                                 )}
-                                            </div>
-
-                                            {/* Selected Employees Tags */}
-                                            <div className="mt-2 flex flex-wrap gap-2">
-                                                {selectedSupervisor && (
-                                                    <div className="inline-flex items-center px-2 py-1 text-sm text-white rounded-full bg-primary/80">
-                                                        {selectedSupervisor.name}
-                                                        <span className="ml-1 text-xs">(Supervisor)</span>
-                                                    </div>
-                                                )}
-                                                {employees.map((emp) => (
-                                                    <div
-                                                        key={emp.id}
-                                                        className="inline-flex items-center px-2 py-1 text-sm text-white rounded-full bg-primary"
-                                                    >
-                                                        {emp.name}
-                                                        <button
-                                                            type="button"
-                                                            className="ml-2 text-xs hover:text-white/80"
-                                                            onClick={() => handleEmployeeRemove(emp.id)}
-                                                        >
-                                                            ✕
-                                                        </button>
-                                                    </div>
-                                                ))}
                                             </div>
                                         </div>
                                     </div>

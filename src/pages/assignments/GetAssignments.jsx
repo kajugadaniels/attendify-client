@@ -192,7 +192,7 @@ const GetAssignments = () => {
                                                             <div className="flex text-success">
                                                                 <User2 className="h-3.5 w-3.5 stroke-[1.7]" />
                                                                 <div className="ml-1.5 max-w-[200px] overflow-hidden whitespace-normal">
-                                                                    {assignment.employee_assignments.map((employee) => employee.employee_name).join(', ')}
+                                                                    {assignment.employee_assignments.map((employee) => employee.employee_tag_id).join(', ')}
                                                                 </div>
                                                             </div>
                                                         </td>

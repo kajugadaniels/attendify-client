@@ -69,7 +69,7 @@ export const fetchUsers = async () => {
 
 export const createUser = async (userData) => {
     try {
-        const response = await apiClient.post('/user/add/', userData);
+        const response = await apiClient.post('/auth/register/', userData);
         return response.data;
     } catch (error) {
         throw error;
@@ -114,7 +114,7 @@ export const fetchFields = async () => {
 
 export const createField = async (fieldData) => {
     try {
-        const response = await apiClient.post('/field/add/', fieldData);
+        const response = await apiClient.post('/field/create/', fieldData);
         return response.data;
     } catch (error) {
         throw error;
@@ -142,6 +142,51 @@ export const updateField = async (fieldId, fieldData) => {
 export const deleteField = async (fieldId) => {
     try {
         const response = await apiClient.delete(`/field/${fieldId}/delete/`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const fetchDepartments = async () => {
+    try {
+        const response = await apiClient.get('/departments/');
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const createDepartment = async (departmentData) => {
+    try {
+        const response = await apiClient.post('/department/create/', departmentData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const fetchDepartmentDetails = async (departmentId) => {
+    try {
+        const response = await apiClient.get(`/department/${departmentId}/`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const updateDepartment = async (departmentId, departmentData) => {
+    try {
+        const response = await apiClient.patch(`/department/${departmentId}/update/`, departmentData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const deleteDepartment = async (departmentId) => {
+    try {
+        const response = await apiClient.delete(`/department/${departmentId}/delete/`);
         return response.data;
     } catch (error) {
         throw error;

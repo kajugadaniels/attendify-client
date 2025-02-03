@@ -237,3 +237,57 @@ export const deleteEmployee = async (employeeId) => {
         throw error;
     }
 };
+
+export const fetchAssignments = async () => {
+    try {
+        const response = await apiClient.get('/assignments/');
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const createAssignment = async (assignmentData) => {
+    try {
+        const response = await apiClient.post('/assignment/create/', assignmentData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const fetchAssignmentDetails = async (assignmentId) => {
+    try {
+        const response = await apiClient.get(`/assignment/${assignmentId}/`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const updateAssignment = async (assignmentId, assignmentData) => {
+    try {
+        const response = await apiClient.patch(`/assignment/${assignmentId}/update/`, assignmentData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const deleteAssignment = async (assignmentId) => {
+    try {
+        const response = await apiClient.delete(`/assignment/${assignmentId}/delete/`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const EndAssignment = async (assignmentId, assignmentData) => {
+    try {
+        const response = await apiClient.patch(`/assignment/${assignmentId}/end/`, assignmentData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};

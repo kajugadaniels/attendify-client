@@ -192,3 +192,48 @@ export const deleteDepartment = async (departmentId) => {
         throw error;
     }
 };
+
+export const fetchEmployees = async () => {
+    try {
+        const response = await apiClient.get('/employees/');
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const createEmployee = async (employeeData) => {
+    try {
+        const response = await apiClient.post('/employee/create/', employeeData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const fetchEmployeeDetails = async (employeeId) => {
+    try {
+        const response = await apiClient.get(`/employee/${employeeId}/`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const updateEmployee = async (employeeId, employeeData) => {
+    try {
+        const response = await apiClient.patch(`/employee/${employeeId}/update/`, employeeData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const deleteEmployee = async (employeeId) => {
+    try {
+        const response = await apiClient.delete(`/employee/${employeeId}/delete/`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};

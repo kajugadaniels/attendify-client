@@ -291,3 +291,12 @@ export const EndAssignment = async (assignmentId, assignmentData) => {
         throw error;
     }
 };
+
+export const fetchAttendances = async () => {
+    try {
+        const response = await apiClient.get('/attendances/');
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};

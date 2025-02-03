@@ -1,7 +1,7 @@
 import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 import AppLayout from './layouts/AppLayout'
-import { AddEmployee, AddUser, Dashboard, EditEmployee, EditUser, GetAttendances, GetEmployees, GetUsers, Login, NotFound, Profile, ShowEmployee, ShowUser } from './pages'
+import { AddEmployee, AddField, AddUser, Dashboard, EditEmployee, EditField, EditUser, GetAttendances, GetEmployees, GetFields, GetUsers, Login, NotFound, Profile, ShowEmployee, ShowField, ShowUser } from './pages'
 import ProtectedRoute from './components/ProtectedRoute'
 
 const AppRoutes = () => {
@@ -18,6 +18,11 @@ const AppRoutes = () => {
                     <Route path="/user/add" element={<AddUser />} />
                     <Route path="/user/:id" element={<ShowUser />} />
                     <Route path="/user/:id/edit" element={<EditUser />} />
+
+                    <Route path="/fields" element={<GetFields />} />
+                    <Route path="/field/add" element={<AddField />} />
+                    <Route path="/field/:id" element={<ShowField />} />
+                    <Route path="/field/:id/edit" element={<EditField />} />
 
                     <Route path="/employees" element={<GetEmployees />} />
                     <Route path="/employee/add" element={<AddEmployee />} />

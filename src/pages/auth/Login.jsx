@@ -61,7 +61,7 @@ const Login = () => {
                             <img
                                 className="w-6"
                                 src="https://midone-html.left4code.com/dist/images/logo.svg"
-                                alt="Midone - Tailwind Admin Dashboard Template"
+                                alt="CAPS"
                             />
                             <span className="ml-3 text-lg text-white">Midone </span>
                         </a>
@@ -69,7 +69,7 @@ const Login = () => {
                             <img
                                 className="-intro-x -mt-16 w-1/2"
                                 src="https://midone-html.left4code.com/dist/images/illustration.svg"
-                                alt="Midone - Tailwind Admin Dashboard Template"
+                                alt="CAPS"
                             />
                             <div className="-intro-x mt-10 text-4xl font-medium leading-tight text-white">
                                 A few more clicks to <br />

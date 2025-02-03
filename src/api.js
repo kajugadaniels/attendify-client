@@ -102,3 +102,48 @@ export const deleteUser = async (userId) => {
         throw error;
     }
 };
+
+export const fetchFields = async () => {
+    try {
+        const response = await apiClient.get('/fields/');
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const createField = async (fieldData) => {
+    try {
+        const response = await apiClient.post('/field/add/', fieldData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const fetchFieldDetails = async (fieldId) => {
+    try {
+        const response = await apiClient.get(`/field/${fieldId}/`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const updateField = async (fieldId, fieldData) => {
+    try {
+        const response = await apiClient.patch(`/field/${fieldId}/update/`, fieldData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const deleteField = async (fieldId) => {
+    try {
+        const response = await apiClient.delete(`/field/${fieldId}/delete/`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};

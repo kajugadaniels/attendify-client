@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchEmployeeDetails, deleteEmployee } from '../../api';
 import { toast } from 'react-toastify';
-import { Eye, Edit, Trash2 } from 'lucide-react';
+import { Edit, Trash2, Eye } from 'lucide-react';
 
 const ShowEmployee = () => {
     const { id } = useParams();
@@ -42,55 +42,149 @@ const ShowEmployee = () => {
     if (loading) return <div>Loading employee details...</div>;
     if (!employee) return <div>No employee found.</div>;
 
+    // Sum up all the day_salary values from attendanceHistory
+    const totalSalary = attendanceHistory.reduce(
+        (sum, record) => sum + (Number(record.day_salary) || 0),
+        0
+    );
+
     return (
-        <div className="p-6 max-w-4xl mx-auto bg-white rounded-md shadow-md">
-            <h2 className="text-2xl font-semibold mb-4">Employee Details</h2>
-            <div className="space-y-2">
-                <p><strong>Name:</strong> {employee.name || 'N/A'}</p>
-                <p><strong>Email:</strong> {employee.email || 'N/A'}</p>
-                <p><strong>Phone Number:</strong> {employee.phone_number || 'N/A'}</p>
-                <p><strong>Address:</strong> {employee.address || 'N/A'}</p>
-                <p><strong>Tag ID:</strong> {employee.tag_id || 'N/A'}</p>
-                <p><strong>National ID:</strong> {employee.nid || 'N/A'}</p>
-                <p><strong>RSSB Number:</strong> {employee.rssb_number || 'N/A'}</p>
+        <div className="p-6">
+            {/* Header */}
+            <div className="intro-y mt-8 flex flex-col items-center sm:flex-row">
+                <h2 className="mr-auto text-lg font-medium">Employee Details</h2>
             </div>
 
-            {attendanceHistory.length > 0 && (
-                <div className="mt-6">
-                    <h3 className="text-xl font-semibold mb-2">Attendance History</h3>
-                    <div className="overflow-x-auto">
-                        <table className="min-w-full text-left border-collapse">
-                            <thead>
-                                <tr>
-                                    <th className="border p-2">Date</th>
-                                    <th className="border p-2">Department</th>
-                                    <th className="border p-2">Attended</th>
-                                    <th className="border p-2">Day Salary</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {attendanceHistory.map(record => (
-                                    <tr key={record.id}>
-                                        <td className="border p-2">{record.date || 'N/A'}</td>
-                                        <td className="border p-2">{record.department_name || 'N/A'}</td>
-                                        <td className="border p-2">{record.attended ? 'Yes' : 'No'}</td>
-                                        <td className="border p-2">{record.day_salary || 'N/A'}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+            {/* BEGIN: Employee & Attendance Details */}
+            <div className="intro-y mt-5 grid grid-cols-11 gap-5">
+                {/* Left Column: Employee Details */}
+                <div className="col-span-12 lg:col-span-4 2xl:col-span-3">
+                    <div className="box rounded-md p-5">
+                        <div className="mb-5 flex items-center border-b border-slate-200/60 pb-5 dark:border-darkmode-400">
+                            <div className="truncate text-base font-medium">
+                                Employee Details
+                            </div>
+                            <button
+                                onClick={() => navigate(`/employee/${id}/edit`)}
+                                className="ml-auto flex items-center text-primary hover:underline"
+                            >
+                                <Edit className="stroke-1.5 mr-2 h-4 w-4" />
+                                Edit Employee
+                            </button>
+                        </div>
+                        <div className="flex items-center">
+                            <i data-lucide="user" className="stroke-1.5 mr-2 h-4 w-4 text-slate-500"></i>
+                            <span className="font-medium">Name:</span>
+                            <span className="ml-1">{employee.name || 'N/A'}</span>
+                        </div>
+                        <div className="mt-3 flex items-center">
+                            <i data-lucide="mail" className="stroke-1.5 mr-2 h-4 w-4 text-slate-500"></i>
+                            <span className="font-medium">Email:</span>
+                            <span className="ml-1">{employee.email || 'N/A'}</span>
+                        </div>
+                        <div className="mt-3 flex items-center">
+                            <i data-lucide="phone" className="stroke-1.5 mr-2 h-4 w-4 text-slate-500"></i>
+                            <span className="font-medium">Phone:</span>
+                            <span className="ml-1">{employee.phone_number || 'N/A'}</span>
+                        </div>
+                        <div className="mt-3 flex items-center">
+                            <i data-lucide="map-pin" className="stroke-1.5 mr-2 h-4 w-4 text-slate-500"></i>
+                            <span className="font-medium">Address:</span>
+                            <span className="ml-1">{employee.address || 'N/A'}</span>
+                        </div>
+                        <div className="mt-3 flex items-center">
+                            <i data-lucide="hash" className="stroke-1.5 mr-2 h-4 w-4 text-slate-500"></i>
+                            <span className="font-medium">Tag ID:</span>
+                            <span className="ml-1">{employee.tag_id || 'N/A'}</span>
+                        </div>
+                        <div className="mt-3 flex items-center">
+                            <i data-lucide="credit-card" className="stroke-1.5 mr-2 h-4 w-4 text-slate-500"></i>
+                            <span className="font-medium">National ID:</span>
+                            <span className="ml-1">{employee.nid || 'N/A'}</span>
+                        </div>
+                        <div className="mt-3 flex items-center">
+                            <i data-lucide="dollar-sign" className="stroke-1.5 mr-2 h-4 w-4 text-slate-500"></i>
+                            <span className="font-medium">RSSB Number:</span>
+                            <span className="ml-1">{employee.rssb_number || 'N/A'}</span>
+                        </div>
                     </div>
                 </div>
-            )}
 
-            <div className="mt-6 flex space-x-4">
-                <button
-                    onClick={() => navigate(`/employee/${id}/edit`)}
-                    className="flex items-center px-4 py-2 text-white bg-green-600 rounded hover:bg-green-700 transition"
-                >
-                    <Edit className="mr-2 h-4 w-4" />
-                    Edit
-                </button>
+                {/* Right Column: Attendance History */}
+                <div className="col-span-12 lg:col-span-7 2xl:col-span-8">
+                    <div className="box rounded-md p-5">
+                        <div className="mb-5 flex items-center border-b border-slate-200/60 pb-5 dark:border-darkmode-400">
+                            <div className="truncate text-base font-medium">
+                                Attendance History
+                            </div>
+                            <button
+                                onClick={() => toast.info('Add attendance note functionality coming soon!')}
+                                className="ml-auto flex items-center text-primary hover:underline"
+                            >
+                                <i data-lucide="plus" className="stroke-1.5 mr-2 h-4 w-4"></i>
+                                Add Note
+                            </button>
+                        </div>
+                        <div className="-mt-3 overflow-auto lg:overflow-visible">
+                            <table className="w-full text-left">
+                                <thead>
+                                    <tr className="[&:nth-of-type(odd)_td]:bg-slate-100 [&:nth-of-type(odd)_td]:dark:bg-darkmode-300 [&:nth-of-type(odd)_td]:dark:bg-opacity-50">
+                                        <th className="font-medium px-5 py-3 border-b-2 dark:border-darkmode-300 whitespace-nowrap !py-5">
+                                            Date
+                                        </th>
+                                        <th className="font-medium px-5 py-3 border-b-2 dark:border-darkmode-300 whitespace-nowrap">
+                                            Department
+                                        </th>
+                                        <th className="font-medium px-5 py-3 border-b-2 dark:border-darkmode-300 whitespace-nowrap text-center">
+                                            Attended
+                                        </th>
+                                        <th className="font-medium px-5 py-3 border-b-2 dark:border-darkmode-300 whitespace-nowrap text-right">
+                                            Day Salary
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {attendanceHistory.map((record) => (
+                                        <tr
+                                            key={record.id}
+                                            className="[&:nth-of-type(odd)_td]:bg-slate-100 [&:nth-of-type(odd)_td]:dark:bg-darkmode-300 [&:nth-of-type(odd)_td]:dark:bg-opacity-50"
+                                        >
+                                            <td className="px-5 py-3 border-b dark:border-darkmode-300 !py-4">
+                                                {record.date || 'N/A'}
+                                            </td>
+                                            <td className="px-5 py-3 border-b dark:border-darkmode-300">
+                                                {record.department_name || 'N/A'}
+                                            </td>
+                                            <td className="px-5 py-3 border-b dark:border-darkmode-300 text-center">
+                                                {record.attended ? 'Yes' : 'No'}
+                                            </td>
+                                            <td className="px-5 py-3 border-b dark:border-darkmode-300 text-right">
+                                                {record.day_salary || 'N/A'}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                                {attendanceHistory.length > 0 && (
+                                    <tfoot>
+                                        <tr>
+                                            <td colSpan="3" className="font-medium px-5 py-3 border-t dark:border-darkmode-300 text-right">
+                                                Total Salary:
+                                            </td>
+                                            <td className="font-medium px-5 py-3 border-t dark:border-darkmode-300 text-right">
+                                                {totalSalary}
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                )}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {/* END: Employee & Attendance Details */}
+
+            {/* Action Buttons */}
+            <div className="mt-6 flex justify-end space-x-4">
                 <button
                     onClick={handleDelete}
                     className="flex items-center px-4 py-2 text-white bg-red-600 rounded hover:bg-red-700 transition"

@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchFieldDetails, deleteField } from '../../api';
 import { toast } from 'react-toastify';
-import { Edit, Trash2, Eye, ChevronLeft, ChevronRight, ChevronsRight } from 'lucide-react';
+import { Edit, Trash2, Eye, ChevronLeft, ChevronRight, ChevronsRight } from 'lucide-react'
 
-const ViewField = () => {
+const ShowField = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [field, setField] = useState(null);
@@ -282,4 +282,4 @@ const ViewField = () => {
     );
 }
 
-export default ViewField
+export default ShowField

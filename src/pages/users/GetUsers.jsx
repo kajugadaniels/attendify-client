@@ -37,26 +37,30 @@ const GetUsers = () => {
         loadUsers();
     }, []);
 
-    // Filter and sort users based on searchTerm, roleFilter, and sortOrder
-    const filteredUsers = users
-        .filter((user) => {
-            const term = searchTerm.toLowerCase();
-            const nameMatch = user.name?.toLowerCase().includes(term);
-            const phoneMatch = user.phone_number?.toLowerCase().includes(term);
-            const roleMatch = roleFilter ? user.role === roleFilter : true;
-            return (nameMatch || phoneMatch) && roleMatch;
-        })
-        .sort((a, b) => {
-            if (sortOrder === 'newest') {
-                return b.id - a.id;
-            } else {
-                return a.id - b.id;
-            }
-        });
+    // Filter users based on search term and role filter
+    const filteredUsers = users.filter((user) => {
+        const term = searchTerm.toLowerCase();
+        const nameMatch = (user.name || "").toLowerCase().includes(term);
+        const phoneMatch = (user.phone_number || "").toLowerCase().includes(term);
+        const roleMatch = roleFilter ? user.role === roleFilter : true;
+        return (nameMatch || phoneMatch) && roleMatch;
+    });
+
+    // Sort users by created_at date
+    const sortedUsers = filteredUsers.sort((a, b) => {
+        // Convert created_at strings to Date objects; if missing, treat as epoch (0)
+        const aDate = a.created_at ? new Date(a.created_at) : new Date(0);
+        const bDate = b.created_at ? new Date(b.created_at) : new Date(0);
+        if (sortOrder === 'newest') {
+            return bDate - aDate;
+        } else {
+            return aDate - bDate;
+        }
+    });
 
     // Pagination calculations
-    const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
-    const currentUsers = filteredUsers.slice(
+    const totalPages = Math.ceil(sortedUsers.length / itemsPerPage);
+    const currentUsers = sortedUsers.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     );
@@ -122,16 +126,7 @@ const GetUsers = () => {
                     <option value="User">User</option>
                 </select>
 
-                <input
-                    type="date"
-                    className="w-40 disabled:bg-slate-100 disabled:cursor-not-allowed dark:disabled:bg-800/50 transition duration-200 ease-in-out text-sm border-slate-200 shadow-sm rounded-md py-2 px-3 focus:ring-4 focus:ring-primary focus:ring-opacity-20 dark:bg-800 dark:border-transparent dark:focus:ring-slate-700 dark:focus:ring-opacity-50"
-                />
-
-                <input
-                    type="date"
-                    className="w-40 disabled:bg-slate-100 disabled:cursor-not-allowed dark:disabled:bg-800/50 transition duration-200 ease-in-out text-sm border-slate-200 shadow-sm rounded-md py-2 px-3 focus:ring-4 focus:ring-primary focus:ring-opacity-20 dark:bg-800 dark:border-transparent dark:focus:ring-slate-700 dark:focus:ring-opacity-50"
-                />
-
+                {/* Sorting dropdown using created_at date */}
                 <select
                     className="disabled:bg-slate-100 disabled:cursor-not-allowed dark:disabled:bg-800/50 transition duration-200 ease-in-out text-sm border-slate-200 shadow-sm rounded-md py-2 px-3 pr-8 focus:ring-4 focus:ring-primary focus:ring-opacity-20 dark:bg-800 dark:border-transparent dark:focus:ring-slate-700 dark:focus:ring-opacity-50 !box w-48"
                     value={sortOrder}
@@ -168,6 +163,9 @@ const GetUsers = () => {
                                 Phone Number
                             </th>
                             <th className="font-medium px-5 py-3 dark:border-300 whitespace-nowrap border-b-0 text-center">
+                                Created At
+                            </th>
+                            <th className="font-medium px-5 py-3 dark:border-300 whitespace-nowrap border-b-0 text-center">
                                 Action
                             </th>
                         </tr>
@@ -185,29 +183,34 @@ const GetUsers = () => {
                                     <div className="flex items-center">
                                         <div className="image-fit zoom-in h-9 w-9">
                                             <img
-                                                src={user.avatar}
+                                                src={user.avatar || 'https://cdn-icons-png.flaticon.com/512/10337/10337609.png'}
                                                 className="tooltip cursor-pointer rounded-lg border-white shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
                                                 alt="User avatar"
                                             />
                                         </div>
                                         <div className="ml-4">
                                             <span className="whitespace-nowrap font-medium">
-                                                {user.name}
+                                                {user.name || 'N/A'}
                                             </span>
                                             <div className="mt-0.5 whitespace-nowrap text-xs text-slate-500">
-                                                {user.email}
+                                                {user.email || 'N/A'}
                                             </div>
                                         </div>
                                     </div>
                                 </td>
                                 <td className="px-5 py-3 border-b dark:border-300 box whitespace-nowrap border-x-0 text-center shadow-[5px_3px_5px_#00000005] dark:bg-600">
-                                    {user.email}
+                                    {user.email || 'N/A'}
                                 </td>
                                 <td className="px-5 py-3 border-b dark:border-300 box whitespace-nowrap border-x-0 text-center shadow-[5px_3px_5px_#00000005] dark:bg-600">
-                                    {user.role}
+                                    {user.role || 'N/A'}
                                 </td>
                                 <td className="px-5 py-3 border-b dark:border-300 box whitespace-nowrap border-x-0 text-center shadow-[5px_3px_5px_#00000005] dark:bg-600">
-                                    {user.phone_number}
+                                    {user.phone_number || 'N/A'}
+                                </td>
+                                <td className="px-5 py-3 border-b dark:border-300 box whitespace-nowrap border-x-0 text-center shadow-[5px_3px_5px_#00000005] dark:bg-600">
+                                    {user.created_at
+                                        ? new Date(user.created_at).toLocaleString()
+                                        : 'N/A'}
                                 </td>
                                 <td className="px-5 py-3 border-b dark:border-300 box w-56 border-x-0 shadow-[5px_3px_5px_#00000005] dark:bg-600">
                                     <div className="flex items-center justify-center">

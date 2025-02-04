@@ -2,7 +2,13 @@ import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { fetchAssignmentDetails, updateAssignment, fetchFields, fetchDepartments, fetchEmployees } from '../../api';
+import {
+    fetchAssignmentDetails,
+    updateAssignment,
+    fetchFields,
+    fetchDepartments,
+    fetchEmployees
+} from '../../api';
 import { CloudUpload, Eye, ToggleLeft } from 'lucide-react';
 
 const EditAssignment = () => {
@@ -13,6 +19,7 @@ const EditAssignment = () => {
         field: null,
         department: null,
         supervisor: null,
+        // Here we initialize employees as an empty array.
         employees: [],
         notes: ''
     });
@@ -43,9 +50,10 @@ const EditAssignment = () => {
                     supervisor: employeesData.find(emp => emp.id === assignmentData.supervisor)
                         ? { value: assignmentData.supervisor, label: assignmentData.supervisor_name }
                         : null,
-                    employees: assignmentData.employees
-                        ? assignmentData.employees.map(empId => {
-                            const emp = employeesData.find(e => e.id === empId);
+                    // Map assigned employees from the employee_assignments array.
+                    employees: assignmentData.employee_assignments
+                        ? assignmentData.employee_assignments.map(empAssign => {
+                            const emp = employeesData.find(e => e.id === empAssign.employee);
                             return emp ? { value: emp.id, label: emp.name } : null;
                         }).filter(Boolean)
                         : [],

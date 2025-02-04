@@ -285,7 +285,7 @@ export const deleteAssignment = async (assignmentId) => {
 
 export const FinishAssignment = async (assignmentId, assignmentData) => {
     try {
-        const response = await apiClient.patch(`/assignment/${assignmentId}/end/`, assignmentData);
+        const response = await apiClient.post(`/assignment/${assignmentId}/end/`, assignmentData);
         return response.data;
     } catch (error) {
         throw error;

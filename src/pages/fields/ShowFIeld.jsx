@@ -199,6 +199,12 @@ const ShowField = () => {
                                     ))}
                                 </tbody>
                             </table>
+
+                            {filteredAttendance.length === 0 && (
+                                <div className="text-center py-4 text-slate-500">
+                                    No attendance records found for the selected date range.
+                                </div>
+                            )}
                         </div>
                         {/* Pagination Controls */}
                         {totalRecords > pageSize && (

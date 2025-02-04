@@ -11,7 +11,7 @@ export { default as ShowUser } from './users/ShowUser'
 export { default as GetFields } from './fields/GetFields'
 export { default as AddField } from './fields/AddField'
 export { default as EditField } from './fields/EditField'
-export { default as ShowField } from './fields/ShowField'
+export { default as ShowField } from './fields/ShowField.jsx'
 
 export { default as GetDepartments } from './departments/GetDepartments'
 export { default as AddDepartment } from './departments/AddDepartment'

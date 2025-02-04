@@ -51,7 +51,7 @@ export const logoutUser = async () => {
 
 export const updateUserProfile = async (updateData) => {
     try {
-        const response = await apiClient.patch('/auth/profile-update/', updateData);
+        const response = await apiClient.put('/auth/profile-update/', updateData);
         return response.data;
     } catch (error) {
         throw error;
@@ -87,7 +87,7 @@ export const fetchUserDetails = async (userId) => {
 
 export const updateUser = async (userId, userData) => {
     try {
-        const response = await apiClient.patch(`/user/${userId}/update/`, userData);
+        const response = await apiClient.put(`/user/${userId}/update/`, userData);
         return response.data;
     } catch (error) {
         throw error;
@@ -132,7 +132,7 @@ export const fetchFieldDetails = async (fieldId) => {
 
 export const updateField = async (fieldId, fieldData) => {
     try {
-        const response = await apiClient.patch(`/field/${fieldId}/update/`, fieldData);
+        const response = await apiClient.put(`/field/${fieldId}/update/`, fieldData);
         return response.data;
     } catch (error) {
         throw error;
@@ -177,7 +177,7 @@ export const fetchDepartmentDetails = async (departmentId) => {
 
 export const updateDepartment = async (departmentId, departmentData) => {
     try {
-        const response = await apiClient.patch(`/department/${departmentId}/update/`, departmentData);
+        const response = await apiClient.put(`/department/${departmentId}/update/`, departmentData);
         return response.data;
     } catch (error) {
         throw error;
@@ -222,7 +222,7 @@ export const fetchEmployeeDetails = async (employeeId) => {
 
 export const updateEmployee = async (employeeId, employeeData) => {
     try {
-        const response = await apiClient.patch(`/employee/${employeeId}/update/`, employeeData);
+        const response = await apiClient.put(`/employee/${employeeId}/update/`, employeeData);
         return response.data;
     } catch (error) {
         throw error;
@@ -267,7 +267,7 @@ export const fetchAssignmentDetails = async (assignmentId) => {
 
 export const updateAssignment = async (assignmentId, assignmentData) => {
     try {
-        const response = await apiClient.patch(`/assignment/${assignmentId}/update/`, assignmentData);
+        const response = await apiClient.put(`/assignment/${assignmentId}/update/`, assignmentData);
         return response.data;
     } catch (error) {
         throw error;

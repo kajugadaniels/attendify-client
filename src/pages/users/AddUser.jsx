@@ -17,27 +17,94 @@ const AddUser = () => {
         password_confirmation: ''
     });
 
-    // Handle input change
+    // State for live validation errors
+    const [errors, setErrors] = useState({
+        phone_number: '',
+        email: '',
+        password: ''
+    });
+
+    // Track loading state for the submit button
+    const [loading, setLoading] = useState(false);
+
+    // Validation functions
+    const validateEmail = (email) => {
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return regex.test(email);
+    };
+
+    const validatePhoneNumber = (phone) => {
+        const regex = /^[0-9]+$/;
+        return regex.test(phone);
+    };
+
+    const validatePassword = (password) => {
+        return password.length >= 6;
+    };
+
+    // Handle input changes and perform live validations
     const handleChange = (e) => {
-        setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+        const { name, value } = e.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+
+        // Perform live validations on key fields
+        if (name === 'phone_number') {
+            if (!validatePhoneNumber(value)) {
+                setErrors((prev) => ({
+                    ...prev,
+                    phone_number: 'Phone number must contain only digits.'
+                }));
+            } else {
+                setErrors((prev) => ({ ...prev, phone_number: '' }));
+            }
+        }
+        if (name === 'email') {
+            if (!validateEmail(value)) {
+                setErrors((prev) => ({
+                    ...prev,
+                    email: 'Invalid email format.'
+                }));
+            } else {
+                setErrors((prev) => ({ ...prev, email: '' }));
+            }
+        }
+        if (name === 'password') {
+            if (!validatePassword(value)) {
+                setErrors((prev) => ({
+                    ...prev,
+                    password: 'Password must be at least 6 characters long.'
+                }));
+            } else {
+                setErrors((prev) => ({ ...prev, password: '' }));
+            }
+        }
     };
 
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Basic validation
+        // Basic check for password confirmation
         if (formData.password !== formData.password_confirmation) {
             toast.error('Passwords do not match!');
             return;
         }
 
+        // Check if there are any live validation errors
+        if (errors.phone_number || errors.email || errors.password) {
+            toast.error('Please fix the errors before submitting.');
+            return;
+        }
+
         try {
+            setLoading(true);
             await createUser(formData);
             toast.success('User created successfully!');
             navigate('/users');
         } catch (error) {
             toast.error('Failed to create user. Please check your details.');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -70,7 +137,7 @@ const AddUser = () => {
                                         <label className="inline-block mb-2 xl:!mr-10 xl:w-64">
                                             <div className="text-left">
                                                 <div className="flex items-center">
-                                                    <div className="font-medium">Name & Role</div>
+                                                    <div className="font-medium">Name &amp; Role</div>
                                                     <div className="ml-2 rounded-md bg-slate-200 px-2 py-0.5 text-xs text-slate-600 dark:bg-darkmode-300 dark:text-slate-400">
                                                         Required
                                                     </div>
@@ -109,7 +176,7 @@ const AddUser = () => {
                                         <label className="inline-block mb-2 xl:!mr-10 xl:w-64">
                                             <div className="text-left">
                                                 <div className="flex items-center">
-                                                    <div className="font-medium">Phone & Email</div>
+                                                    <div className="font-medium">Phone &amp; Email</div>
                                                     <div className="ml-2 rounded-md bg-slate-200 px-2 py-0.5 text-xs text-slate-600 dark:bg-darkmode-300 dark:text-slate-400">
                                                         Required
                                                     </div>
@@ -120,24 +187,34 @@ const AddUser = () => {
                                             </div>
                                         </label>
                                         <div className="mt-3 w-full flex-1 xl:mt-0 grid grid-cols-2 gap-3">
-                                            <input
-                                                type="text"
-                                                name="phone_number"
-                                                placeholder="123-456-7890"
-                                                value={formData.phone_number}
-                                                onChange={handleChange}
-                                                className="disabled:bg-slate-100 dark:disabled:bg-darkmode-800/50 transition duration-200 ease-in-out w-full text-sm border-slate-200 shadow-sm rounded-md placeholder:text-slate-400/90 focus:ring-4 focus:ring-primary dark:bg-darkmode-800"
-                                                required
-                                            />
-                                            <input
-                                                type="email"
-                                                name="email"
-                                                placeholder="example@mail.com"
-                                                value={formData.email}
-                                                onChange={handleChange}
-                                                className="disabled:bg-slate-100 dark:disabled:bg-darkmode-800/50 transition duration-200 ease-in-out w-full text-sm border-slate-200 shadow-sm rounded-md placeholder:text-slate-400/90 focus:ring-4 focus:ring-primary dark:bg-darkmode-800"
-                                                required
-                                            />
+                                            <div>
+                                                <input
+                                                    type="text"
+                                                    name="phone_number"
+                                                    placeholder="1234567890"
+                                                    value={formData.phone_number}
+                                                    onChange={handleChange}
+                                                    className="disabled:bg-slate-100 dark:disabled:bg-darkmode-800/50 transition duration-200 ease-in-out w-full text-sm border-slate-200 shadow-sm rounded-md placeholder:text-slate-400/90 focus:ring-4 focus:ring-primary dark:bg-darkmode-800"
+                                                    required
+                                                />
+                                                {errors.phone_number && (
+                                                    <span className="text-red-500 text-xs">{errors.phone_number}</span>
+                                                )}
+                                            </div>
+                                            <div>
+                                                <input
+                                                    type="email"
+                                                    name="email"
+                                                    placeholder="example@mail.com"
+                                                    value={formData.email}
+                                                    onChange={handleChange}
+                                                    className="disabled:bg-slate-100 dark:disabled:bg-darkmode-800/50 transition duration-200 ease-in-out w-full text-sm border-slate-200 shadow-sm rounded-md placeholder:text-slate-400/90 focus:ring-4 focus:ring-primary dark:bg-darkmode-800"
+                                                    required
+                                                />
+                                                {errors.email && (
+                                                    <span className="text-red-500 text-xs">{errors.email}</span>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
 
@@ -157,15 +234,20 @@ const AddUser = () => {
                                             </div>
                                         </label>
                                         <div className="mt-3 w-full flex-1 xl:mt-0 grid grid-cols-2 gap-3">
-                                            <input
-                                                type="password"
-                                                name="password"
-                                                placeholder="Enter password"
-                                                value={formData.password}
-                                                onChange={handleChange}
-                                                className="disabled:bg-slate-100 dark:disabled:bg-darkmode-800/50 transition duration-200 ease-in-out w-full text-sm border-slate-200 shadow-sm rounded-md placeholder:text-slate-400/90 focus:ring-4 focus:ring-primary dark:bg-darkmode-800"
-                                                required
-                                            />
+                                            <div>
+                                                <input
+                                                    type="password"
+                                                    name="password"
+                                                    placeholder="Enter password"
+                                                    value={formData.password}
+                                                    onChange={handleChange}
+                                                    className="disabled:bg-slate-100 dark:disabled:bg-darkmode-800/50 transition duration-200 ease-in-out w-full text-sm border-slate-200 shadow-sm rounded-md placeholder:text-slate-400/90 focus:ring-4 focus:ring-primary dark:bg-darkmode-800"
+                                                    required
+                                                />
+                                                {errors.password && (
+                                                    <span className="text-red-500 text-xs">{errors.password}</span>
+                                                )}
+                                            </div>
                                             <input
                                                 type="password"
                                                 name="password_confirmation"
@@ -194,12 +276,41 @@ const AddUser = () => {
                                 </a>
                                 <button
                                     type="submit"
-                                    className="transition duration-200 border shadow-sm inline-flex items-center justify-center px-3 rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 dark:focus:ring-slate-700 bg-primary border-primary text-white dark:border-primary w-full py-3 md:w-52 disabled:opacity-70 disabled:cursor-not-allowed"
+                                    disabled={loading}
+                                    className={`transition duration-200 border shadow-sm inline-flex items-center justify-center px-3 rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 dark:focus:ring-slate-700 bg-primary border-primary text-white w-full py-3 md:w-52 disabled:opacity-70 disabled:cursor-not-allowed`}
                                 >
-                                    Save
-                                    <span className="flex h-5 w-5 items-center justify-center ml-1">
-                                        <CloudUpload className="stroke-1.5 h-4 w-4" />
-                                    </span>
+                                    {loading ? (
+                                        <div className="flex items-center">
+                                            <span className="mr-2">Saving</span>
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                width="1.4rem"
+                                                height="1.4rem"
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                            >
+                                                <circle
+                                                    cx="12"
+                                                    cy="12"
+                                                    r="10"
+                                                    stroke="#fff"
+                                                    strokeWidth="4"
+                                                    strokeDasharray="31.415, 31.415"
+                                                >
+                                                    <animateTransform
+                                                        attributeName="transform"
+                                                        type="rotate"
+                                                        from="0 12 12"
+                                                        to="360 12 12"
+                                                        dur="1s"
+                                                        repeatCount="indefinite"
+                                                    />
+                                                </circle>
+                                            </svg>
+                                        </div>
+                                    ) : (
+                                        'Save'
+                                    )}
                                 </button>
                             </div>
                         </div>

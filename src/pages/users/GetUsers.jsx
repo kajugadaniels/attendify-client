@@ -11,12 +11,12 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { fetchUsers } from '../../api';
+import { fetchUsers, deleteUser } from '../../api';
 
 const GetUsers = () => {
     const navigate = useNavigate();
 
-    // State variables for users, search, filtering, sorting and pagination
+    // State variables for users, search, filtering, sorting, and pagination
     const [users, setUsers] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [roleFilter, setRoleFilter] = useState('');
@@ -78,8 +78,17 @@ const GetUsers = () => {
         navigate(`/user/${userId}/edit`);
     };
 
-    const handleDeleteUser = (userId) => {
-        toast.info(`Delete functionality not implemented yet for ID: ${userId}`);
+    const handleDeleteUser = async (userId) => {
+        if (window.confirm('Are you sure you want to delete this user?')) {
+            try {
+                await deleteUser(userId);
+                toast.success('User deleted successfully');
+                // Update the users list by filtering out the deleted user
+                setUsers((prev) => prev.filter(user => user.id !== userId));
+            } catch (error) {
+                toast.error('Failed to delete user.');
+            }
+        }
     };
 
     return (
@@ -88,7 +97,7 @@ const GetUsers = () => {
                 <h2 className="mr-auto text-lg font-medium">Users</h2>
                 <button
                     onClick={handleAddUser}
-                    className="transition duration-200 border inline-flex items-center justify-center py-2 px-3 rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 [&:hover:not(:disabled)]:bg-opacity-90 [&:hover:not(:disabled)]:border-opacity-90 [&:not(button)]:text-center disabled:opacity-70 disabled:cursor-not-allowed bg-primary border-primary text-white dark:border-primary mr-2 shadow-md"
+                    className="transition duration-200 border inline-flex items-center justify-center py-2 px-3 rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 bg-primary border-primary text-white dark:border-primary mr-2 shadow-md"
                 >
                     Add New User
                     <span className="flex h-5 w-5 items-center justify-center ml-1">
@@ -103,7 +112,7 @@ const GetUsers = () => {
                     <input
                         type="text"
                         placeholder="Search name or phone..."
-                        className="disabled:bg-slate-100 disabled:cursor-not-allowed dark:disabled:bg-800/50 dark:disabled:border-transparent [&[readonly]]:bg-slate-100 [&[readonly]]:cursor-not-allowed [&[readonly]]:dark:bg-800/50 [&[readonly]]:dark:border-transparent transition duration-200 ease-in-out text-sm border-slate-200 shadow-sm rounded-md placeholder:text-slate-400/90 focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus:border-primary focus:border-opacity-40 dark:bg-800 dark:border-transparent dark:focus:ring-slate-700 dark:focus:ring-opacity-50 !box w-56 pr-10"
+                        className="disabled:bg-slate-100 disabled:cursor-not-allowed dark:disabled:bg-800/50 dark:disabled:border-transparent transition duration-200 ease-in-out text-sm border-slate-200 shadow-sm rounded-md placeholder:text-slate-400/90 focus:ring-4 focus:ring-primary focus:border-primary focus:border-opacity-40 dark:bg-800 dark:border-transparent dark:focus:ring-slate-700 dark:focus:ring-opacity-50 !box w-56 pr-10"
                         value={searchTerm}
                         onChange={(e) => {
                             setSearchTerm(e.target.value);

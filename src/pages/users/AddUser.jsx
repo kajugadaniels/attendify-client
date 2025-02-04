@@ -1,18 +1,53 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { toast } from 'react-toastify'
-import { CloudUpload, Eye, Lightbulb, ToggleLeft } from 'lucide-react'
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { CloudUpload, Eye, Lightbulb, ToggleLeft } from 'lucide-react';
+import { createUser } from '../../api';
 
 const AddUser = () => {
+    const navigate = useNavigate();
+
+    // Manage form state
+    const [formData, setFormData] = useState({
+        name: '',
+        role: '',
+        phone_number: '',
+        email: '',
+        password: '',
+        password_confirmation: ''
+    });
+
+    // Handle input change
+    const handleChange = (e) => {
+        setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    };
+
+    // Handle form submission
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        // Basic validation
+        if (formData.password !== formData.password_confirmation) {
+            toast.error('Passwords do not match!');
+            return;
+        }
+
+        try {
+            await createUser(formData);
+            toast.success('User created successfully!');
+            navigate('/users');
+        } catch (error) {
+            toast.error('Failed to create user. Please check your details.');
+        }
+    };
+
     return (
         <>
             <div className="intro-y col-span-12 mt-8 flex flex-wrap items-center xl:flex-nowrap">
-                <h2 className="mr-auto text-lg font-medium">
-                    Add User
-                </h2>
+                <h2 className="mr-auto text-lg font-medium">Add User</h2>
                 <a
-                    href='/users'
-                    className="transition duration-200 border inline-flex items-center justify-center py-2 px-3 rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 [&:hover:not(:disabled)]:bg-opacity-90 [&:hover:not(:disabled)]:border-opacity-90 bg-primary border-primary text-white dark:border-primary mr-2 shadow-md"
+                    href="/users"
+                    className="transition duration-200 border inline-flex items-center justify-center py-2 px-3 rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 dark:focus:ring-slate-700 dark:focus:ring-opacity-50 bg-primary border-primary text-white dark:border-primary mr-2 shadow-md"
                 >
                     Go Back
                     <span className="flex h-5 w-5 items-center justify-center">
@@ -21,7 +56,7 @@ const AddUser = () => {
                 </a>
             </div>
 
-            <form>
+            <form onSubmit={handleSubmit}>
                 <div className="mt-5 grid grid-cols-11 gap-x-6 pb-20">
                     <div className="intro-y col-span-11 2xl:col-span-9">
                         <div className="intro-y box mt-5 p-5">
@@ -30,7 +65,7 @@ const AddUser = () => {
                                     Add New User
                                 </div>
                                 <div className="mt-5">
-                                    {/* Name & Email */}
+                                    {/* Name & Role */}
                                     <div className="block sm:flex group form-inline mt-5 flex-col items-start pt-5 xl:flex-row">
                                         <label className="inline-block mb-2 xl:!mr-10 xl:w-64">
                                             <div className="text-left">
@@ -41,7 +76,7 @@ const AddUser = () => {
                                                     </div>
                                                 </div>
                                                 <div className="mt-3 text-xs leading-relaxed text-slate-500">
-                                                    Please enter the user’s full name and a role.
+                                                    Full name and user type.
                                                 </div>
                                             </div>
                                         </label>
@@ -49,12 +84,16 @@ const AddUser = () => {
                                             <input
                                                 type="text"
                                                 name="name"
-                                                placeholder="Enter user name"
+                                                placeholder="John Doe"
+                                                value={formData.name}
+                                                onChange={handleChange}
                                                 className="disabled:bg-slate-100 dark:disabled:bg-darkmode-800/50 transition duration-200 ease-in-out w-full text-sm border-slate-200 shadow-sm rounded-md placeholder:text-slate-400/90 focus:ring-4 focus:ring-primary dark:bg-darkmode-800"
                                                 required
                                             />
                                             <select
                                                 name="role"
+                                                value={formData.role}
+                                                onChange={handleChange}
                                                 className="disabled:bg-slate-100 dark:disabled:bg-darkmode-800/50 transition duration-200 ease-in-out w-full text-sm border-slate-200 shadow-sm rounded-md py-2 px-3 pr-8 focus:ring-4 focus:ring-primary dark:bg-darkmode-800"
                                                 required
                                             >
@@ -70,28 +109,32 @@ const AddUser = () => {
                                         <label className="inline-block mb-2 xl:!mr-10 xl:w-64">
                                             <div className="text-left">
                                                 <div className="flex items-center">
-                                                    <div className="font-medium">Phone Number & Email</div>
+                                                    <div className="font-medium">Phone & Email</div>
                                                     <div className="ml-2 rounded-md bg-slate-200 px-2 py-0.5 text-xs text-slate-600 dark:bg-darkmode-300 dark:text-slate-400">
                                                         Required
                                                     </div>
                                                 </div>
                                                 <div className="mt-3 text-xs leading-relaxed text-slate-500">
-                                                    Please enter the user’s unique phone number and email address.
+                                                    Unique contact details.
                                                 </div>
                                             </div>
                                         </label>
                                         <div className="mt-3 w-full flex-1 xl:mt-0 grid grid-cols-2 gap-3">
                                             <input
-                                                type="email"
+                                                type="text"
                                                 name="phone_number"
-                                                placeholder="Enter user phone number"
+                                                placeholder="123-456-7890"
+                                                value={formData.phone_number}
+                                                onChange={handleChange}
                                                 className="disabled:bg-slate-100 dark:disabled:bg-darkmode-800/50 transition duration-200 ease-in-out w-full text-sm border-slate-200 shadow-sm rounded-md placeholder:text-slate-400/90 focus:ring-4 focus:ring-primary dark:bg-darkmode-800"
                                                 required
                                             />
                                             <input
                                                 type="email"
                                                 name="email"
-                                                placeholder="Enter user email address"
+                                                placeholder="example@mail.com"
+                                                value={formData.email}
+                                                onChange={handleChange}
                                                 className="disabled:bg-slate-100 dark:disabled:bg-darkmode-800/50 transition duration-200 ease-in-out w-full text-sm border-slate-200 shadow-sm rounded-md placeholder:text-slate-400/90 focus:ring-4 focus:ring-primary dark:bg-darkmode-800"
                                                 required
                                             />
@@ -109,7 +152,7 @@ const AddUser = () => {
                                                     </div>
                                                 </div>
                                                 <div className="mt-3 text-xs leading-relaxed text-slate-500">
-                                                    Please enter the user’s unique password.
+                                                    Minimum 6 characters.
                                                 </div>
                                             </div>
                                         </label>
@@ -117,14 +160,18 @@ const AddUser = () => {
                                             <input
                                                 type="password"
                                                 name="password"
-                                                placeholder="Enter user password"
+                                                placeholder="Enter password"
+                                                value={formData.password}
+                                                onChange={handleChange}
                                                 className="disabled:bg-slate-100 dark:disabled:bg-darkmode-800/50 transition duration-200 ease-in-out w-full text-sm border-slate-200 shadow-sm rounded-md placeholder:text-slate-400/90 focus:ring-4 focus:ring-primary dark:bg-darkmode-800"
                                                 required
                                             />
                                             <input
                                                 type="password"
                                                 name="password_confirmation"
-                                                placeholder="Password Confirmation"
+                                                placeholder="Confirm password"
+                                                value={formData.password_confirmation}
+                                                onChange={handleChange}
                                                 className="disabled:bg-slate-100 dark:disabled:bg-darkmode-800/50 transition duration-200 ease-in-out w-full text-sm border-slate-200 shadow-sm rounded-md placeholder:text-slate-400/90 focus:ring-4 focus:ring-primary dark:bg-darkmode-800"
                                                 required
                                             />
@@ -166,12 +213,7 @@ const AddUser = () => {
                                 <h2 className="text-lg font-medium">Tips</h2>
                                 <div className="mt-5 font-medium">Hiring</div>
                                 <div className="mt-2 text-xs leading-relaxed text-slate-600 dark:text-slate-500">
-                                    <div>
-                                        Provide correct details to ensure the system
-                                        accurately manages attendance and payroll.
-                                        Double-check salary, finger ID, and phone number
-                                        for accuracy before saving.
-                                    </div>
+                                    Provide accurate details. Verify name, role, contact, and password.
                                 </div>
                             </div>
                         </div>
@@ -179,7 +221,7 @@ const AddUser = () => {
                 </div>
             </form>
         </>
-    )
-}
+    );
+};
 
-export default AddUser
+export default AddUser;

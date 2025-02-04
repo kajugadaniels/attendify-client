@@ -128,145 +128,148 @@ const ShowAssignment = () => {
                     </div>
                 </div>
 
-                {/* Right Column: Attendance History with Advanced Filters and Pagination */}
-                {assignment.attendance_history && assignment.attendance_history.length > 0 && (
-                    <div className="col-span-12 lg:col-span-7 2xl:col-span-8">
-                        <div className="box rounded-md p-5">
-                            <div className="mb-5 flex flex-col sm:flex-row items-center border-b border-slate-200/60 pb-5 dark:border-darkmode-400">
-                                <div className="truncate text-base font-medium">Attendance History</div>
-                                <div className="ml-auto flex flex-wrap items-center gap-2 mt-2 sm:mt-0">
-                                    <input
-                                        type="date"
-                                        value={filterStartDate}
-                                        onChange={(e) => {
-                                            setFilterStartDate(e.target.value);
-                                            setCurrentPage(1);
-                                        }}
-                                        className="w-40 border-slate-200 shadow-sm rounded-md py-2 px-3 focus:ring-4 focus:ring-primary"
-                                    />
-                                    <span className="text-slate-500">to</span>
-                                    <input
-                                        type="date"
-                                        value={filterEndDate}
-                                        onChange={(e) => {
-                                            setFilterEndDate(e.target.value);
-                                            setCurrentPage(1);
-                                        }}
-                                        className="w-40 border-slate-200 shadow-sm rounded-md py-2 px-3 focus:ring-4 focus:ring-primary"
-                                    />
-                                    <input
-                                        type="text"
-                                        placeholder="Search attendance..."
-                                        value={attendanceSearch}
-                                        onChange={(e) => {
-                                            setAttendanceSearch(e.target.value);
-                                            setCurrentPage(1);
-                                        }}
-                                        className="w-56 border-slate-200 shadow-sm rounded-md py-2 px-3 focus:ring-4 focus:ring-primary"
-                                    />
-                                </div>
+                <div className="col-span-12 lg:col-span-7 2xl:col-span-8">
+                    <div className="box rounded-md p-5">
+                        <div className="mb-5 flex flex-col sm:flex-row items-center border-b border-slate-200/60 pb-5 dark:border-darkmode-400">
+                            <div className="truncate text-base font-medium">Attendance History</div>
+                            <div className="ml-auto flex flex-wrap items-center gap-2 mt-2 sm:mt-0">
+                                <input
+                                    type="date"
+                                    value={filterStartDate}
+                                    onChange={(e) => {
+                                        setFilterStartDate(e.target.value);
+                                        setCurrentPage(1);
+                                    }}
+                                    className="w-40 border-slate-200 shadow-sm rounded-md py-2 px-3 focus:ring-4 focus:ring-primary"
+                                />
+                                <span className="text-slate-500">to</span>
+                                <input
+                                    type="date"
+                                    value={filterEndDate}
+                                    onChange={(e) => {
+                                        setFilterEndDate(e.target.value);
+                                        setCurrentPage(1);
+                                    }}
+                                    className="w-40 border-slate-200 shadow-sm rounded-md py-2 px-3 focus:ring-4 focus:ring-primary"
+                                />
+                                <input
+                                    type="text"
+                                    placeholder="Search attendance..."
+                                    value={attendanceSearch}
+                                    onChange={(e) => {
+                                        setAttendanceSearch(e.target.value);
+                                        setCurrentPage(1);
+                                    }}
+                                    className="w-56 border-slate-200 shadow-sm rounded-md py-2 px-3 focus:ring-4 focus:ring-primary"
+                                />
                             </div>
-                            <div className="-mt-3 overflow-auto lg:overflow-visible">
-                                <table className="w-full text-left">
-                                    <thead>
-                                        <tr className="[&:nth-of-type(odd)_td]:bg-slate-100 [&:nth-of-type(odd)_td]:dark:bg-darkmode-300 [&:nth-of-type(odd)_td]:dark:bg-opacity-50">
-                                            <th className="font-medium px-5 py-3 border-b-2 dark:border-darkmode-300 whitespace-nowrap !py-5">
-                                                Employee
-                                            </th>
-                                            <th className="font-medium px-5 py-3 border-b-2 dark:border-darkmode-300 whitespace-nowrap">
-                                                Tag ID
-                                            </th>
-                                            <th className="font-medium px-5 py-3 border-b-2 dark:border-darkmode-300 whitespace-nowrap">
-                                                Department
-                                            </th>
-                                            <th className="font-medium px-5 py-3 border-b-2 dark:border-darkmode-300 whitespace-nowrap">
-                                                Date
-                                            </th>
-                                            <th className="font-medium px-5 py-3 border-b-2 dark:border-darkmode-300 whitespace-nowrap text-center">
-                                                Attended
-                                            </th>
+                        </div>
+                        <div className="-mt-3 overflow-auto lg:overflow-visible">
+                            <table className="w-full text-left">
+                                <thead>
+                                    <tr className="[&:nth-of-type(odd)_td]:bg-slate-100 [&:nth-of-type(odd)_td]:dark:bg-darkmode-300 [&:nth-of-type(odd)_td]:dark:bg-opacity-50">
+                                        <th className="font-medium px-5 py-3 border-b-2 dark:border-darkmode-300 whitespace-nowrap !py-5">
+                                            Employee
+                                        </th>
+                                        <th className="font-medium px-5 py-3 border-b-2 dark:border-darkmode-300 whitespace-nowrap">
+                                            Tag ID
+                                        </th>
+                                        <th className="font-medium px-5 py-3 border-b-2 dark:border-darkmode-300 whitespace-nowrap">
+                                            Department
+                                        </th>
+                                        <th className="font-medium px-5 py-3 border-b-2 dark:border-darkmode-300 whitespace-nowrap">
+                                            Date
+                                        </th>
+                                        <th className="font-medium px-5 py-3 border-b-2 dark:border-darkmode-300 whitespace-nowrap text-center">
+                                            Attended
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {paginatedAttendance.map((record) => (
+                                        <tr
+                                            key={record.id}
+                                            className="[&:nth-of-type(odd)_td]:bg-slate-100 [&:nth-of-type(odd)_td]:dark:bg-darkmode-300 [&:nth-of-type(odd)_td]:dark:bg-opacity-50"
+                                        >
+                                            <td className="px-5 py-3 border-b dark:border-darkmode-300 !py-4">
+                                                {record.employee_name || 'N/A'}
+                                            </td>
+                                            <td className="px-5 py-3 border-b dark:border-darkmode-300">
+                                                {record.employee_tag_id || 'N/A'}
+                                            </td>
+                                            <td className="px-5 py-3 border-b dark:border-darkmode-300">
+                                                {record.department_name || 'N/A'}
+                                            </td>
+                                            <td className="px-5 py-3 border-b dark:border-darkmode-300">
+                                                {record.date || 'N/A'}
+                                            </td>
+                                            <td className="px-5 py-3 border-b dark:border-darkmode-300 text-center">
+                                                {record.attended ? 'Yes' : 'No'}
+                                            </td>
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                        {paginatedAttendance.map((record) => (
-                                            <tr
-                                                key={record.id}
-                                                className="[&:nth-of-type(odd)_td]:bg-slate-100 [&:nth-of-type(odd)_td]:dark:bg-darkmode-300 [&:nth-of-type(odd)_td]:dark:bg-opacity-50"
-                                            >
-                                                <td className="px-5 py-3 border-b dark:border-darkmode-300 !py-4">
-                                                    {record.employee_name || 'N/A'}
-                                                </td>
-                                                <td className="px-5 py-3 border-b dark:border-darkmode-300">
-                                                    {record.employee_tag_id || 'N/A'}
-                                                </td>
-                                                <td className="px-5 py-3 border-b dark:border-darkmode-300">
-                                                    {record.department_name || 'N/A'}
-                                                </td>
-                                                <td className="px-5 py-3 border-b dark:border-darkmode-300">
-                                                    {record.date || 'N/A'}
-                                                </td>
-                                                <td className="px-5 py-3 border-b dark:border-darkmode-300 text-center">
-                                                    {record.attended ? 'Yes' : 'No'}
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
+                                    ))}
+                                </tbody>
+                            </table>
 
-                            {/* Pagination Controls */}
-                            {totalRecords > pageSize && (
-                                <div className="mt-4 flex justify-center">
-                                    <nav className="w-full">
-                                        <ul className="flex items-center justify-center gap-2">
-                                            <li>
-                                                <button
-                                                    onClick={() => handlePageChange(1)}
-                                                    disabled={currentPage === 1}
-                                                    className="transition duration-200 border py-2 px-2 rounded-md disabled:opacity-50"
-                                                >
-                                                    First
-                                                </button>
-                                            </li>
-                                            <li>
-                                                <button
-                                                    onClick={() => handlePageChange(currentPage - 1)}
-                                                    disabled={currentPage === 1}
-                                                    className="transition duration-200 border py-2 px-2 rounded-md disabled:opacity-50"
-                                                >
-                                                    <ChevronLeft className="h-4 w-4" />
-                                                </button>
-                                            </li>
-                                            <li>
-                                                <span className="px-3 py-2">
-                                                    Page {currentPage} of {totalPages}
-                                                </span>
-                                            </li>
-                                            <li>
-                                                <button
-                                                    onClick={() => handlePageChange(currentPage + 1)}
-                                                    disabled={currentPage === totalPages}
-                                                    className="transition duration-200 border py-2 px-2 rounded-md disabled:opacity-50"
-                                                >
-                                                    <ChevronRight className="h-4 w-4" />
-                                                </button>
-                                            </li>
-                                            <li>
-                                                <button
-                                                    onClick={() => handlePageChange(totalPages)}
-                                                    disabled={currentPage === totalPages}
-                                                    className="transition duration-200 border py-2 px-2 rounded-md disabled:opacity-50"
-                                                >
-                                                    Last
-                                                </button>
-                                            </li>
-                                        </ul>
-                                    </nav>
+                            {filteredAttendance.length === 0 && (
+                                <div className="text-center py-4 text-slate-500">
+                                    No attendance records found for the selected date range.
                                 </div>
                             )}
                         </div>
+
+                        {/* Pagination Controls */}
+                        {totalRecords > pageSize && (
+                            <div className="mt-4 flex justify-center">
+                                <nav className="w-full">
+                                    <ul className="flex items-center justify-center gap-2">
+                                        <li>
+                                            <button
+                                                onClick={() => handlePageChange(1)}
+                                                disabled={currentPage === 1}
+                                                className="transition duration-200 border py-2 px-2 rounded-md disabled:opacity-50"
+                                            >
+                                                First
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button
+                                                onClick={() => handlePageChange(currentPage - 1)}
+                                                disabled={currentPage === 1}
+                                                className="transition duration-200 border py-2 px-2 rounded-md disabled:opacity-50"
+                                            >
+                                                <ChevronLeft className="h-4 w-4" />
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <span className="px-3 py-2">
+                                                Page {currentPage} of {totalPages}
+                                            </span>
+                                        </li>
+                                        <li>
+                                            <button
+                                                onClick={() => handlePageChange(currentPage + 1)}
+                                                disabled={currentPage === totalPages}
+                                                className="transition duration-200 border py-2 px-2 rounded-md disabled:opacity-50"
+                                            >
+                                                <ChevronRight className="h-4 w-4" />
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button
+                                                onClick={() => handlePageChange(totalPages)}
+                                                disabled={currentPage === totalPages}
+                                                className="transition duration-200 border py-2 px-2 rounded-md disabled:opacity-50"
+                                            >
+                                                Last
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        )}
                     </div>
-                )}
+                </div>
             </div>
             {/* END: Assignment & Attendance Details */}
 

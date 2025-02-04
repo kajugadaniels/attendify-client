@@ -283,7 +283,7 @@ export const deleteAssignment = async (assignmentId) => {
     }
 };
 
-export const EndAssignment = async (assignmentId, assignmentData) => {
+export const FinishAssignment = async (assignmentId, assignmentData) => {
     try {
         const response = await apiClient.patch(`/assignment/${assignmentId}/end/`, assignmentData);
         return response.data;

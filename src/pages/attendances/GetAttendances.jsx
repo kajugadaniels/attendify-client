@@ -234,7 +234,7 @@ const GetAttendances = () => {
                                             <div className="image-fit zoom-in h-9 w-9">
                                                 {/* Using a placeholder image for employee avatar */}
                                                 <img
-                                                    src="https://midone-html.left4code.com/dist/images/fakers/preview-6.jpg"
+                                                    src="https://cdn-icons-png.flaticon.com/512/10337/10337609.png"
                                                     className="tooltip cursor-pointer rounded-lg shadow-md"
                                                     alt="employee avatar"
                                                 />

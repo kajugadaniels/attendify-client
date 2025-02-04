@@ -7,15 +7,18 @@ import { Eye, Edit, Trash2 } from 'lucide-react';
 const ShowField = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const [field, setField] = useState(null);
+    const [fieldData, setFieldData] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    // Load field details
     useEffect(() => {
         const loadField = async () => {
             try {
-                const data = await fetchFieldDetails(id);
-                setField(data);
+                const response = await fetchFieldDetails(id);
+                if (response.field) {
+                    setFieldData(response);
+                } else {
+                    toast.error('Field data not found.');
+                }
             } catch (error) {
                 toast.error('Failed to load field details.');
             } finally {
@@ -38,19 +41,20 @@ const ShowField = () => {
     };
 
     if (loading) return <div>Loading field details...</div>;
-    if (!field) return <div>No field found.</div>;
+    if (!fieldData || !fieldData.field) return <div>No field found.</div>;
 
     return (
         <div className="p-6 max-w-3xl mx-auto bg-white rounded-md shadow-md">
             <h2 className="text-2xl font-semibold mb-4">Field Details</h2>
             <div className="space-y-2">
                 <p>
-                    <strong>Name:</strong> {field.name || 'N/A'}
+                    <strong>Name:</strong> {fieldData.field.name || 'N/A'}
                 </p>
                 <p>
-                    <strong>Address:</strong> {field.address || 'N/A'}
+                    <strong>Address:</strong> {fieldData.field.address || 'N/A'}
                 </p>
             </div>
+            {/* Optionally, you can display attendance_history here if needed */}
             <div className="mt-6 flex space-x-4">
                 <button
                     onClick={() => navigate(`/field/${id}/edit`)}

@@ -11,17 +11,21 @@ const EditField = () => {
     const [loading, setLoading] = useState(false);
     const [dataLoading, setDataLoading] = useState(true);
 
-    // Load field details
+    // Fetch field details from API (assuming response is { field: {...}, attendance_history: [...] })
     useEffect(() => {
         const loadField = async () => {
             try {
-                const data = await fetchFieldDetails(id);
-                setFormData({
-                    name: data.name || '',
-                    address: data.address || ''
-                });
+                const response = await fetchFieldDetails(id);
+                if (response.field) {
+                    setFormData({
+                        name: response.field.name || '',
+                        address: response.field.address || ''
+                    });
+                } else {
+                    toast.error('Field data not found.');
+                }
             } catch (error) {
-                toast.error('Failed to load field details');
+                toast.error('Failed to load field details.');
             } finally {
                 setDataLoading(false);
             }
@@ -31,7 +35,7 @@ const EditField = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
     const handleSubmit = async (e) => {
@@ -76,7 +80,7 @@ const EditField = () => {
                                     <div className="block sm:flex flex-col items-start pt-5 xl:flex-row">
                                         <label className="inline-block mb-2 xl:mr-10 xl:w-64">
                                             <div className="text-left">
-                                                <div className="font-medium">Field Name & Address</div>
+                                                <div className="font-medium">Field Name &amp; Address</div>
                                                 <div className="mt-3 text-xs leading-relaxed text-slate-500">
                                                     Please enter the field name and its address.
                                                 </div>
@@ -125,6 +129,7 @@ const EditField = () => {
                             </div>
                         </div>
                     </div>
+                    {/* Tips Section */}
                     <div className="intro-y col-span-2 hidden 2xl:block">
                         <div className="sticky top-0">
                             <div className="relative mt-6 rounded-md border border-warning bg-warning/20 p-5">

@@ -1,9 +1,332 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
+import Select from 'react-select';
+import { toast } from 'react-toastify';
+import {
+    ChevronLeft,
+    ChevronRight,
+    ChevronsRight,
+    Eye,
+    Search
+} from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { format, subDays, addDays, isSameDay } from 'date-fns';
+import { fetchAssignments, fetchAttendances } from '../../api';
 
 const GetAttendances = () => {
-    return (
-        <div>GetAttendances</div>
-    )
-}
+    const navigate = useNavigate();
+    const [assignments, setAssignments] = useState([]);
+    const [attendances, setAttendances] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
-export default GetAttendances
+    // Filters & search states
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedField, setSelectedField] = useState(null);
+    const [selectedDepartment, setSelectedDepartment] = useState(null);
+    const [sortOrder, setSortOrder] = useState({ value: 'newest', label: 'Newest' });
+
+    // Pagination
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 10;
+
+    // 7-day window: dayOffsets = [-2, -1, 0, 1, 2, 3, 4]
+    const dayOffsets = [-2, -1, 0, 1, 2, 3, 4];
+    const daysArray = dayOffsets.map(offset => {
+        const d = new Date();
+        d.setDate(d.getDate() + offset);
+        return d;
+    });
+
+    // Fetch assignments and attendance records on mount
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                setLoading(true);
+                const assignmentsData = await fetchAssignments(); // Expected structure: { results: [...] }
+                setAssignments(assignmentsData.results || []);
+                const attendanceData = await fetchAttendances(); // Expected to return an array
+                setAttendances(attendanceData);
+            } catch (err) {
+                setError('Failed to fetch attendance.');
+                toast.error(
+                    err.response?.data?.message?.detail ||
+                    err.response?.data?.detail ||
+                    'Error fetching attendance records.'
+                );
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadData();
+    }, []);
+
+    // Build filter options from assignments for Field and Department
+    const fieldOptions = Array.from(new Set(assignments.map(a => a.field))).map(f => {
+        const assignment = assignments.find(a => a.field === f);
+        return { value: f, label: assignment ? assignment.field_name : f };
+    });
+    const departmentOptions = Array.from(new Set(assignments.map(a => a.department))).map(d => {
+        const assignment = assignments.find(a => a.department === d);
+        return { value: d, label: assignment ? assignment.department_name : d };
+    });
+
+    // Extract unique employees from assignments (applying field/department filters)
+    const uniqueEmployees = [];
+    const employeeMap = {};
+    assignments.forEach(a => {
+        if (selectedField && a.field !== selectedField.value) return;
+        if (selectedDepartment && a.department !== selectedDepartment.value) return;
+        a.employee_assignments.forEach(ea => {
+            if (!employeeMap[ea.employee]) {
+                employeeMap[ea.employee] = {
+                    id: ea.employee,
+                    name: ea.employee_name,
+                    tag_id: ea.employee_tag_id
+                };
+            }
+        });
+    });
+    for (let key in employeeMap) {
+        uniqueEmployees.push(employeeMap[key]);
+    }
+    if (sortOrder.value === 'newest') {
+        uniqueEmployees.sort((a, b) => b.id - a.id);
+    } else {
+        uniqueEmployees.sort((a, b) => a.id - b.id);
+    }
+
+    // For each employee, compute total day_salary for today's attendance and generate a 7-day status array
+    const employeeAttendanceData = uniqueEmployees.map(emp => {
+        const empAttendances = attendances.filter(r => r.employee_tag_id === emp.tag_id);
+        const totalDaySalary = empAttendances
+            .filter(r => isSameDay(new Date(r.date), new Date()))
+            .reduce((sum, r) => sum + Number(r.day_salary || 0), 0);
+        const attendanceStatus = daysArray.map(day => {
+            const record = empAttendances.find(r => isSameDay(new Date(r.date), day));
+            if (record) return "Present";
+            else {
+                if (day > new Date()) return format(day, "MMM dd");
+                else return "Absent";
+            }
+        });
+        return { ...emp, totalDaySalary, attendanceStatus };
+    });
+
+    // Filter employees based on search (name or tag_id)
+    const filteredEmployees = employeeAttendanceData.filter(emp => {
+        return (
+            emp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            emp.tag_id.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+    });
+
+    // Pagination for filtered employees
+    const totalRecords = filteredEmployees.length;
+    const totalPages = Math.ceil(totalRecords / pageSize);
+    const paginatedData = filteredEmployees.slice(
+        (currentPage - 1) * pageSize,
+        currentPage * pageSize
+    );
+
+    const handlePageChange = (page) => {
+        if (page >= 1 && page <= totalPages) {
+            setCurrentPage(page);
+        }
+    };
+
+    const handleShowEmployee = (employeeId) => {
+        navigate(`/employee/${employeeId}`);
+    };
+
+    const formatDate = (dateObj) => dateObj.toISOString().split('T')[0];
+
+    if (loading)
+        return <div className="text-center py-10">Loading attendance data...</div>;
+    if (error) return <div className="text-center py-10 text-red-500">{error}</div>;
+    if (filteredEmployees.length === 0)
+        return (
+            <div className="text-center py-10">
+                <h3 className="text-lg font-medium">No Attendance Found</h3>
+                <p className="mt-2 text-slate-500">
+                    Looks like no employees match your criteria.
+                </p>
+            </div>
+        );
+
+    return (
+        <>
+            <div className="intro-y col-span-12 mt-8 flex flex-wrap items-center xl:flex-nowrap">
+                <h2 className="mr-auto text-lg font-medium">Employee Attendance (7-Day Window)</h2>
+            </div>
+
+            <div className="mt-5 grid grid-cols-12 gap-6">
+                {/* SEARCH & FILTERS */}
+                <div className="intro-y col-span-12 mt-2 flex flex-wrap items-center gap-2 xl:flex-nowrap">
+                    <div className="relative w-56 text-slate-500">
+                        <input
+                            type="text"
+                            placeholder="Search name or tag..."
+                            value={searchTerm}
+                            onChange={(e) => {
+                                setSearchTerm(e.target.value);
+                                setCurrentPage(1);
+                            }}
+                            className="transition duration-200 ease-in-out text-sm border-slate-200 shadow-sm rounded-md placeholder:text-slate-400/90 focus:ring-4 focus:ring-primary w-56 pr-10"
+                        />
+                        <Search className="stroke-1.5 absolute inset-y-0 right-0 my-auto mr-3 h-4 w-4" />
+                    </div>
+                    <div className="w-44">
+                        <Select
+                            options={fieldOptions}
+                            value={selectedField}
+                            onChange={setSelectedField}
+                            placeholder="Filter by Field"
+                            isClearable
+                        />
+                    </div>
+                    <div className="w-44">
+                        <Select
+                            options={departmentOptions}
+                            value={selectedDepartment}
+                            onChange={setSelectedDepartment}
+                            placeholder="Filter by Dept."
+                            isClearable
+                        />
+                    </div>
+                    <div className="w-44">
+                        <Select
+                            options={[
+                                { value: 'newest', label: 'Newest' },
+                                { value: 'oldest', label: 'Oldest' }
+                            ]}
+                            value={sortOrder}
+                            onChange={setSortOrder}
+                            placeholder="Sort Order"
+                        />
+                    </div>
+                </div>
+
+                <div className="intro-y col-span-12 overflow-auto 2xl:overflow-visible">
+                    <table className="w-full text-left -mt-2 border-separate border-spacing-y-[10px]">
+                        <thead>
+                            <tr>
+                                <th className="font-medium px-5 py-3 whitespace-nowrap border-b-0">Select</th>
+                                <th className="font-medium px-5 py-3 whitespace-nowrap">Name</th>
+                                {daysArray.map((d, idx) => (
+                                    <th key={idx} className="font-medium px-5 py-3 whitespace-nowrap border-b-0 text-center">
+                                        {formatDate(d)}
+                                    </th>
+                                ))}
+                                <th className="font-medium px-5 py-3 whitespace-nowrap border-b-0 text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {paginatedData.map((emp, idx) => (
+                                <tr key={idx} className="intro-x">
+                                    <td className="px-5 py-3 border-b box w-10 whitespace-nowrap">
+                                        <input
+                                            type="checkbox"
+                                            className="transition-all duration-100 ease-in-out shadow-sm border-slate-200 rounded"
+                                        />
+                                    </td>
+                                    <td className="px-5 py-3 border-b whitespace-nowrap">
+                                        <div className="flex items-center">
+                                            <div className="image-fit zoom-in h-9 w-9">
+                                                {/* Using a placeholder image for employee avatar */}
+                                                <img
+                                                    src="https://midone-html.left4code.com/dist/images/fakers/preview-6.jpg"
+                                                    className="tooltip cursor-pointer rounded-lg shadow-md"
+                                                    alt="employee avatar"
+                                                />
+                                            </div>
+                                            <div className="ml-4">
+                                                <span className="whitespace-nowrap font-medium">{emp.name}</span>
+                                                <div className="mt-0.5 text-xs text-slate-500">ID: {emp.id}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    {emp.attendanceStatus.map((status, dayIdx) => {
+                                        let bgColor = 'bg-slate-400';
+                                        if (status === 'Present') bgColor = 'bg-success';
+                                        else if (status === 'Absent' || status === 'No Data') bgColor = 'bg-danger';
+                                        else if (status === 'Future') bgColor = 'bg-warning';
+                                        return (
+                                            <td key={dayIdx} className="px-5 py-3 border-b text-center">
+                                                <span className={`px-3 py-1 inline-block rounded-full text-xs text-white ${bgColor}`}>
+                                                    {status}
+                                                </span>
+                                            </td>
+                                        );
+                                    })}
+                                    <td className="px-5 py-3 border-b text-center">
+                                        <div className="flex items-center justify-center">
+                                            <button
+                                                onClick={() => handleShowEmployee(emp.id)}
+                                                className="mr-3 flex items-center text-blue-600"
+                                            >
+                                                <Eye className="stroke-1.5 mr-1 h-4 w-4" /> View
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* Pagination area */}
+                {filteredEmployees.length > 0 && (
+                    <div className="intro-y col-span-12 flex flex-wrap items-center sm:flex-row sm:flex-nowrap mt-4">
+                        <nav className="w-full sm:mr-auto sm:w-auto">
+                            <ul className="flex gap-2">
+                                <li>
+                                    <button
+                                        onClick={() => handlePageChange(1)}
+                                        disabled={currentPage === 1}
+                                        className="transition duration-200 border py-2 px-2 rounded-md disabled:opacity-50"
+                                    >
+                                        First
+                                    </button>
+                                </li>
+                                <li>
+                                    <button
+                                        onClick={() => handlePageChange(currentPage - 1)}
+                                        disabled={currentPage === 1}
+                                        className="transition duration-200 border py-2 px-2 rounded-md disabled:opacity-50"
+                                    >
+                                        <ChevronLeft className="h-4 w-4" />
+                                    </button>
+                                </li>
+                                <li>
+                                    <span className="px-3 py-2">
+                                        Page {currentPage} of {totalPages}
+                                    </span>
+                                </li>
+                                <li>
+                                    <button
+                                        onClick={() => handlePageChange(currentPage + 1)}
+                                        disabled={currentPage === totalPages}
+                                        className="transition duration-200 border py-2 px-2 rounded-md disabled:opacity-50"
+                                    >
+                                        <ChevronRight className="h-4 w-4" />
+                                    </button>
+                                </li>
+                                <li>
+                                    <button
+                                        onClick={() => handlePageChange(totalPages)}
+                                        disabled={currentPage === totalPages}
+                                        className="transition duration-200 border py-2 px-2 rounded-md disabled:opacity-50"
+                                    >
+                                        <ChevronsRight className="h-4 w-4" />
+                                    </button>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                )}
+            </div>
+        </>
+    );
+};
+
+export default GetAttendances;

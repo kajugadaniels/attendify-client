@@ -7,18 +7,17 @@ import { Eye, Edit, Trash2 } from 'lucide-react';
 const ShowField = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const [fieldData, setFieldData] = useState(null);
+    const [field, setField] = useState(null);
+    const [attendanceHistory, setAttendanceHistory] = useState([]);
     const [loading, setLoading] = useState(true);
 
+    // Load field details and attendance history from the API
     useEffect(() => {
         const loadField = async () => {
             try {
-                const response = await fetchFieldDetails(id);
-                if (response.field) {
-                    setFieldData(response);
-                } else {
-                    toast.error('Field data not found.');
-                }
+                const data = await fetchFieldDetails(id);
+                setField(data.field);
+                setAttendanceHistory(data.attendance_history || []);
             } catch (error) {
                 toast.error('Failed to load field details.');
             } finally {
@@ -41,20 +40,50 @@ const ShowField = () => {
     };
 
     if (loading) return <div>Loading field details...</div>;
-    if (!fieldData || !fieldData.field) return <div>No field found.</div>;
+    if (!field) return <div>No field found.</div>;
 
     return (
-        <div className="p-6 max-w-3xl mx-auto bg-white rounded-md shadow-md">
+        <div className="p-6 max-w-4xl mx-auto bg-white rounded-md shadow-md">
             <h2 className="text-2xl font-semibold mb-4">Field Details</h2>
             <div className="space-y-2">
                 <p>
-                    <strong>Name:</strong> {fieldData.field.name || 'N/A'}
+                    <strong>Name:</strong> {field.name || 'N/A'}
                 </p>
                 <p>
-                    <strong>Address:</strong> {fieldData.field.address || 'N/A'}
+                    <strong>Address:</strong> {field.address || 'N/A'}
                 </p>
             </div>
-            {/* Optionally, you can display attendance_history here if needed */}
+
+            {attendanceHistory.length > 0 && (
+                <div className="mt-6">
+                    <h3 className="text-xl font-semibold mb-2">Attendance History</h3>
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full text-left border-collapse">
+                            <thead>
+                                <tr>
+                                    <th className="border p-2">Employee Name</th>
+                                    <th className="border p-2">Tag ID</th>
+                                    <th className="border p-2">Department</th>
+                                    <th className="border p-2">Date</th>
+                                    <th className="border p-2">Attended</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {attendanceHistory.map(record => (
+                                    <tr key={record.id}>
+                                        <td className="border p-2">{record.employee_name || 'N/A'}</td>
+                                        <td className="border p-2">{record.employee_tag_id || 'N/A'}</td>
+                                        <td className="border p-2">{record.department_name || 'N/A'}</td>
+                                        <td className="border p-2">{record.date || 'N/A'}</td>
+                                        <td className="border p-2">{record.attended ? 'Yes' : 'No'}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            )}
+
             <div className="mt-6 flex space-x-4">
                 <button
                     onClick={() => navigate(`/field/${id}/edit`)}

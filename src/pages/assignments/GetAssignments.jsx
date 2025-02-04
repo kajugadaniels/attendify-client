@@ -83,135 +83,118 @@ const GetAssignments = () => {
 
     return (
         <>
-            <div className="intro-y col-span-12 mt-8 flex flex-wrap items-center xl:flex-nowrap">
-                <h2 className="mr-auto text-lg font-medium">Assignments</h2>
-                <button
-                    onClick={handleAddAssignment}
-                    className="transition duration-200 border inline-flex items-center justify-center py-2 px-3 rounded-md font-medium bg-primary border-primary text-white mr-2 shadow-md"
-                >
-                    Add New Assignment
-                    <span className="flex h-5 w-5 items-center justify-center ml-1">
-                        <Plus className="stroke-1.5 h-4 w-4" />
-                    </span>
-                </button>
-            </div>
-            {/* Search & Sort */}
-            <div className="intro-y col-span-12 mt-2 flex flex-wrap items-center gap-2 xl:flex-nowrap">
-                <div className="relative w-56 text-slate-500">
-                    <input
-                        type="text"
-                        placeholder="Search assignments..."
-                        className="w-56 text-sm border shadow-sm rounded-md focus:ring-4 focus:ring-primary focus:border-primary"
-                        value={searchTerm}
+            <div className="container mx-auto px-4 py-6">
+                <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-2xl font-semibold">Assignments</h2>
+                    <button
+                        onClick={handleAddAssignment}
+                        className="btn btn-primary flex items-center"
+                    >
+                        <Plus className="mr-1 h-4 w-4" /> Add New Assignment
+                    </button>
+                </div>
+                {/* Search & Sort */}
+                <div className="flex flex-wrap items-center gap-4 mb-4">
+                    <div className="relative w-56">
+                        <input
+                            type="text"
+                            placeholder="Search assignments..."
+                            className="input"
+                            value={searchTerm}
+                            onChange={(e) => {
+                                setSearchTerm(e.target.value);
+                                setCurrentPage(1);
+                            }}
+                        />
+                        <Search className="absolute right-3 top-3 h-4 w-4 text-gray-500" />
+                    </div>
+                    <select
+                        className="input w-48"
+                        value={sortOrder}
                         onChange={(e) => {
-                            setSearchTerm(e.target.value);
+                            setSortOrder(e.target.value);
                             setCurrentPage(1);
                         }}
-                    />
-                    <Search className="absolute inset-y-0 right-0 my-auto mr-3 h-4 w-4" />
+                    >
+                        <option value="newest">Newest</option>
+                        <option value="oldest">Oldest</option>
+                    </select>
                 </div>
-                <select
-                    className="w-48 text-sm border shadow-sm rounded-md py-2 px-3 focus:ring-4 focus:ring-primary"
-                    value={sortOrder}
-                    onChange={(e) => {
-                        setSortOrder(e.target.value);
-                        setCurrentPage(1);
-                    }}
-                >
-                    <option value="newest">Newest</option>
-                    <option value="oldest">Oldest</option>
-                </select>
-            </div>
-            <div className="intro-y col-span-12 overflow-auto 2xl:overflow-visible mt-4">
-                <table className="w-full text-left border-separate border-spacing-y-2">
-                    <thead>
-                        <tr>
-                            <th className="px-5 py-3">Assignment Name</th>
-                            <th className="px-5 py-3 text-center">Field</th>
-                            <th className="px-5 py-3 text-center">Department</th>
-                            <th className="px-5 py-3 text-center">Supervisor</th>
-                            <th className="px-5 py-3 text-center">Created Date</th>
-                            <th className="px-5 py-3 text-center">Employees</th>
-                            <th className="px-5 py-3 text-center">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {currentAssignments.map(a => (
-                            <tr key={a.id} className="intro-x">
-                                <td className="px-5 py-3">{a.name}</td>
-                                <td className="px-5 py-3 text-center">{a.field_name || 'N/A'}</td>
-                                <td className="px-5 py-3 text-center">{a.department_name || 'N/A'}</td>
-                                <td className="px-5 py-3 text-center">{a.supervisor_name || 'N/A'}</td>
-                                <td className="px-5 py-3 text-center">{new Date(a.created_date).toLocaleDateString()}</td>
-                                <td className="px-5 py-3 text-center">{a.total_employees}</td>
-                                <td className="px-5 py-3 text-center">
-                                    <div className="flex items-center justify-center space-x-2">
-                                        <button onClick={() => handleShowAssignment(a.id)} className="text-blue-600 flex items-center">
-                                            <Eye className="mr-1 h-4 w-4" /> View
-                                        </button>
-                                        <button onClick={() => handleEditAssignment(a.id)} className="text-green-600 flex items-center">
-                                            <Edit className="mr-1 h-4 w-4" /> Edit
-                                        </button>
-                                        <button onClick={() => handleEndAssignment(a.id)} className="text-orange-600 flex items-center">
-                                            <StopCircle className="mr-1 h-4 w-4" /> End
-                                        </button>
-                                        <button onClick={() => handleDeleteAssignment(a.id)} className="text-red-600 flex items-center">
-                                            <Trash2 className="mr-1 h-4 w-4" /> Delete
-                                        </button>
-                                    </div>
-                                </td>
+                <div className="overflow-x-auto">
+                    <table className="table-auto w-full border-collapse">
+                        <thead>
+                            <tr className="bg-gray-100">
+                                <th className="px-4 py-2">Assignment Name</th>
+                                <th className="px-4 py-2">Field</th>
+                                <th className="px-4 py-2">Department</th>
+                                <th className="px-4 py-2">Supervisor</th>
+                                <th className="px-4 py-2">Created Date</th>
+                                <th className="px-4 py-2">Employees</th>
+                                <th className="px-4 py-2 text-center">Actions</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-            {/* Pagination */}
-            <div className="intro-y col-span-12 flex flex-wrap items-center mt-4">
-                <nav className="w-full">
-                    <ul className="flex gap-2">
-                        <li>
-                            <button
-                                onClick={() => setCurrentPage(1)}
-                                disabled={currentPage === 1}
-                                className="border py-2 px-2 rounded disabled:opacity-50"
-                            >
-                                First
-                            </button>
-                        </li>
-                        <li>
-                            <button
-                                onClick={() => setCurrentPage(currentPage - 1)}
-                                disabled={currentPage === 1}
-                                className="border py-2 px-2 rounded disabled:opacity-50"
-                            >
-                                <ChevronLeft className="h-4 w-4" />
-                            </button>
-                        </li>
-                        <li>
-                            <span className="px-3 py-2 text-slate-700">
-                                Page {currentPage} of {totalPages}
-                            </span>
-                        </li>
-                        <li>
-                            <button
-                                onClick={() => setCurrentPage(currentPage + 1)}
-                                disabled={currentPage === totalPages}
-                                className="border py-2 px-2 rounded disabled:opacity-50"
-                            >
-                                <ChevronRight className="h-4 w-4" />
-                            </button>
-                        </li>
-                        <li>
-                            <button
-                                onClick={() => setCurrentPage(totalPages)}
-                                disabled={currentPage === totalPages}
-                                className="border py-2 px-2 rounded disabled:opacity-50"
-                            >
-                                <ChevronsRight className="h-4 w-4" />
-                            </button>
-                        </li>
-                    </ul>
-                </nav>
+                        </thead>
+                        <tbody>
+                            {currentAssignments.map(a => (
+                                <tr key={a.id} className="border-b">
+                                    <td className="px-4 py-2">{a.name}</td>
+                                    <td className="px-4 py-2">{a.field_name || 'N/A'}</td>
+                                    <td className="px-4 py-2">{a.department_name || 'N/A'}</td>
+                                    <td className="px-4 py-2">{a.supervisor_name || 'N/A'}</td>
+                                    <td className="px-4 py-2">{new Date(a.created_date).toLocaleDateString()}</td>
+                                    <td className="px-4 py-2 text-center">{a.total_employees}</td>
+                                    <td className="px-4 py-2">
+                                        <div className="flex justify-center space-x-2">
+                                            <button onClick={() => handleShowAssignment(a.id)} className="btn btn-outline-blue">
+                                                <Eye className="mr-1 h-4 w-4" /> View
+                                            </button>
+                                            <button onClick={() => handleEditAssignment(a.id)} className="btn btn-outline-green">
+                                                <Edit className="mr-1 h-4 w-4" /> Edit
+                                            </button>
+                                            <button onClick={() => handleEndAssignment(a.id)} className="btn btn-outline-orange">
+                                                <StopCircle className="mr-1 h-4 w-4" /> End
+                                            </button>
+                                            <button onClick={() => handleDeleteAssignment(a.id)} className="btn btn-outline-red">
+                                                <Trash2 className="mr-1 h-4 w-4" /> Delete
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+                {/* Pagination */}
+                <div className="flex justify-center items-center mt-4">
+                    <button
+                        onClick={() => setCurrentPage(1)}
+                        disabled={currentPage === 1}
+                        className="btn btn-secondary"
+                    >
+                        First
+                    </button>
+                    <button
+                        onClick={() => setCurrentPage(currentPage - 1)}
+                        disabled={currentPage === 1}
+                        className="btn btn-secondary"
+                    >
+                        <ChevronLeft className="h-4 w-4" />
+                    </button>
+                    <span className="px-4">Page {currentPage} of {totalPages}</span>
+                    <button
+                        onClick={() => setCurrentPage(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                        className="btn btn-secondary"
+                    >
+                        <ChevronRight className="h-4 w-4" />
+                    </button>
+                    <button
+                        onClick={() => setCurrentPage(totalPages)}
+                        disabled={currentPage === totalPages}
+                        className="btn btn-secondary"
+                    >
+                        Last
+                    </button>
+                </div>
             </div>
         </>
     );

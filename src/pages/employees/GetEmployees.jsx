@@ -17,6 +17,7 @@ const GetEmployees = () => {
     const navigate = useNavigate();
     const [employees, setEmployees] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
+    const [sortOrder, setSortOrder] = useState('newest');
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
@@ -41,8 +42,10 @@ const GetEmployees = () => {
         );
     });
 
-    // Sort employees by ID (assuming higher ID means newer)
-    const sortedEmployees = filteredEmployees.sort((a, b) => b.id - a.id);
+    // Sort employees by ID (newest first or oldest first)
+    const sortedEmployees = filteredEmployees.sort((a, b) => {
+        return sortOrder === 'newest' ? b.id - a.id : a.id - b.id;
+    });
 
     const totalPages = Math.ceil(sortedEmployees.length / itemsPerPage);
     const currentEmployees = sortedEmployees.slice(
@@ -90,7 +93,7 @@ const GetEmployees = () => {
                 </button>
             </div>
 
-            {/* SEARCH */}
+            {/* SEARCH & SORT */}
             <div className="intro-y col-span-12 mt-2 flex flex-wrap items-center gap-2 xl:flex-nowrap">
                 <div className="relative w-56 text-slate-500">
                     <input
@@ -105,6 +108,18 @@ const GetEmployees = () => {
                     />
                     <Search className="stroke-1.5 absolute inset-y-0 right-0 my-auto mr-3 h-4 w-4" />
                 </div>
+
+                <select
+                    className="disabled:bg-slate-100 disabled:cursor-not-allowed dark:disabled:bg-800/50 transition duration-200 ease-in-out text-sm border-slate-200 shadow-sm rounded-md py-2 px-3 pr-8 focus:ring-4 focus:ring-primary focus:ring-opacity-20 dark:bg-800 dark:border-transparent dark:focus:ring-slate-700 dark:focus:ring-opacity-50 !box w-48"
+                    value={sortOrder}
+                    onChange={(e) => {
+                        setSortOrder(e.target.value);
+                        setCurrentPage(1);
+                    }}
+                >
+                    <option value="newest">Newest</option>
+                    <option value="oldest">Oldest</option>
+                </select>
             </div>
 
             {/* TABLE */}
@@ -153,7 +168,7 @@ const GetEmployees = () => {
                                                     'https://cdn-icons-png.flaticon.com/512/10337/10337609.png'
                                                 }
                                                 className="tooltip cursor-pointer rounded-lg border-white shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
-                                                alt="Field avatar"
+                                                alt="Employee avatar"
                                             />
                                         </div>
                                         <div className="ml-4">

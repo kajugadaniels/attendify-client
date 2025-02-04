@@ -2,7 +2,14 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { CloudUpload, Eye, Lightbulb, ToggleLeft } from 'lucide-react';
+import Select from 'react-select';
 import { createUser } from '../../api';
+
+const roleOptions = [
+    { value: 'Admin', label: 'Admin' },
+    { value: 'User', label: 'User' },
+    // Add more role options here if needed
+];
 
 const AddUser = () => {
     const navigate = useNavigate();
@@ -157,17 +164,22 @@ const AddUser = () => {
                                                 className="disabled:bg-slate-100 dark:disabled:bg-darkmode-800/50 transition duration-200 ease-in-out w-full text-sm border-slate-200 shadow-sm rounded-md placeholder:text-slate-400/90 focus:ring-4 focus:ring-primary dark:bg-darkmode-800"
                                                 required
                                             />
-                                            <select
+                                            {/* Replace standard select with react-select for role */}
+                                            <Select
                                                 name="role"
-                                                value={formData.role}
-                                                onChange={handleChange}
-                                                className="disabled:bg-slate-100 dark:disabled:bg-darkmode-800/50 transition duration-200 ease-in-out w-full text-sm border-slate-200 shadow-sm rounded-md py-2 px-3 pr-8 focus:ring-4 focus:ring-primary dark:bg-darkmode-800"
-                                                required
-                                            >
-                                                <option value="">Select Role</option>
-                                                <option value="Admin">Admin</option>
-                                                <option value="User">User</option>
-                                            </select>
+                                                options={roleOptions}
+                                                value={roleOptions.find(option => option.value === formData.role)}
+                                                onChange={(selectedOption) =>
+                                                    setFormData((prev) => ({
+                                                        ...prev,
+                                                        role: selectedOption ? selectedOption.value : ''
+                                                    }))
+                                                }
+                                                className="react-select-container"
+                                                classNamePrefix="react-select"
+                                                placeholder="Select Role"
+                                                isClearable
+                                            />
                                         </div>
                                     </div>
 

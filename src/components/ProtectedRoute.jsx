@@ -1,7 +1,8 @@
 import React from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import jwt_decode from 'jwt-decode';
+// Import the module using a namespace import
+import * as jwt_decode from 'jwt-decode';
 
 const ProtectedRoute = () => {
     const location = useLocation();
@@ -9,7 +10,8 @@ const ProtectedRoute = () => {
 
     if (token) {
         try {
-            const decoded = jwt_decode(token);
+            // Use jwt_decode.default to decode the token
+            const decoded = jwt_decode.default(token);
             // Check if the token is expired (decoded.exp is in seconds)
             if (decoded.exp * 1000 < Date.now()) {
                 // Token expired; clear storage and redirect to login

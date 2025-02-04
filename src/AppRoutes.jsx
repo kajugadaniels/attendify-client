@@ -1,7 +1,7 @@
 import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 import AppLayout from './layouts/AppLayout'
-import { AddAssignment, AddDepartment, AddEmployee, AddField, AddUser, Dashboard, EditAssignment, EditDepartment, EditEmployee, EditField, EditUser, EndAssignment, GetAssignments, GetAttendances, GetDepartments, GetEmployees, GetFields, GetUsers, Login, NotFound, Profile, ShowAssignment, ShowDepartment, ShowEmployee, ShowField, ShowUser } from './pages'
+import { AddAssignment, AddDepartment, AddEmployee, AddField, AddUser, Dashboard, EditAssignment, EditDepartment, EditEmployee, EditField, EditUser, EndAssignment, GetAssignments, GetAttendances, GetDepartments, GetEmployees, GetFields, GetUsers, Login, NotFound, Profile, ShowAssignment, ShowDepartment, ShowEmployee, ShowUser, ViewField } from './pages'
 import ProtectedRoute from './components/ProtectedRoute'
 
 const AppRoutes = () => {
@@ -21,7 +21,7 @@ const AppRoutes = () => {
 
                     <Route path="/fields" element={<GetFields />} />
                     <Route path="/field/add" element={<AddField />} />
-                    <Route path="/field/:id" element={<ShowField />} />
+                    <Route path="/field/:id" element={<ViewField />} />
                     <Route path="/field/:id/edit" element={<EditField />} />
 
                     <Route path="/departments" element={<GetDepartments />} />

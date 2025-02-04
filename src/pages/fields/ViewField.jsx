@@ -4,7 +4,7 @@ import { fetchFieldDetails, deleteField } from '../../api';
 import { toast } from 'react-toastify';
 import { Edit, Trash2, Eye, ChevronLeft, ChevronRight, ChevronsRight } from 'lucide-react';
 
-const ShowField = () => {
+const ViewField = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const [field, setField] = useState(null);
@@ -280,6 +280,6 @@ const ShowField = () => {
             </div>
         </div>
     );
-};
+}
 
-export default ShowField;
+export default ViewField

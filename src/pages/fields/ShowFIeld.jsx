@@ -1,9 +1,9 @@
 import React from 'react'
 
-const ShowFIeld = () => {
+const ShowField = () => {
     return (
-        <div>ShowFIeld</div>
+        <div>ShowField</div>
     )
 }
 
-export default ShowFIeld
+export default ShowField

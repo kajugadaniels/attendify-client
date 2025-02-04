@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { fetchUsers } from '../../api'; // Adjust the path as necessary
+import { fetchUsers } from '../../api';
 
 const GetUsers = () => {
     const navigate = useNavigate();

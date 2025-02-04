@@ -1,76 +1,114 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { toast } from 'react-toastify'
-import { CloudUpload, Eye, Lightbulb, ToggleLeft } from 'lucide-react'
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { CloudUpload, Eye, ToggleLeft } from 'lucide-react';
+import { fetchFieldDetails, updateField } from '../../api';
 
 const EditField = () => {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const [formData, setFormData] = useState({ name: '', address: '' });
+    const [loading, setLoading] = useState(false);
+    const [dataLoading, setDataLoading] = useState(true);
+
+    // Load field details
+    useEffect(() => {
+        const loadField = async () => {
+            try {
+                const data = await fetchFieldDetails(id);
+                setFormData({
+                    name: data.name || '',
+                    address: data.address || ''
+                });
+            } catch (error) {
+                toast.error('Failed to load field details');
+            } finally {
+                setDataLoading(false);
+            }
+        };
+        loadField();
+    }, [id]);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            setLoading(true);
+            await updateField(id, formData);
+            toast.success('Field updated successfully');
+            navigate('/fields');
+        } catch (error) {
+            toast.error('Failed to update field');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (dataLoading) return <div>Loading field details...</div>;
+
     return (
         <>
             <div className="intro-y col-span-12 mt-8 flex flex-wrap items-center xl:flex-nowrap">
-                <h2 className="mr-auto text-lg font-medium">
-                    Edit Field
-                </h2>
+                <h2 className="mr-auto text-lg font-medium">Edit Field</h2>
                 <a
-                    href='/fields'
-                    className="transition duration-200 border inline-flex items-center justify-center py-2 px-3 rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 [&:hover:not(:disabled)]:bg-opacity-90 [&:hover:not(:disabled)]:border-opacity-90 bg-primary border-primary text-white dark:border-primary mr-2 shadow-md"
+                    href="/fields"
+                    className="transition duration-200 border inline-flex items-center justify-center py-2 px-3 rounded-md font-medium bg-primary border-primary text-white mr-2 shadow-md"
                 >
                     Go Back
-                    <span className="flex h-5 w-5 items-center justify-center">
+                    <span className="flex h-5 w-5 items-center justify-center ml-1">
                         <Eye className="stroke-1.5 h-4 w-4" />
                     </span>
                 </a>
             </div>
-
-            <form>
+            <form onSubmit={handleSubmit}>
                 <div className="mt-5 grid grid-cols-11 gap-x-6 pb-20">
                     <div className="intro-y col-span-11 2xl:col-span-9">
                         <div className="intro-y box mt-5 p-5">
-                            <div className="rounded-md border border-slate-200/60 p-5 dark:border-darkmode-400">
-                                <div className="flex items-center border-b border-slate-200/60 pb-5 text-base font-medium dark:border-darkmode-400">
+                            <div className="rounded-md border border-slate-200/60 p-5">
+                                <div className="flex items-center border-b pb-5 text-base font-medium">
                                     Edit Field
                                 </div>
                                 <div className="mt-5">
-                                    {/* Name & Address */}
-                                    <div className="block sm:flex group form-inline mt-5 flex-col items-start pt-5 xl:flex-row">
-                                        <label className="inline-block mb-2 xl:!mr-10 xl:w-64">
+                                    <div className="block sm:flex flex-col items-start pt-5 xl:flex-row">
+                                        <label className="inline-block mb-2 xl:mr-10 xl:w-64">
                                             <div className="text-left">
-                                                <div className="flex items-center">
-                                                    <div className="font-medium">Field Name & Address</div>
-                                                    <div className="ml-2 rounded-md bg-slate-200 px-2 py-0.5 text-xs text-slate-600 dark:bg-darkmode-300 dark:text-slate-400">
-                                                        Required
-                                                    </div>
-                                                </div>
+                                                <div className="font-medium">Field Name & Address</div>
                                                 <div className="mt-3 text-xs leading-relaxed text-slate-500">
                                                     Please enter the field name and its address.
                                                 </div>
                                             </div>
                                         </label>
-                                        <div className="mt-3 w-full flex-1 xl:mt-0 grid grid-cols-2 gap-3">
+                                        <div className="mt-3 w-full grid grid-cols-2 gap-3">
                                             <input
                                                 type="text"
                                                 name="name"
                                                 placeholder="Enter field name"
-                                                className="disabled:bg-slate-100 dark:disabled:bg-darkmode-800/50 transition duration-200 ease-in-out w-full text-sm border-slate-200 shadow-sm rounded-md placeholder:text-slate-400/90 focus:ring-4 focus:ring-primary dark:bg-darkmode-800"
+                                                value={formData.name}
+                                                onChange={handleChange}
+                                                className="w-full text-sm border-slate-200 shadow-sm rounded-md focus:ring-4 focus:ring-primary"
                                                 required
                                             />
                                             <input
                                                 type="text"
-                                                name="name"
+                                                name="address"
                                                 placeholder="Enter field address"
-                                                className="disabled:bg-slate-100 dark:disabled:bg-darkmode-800/50 transition duration-200 ease-in-out w-full text-sm border-slate-200 shadow-sm rounded-md placeholder:text-slate-400/90 focus:ring-4 focus:ring-primary dark:bg-darkmode-800"
+                                                value={formData.address}
+                                                onChange={handleChange}
+                                                className="w-full text-sm border-slate-200 shadow-sm rounded-md focus:ring-4 focus:ring-primary"
                                                 required
                                             />
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
-                            {/* Action Buttons */}
-                            <div className="mt-5 flex flex-col justify-end gap-2 md:flex-row">
+                            <div className="mt-5 flex flex-col md:flex-row justify-end gap-2">
                                 <a
-                                    href="/users"
-                                    type="button"
-                                    className="transition duration-200 border shadow-sm inline-flex items-center justify-center px-3 rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 bg-white dark:bg-darkmode-800 text-slate-500 dark:text-slate-300 dark:focus:ring-slate-700 w-full py-3 md:w-52"
+                                    href="/fields"
+                                    className="transition duration-200 border shadow-sm inline-flex items-center justify-center px-3 rounded-md font-medium bg-white text-slate-500 w-full py-3 md:w-52"
                                 >
                                     Cancel
                                     <span className="flex h-5 w-5 items-center justify-center ml-1">
@@ -79,31 +117,21 @@ const EditField = () => {
                                 </a>
                                 <button
                                     type="submit"
-                                    className="transition duration-200 border shadow-sm inline-flex items-center justify-center px-3 rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 dark:focus:ring-slate-700 bg-primary border-primary text-white dark:border-primary w-full py-3 md:w-52 disabled:opacity-70 disabled:cursor-not-allowed"
+                                    disabled={loading}
+                                    className="transition duration-200 border shadow-sm inline-flex items-center justify-center px-3 rounded-md font-medium bg-primary text-white w-full py-3 md:w-52 disabled:opacity-70"
                                 >
-                                    Save
-                                    <span className="flex h-5 w-5 items-center justify-center ml-1">
-                                        <CloudUpload className="stroke-1.5 h-4 w-4" />
-                                    </span>
+                                    {loading ? 'Saving' : 'Save'}
                                 </button>
                             </div>
                         </div>
                     </div>
-
-                    {/* Tips Section */}
                     <div className="intro-y col-span-2 hidden 2xl:block">
                         <div className="sticky top-0">
-                            <div className="relative mt-6 rounded-md border border-warning bg-warning/20 p-5 dark:border-0 dark:bg-darkmode-600">
-                                <Lightbulb className="stroke-1.5 absolute right-0 top-0 mr-3 mt-5 h-12 w-12 text-warning/80" />
-                                <h2 className="text-lg font-medium">Tips</h2>
+                            <div className="relative mt-6 rounded-md border border-warning bg-warning/20 p-5">
+                                <div className="text-lg font-medium">Tips</div>
                                 <div className="mt-5 font-medium">Hiring</div>
-                                <div className="mt-2 text-xs leading-relaxed text-slate-600 dark:text-slate-500">
-                                    <div>
-                                        Provide correct details to ensure the system
-                                        accurately manages attendance and payroll.
-                                        Double-check salary, finger ID, and phone number
-                                        for accuracy before saving.
-                                    </div>
+                                <div className="mt-2 text-xs leading-relaxed text-slate-600">
+                                    Provide correct details to ensure the system accurately manages attendance and payroll.
                                 </div>
                             </div>
                         </div>
@@ -111,7 +139,7 @@ const EditField = () => {
                 </div>
             </form>
         </>
-    )
-}
+    );
+};
 
-export default EditField
+export default EditField;

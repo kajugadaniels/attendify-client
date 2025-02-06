@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseURL = 'https://www.api.icotrix.com/api';
+const baseURL = 'https://eps-api.onrender.com/api';
 
 const apiClient = axios.create({
     baseURL,

@@ -107,7 +107,7 @@ const Header = () => {
                         </a>
                         <div className="h-px my-2 -mx-2 bg-slate-200/60 dark:bg-darkmode-400 bg-white/[0.08]" />
                         <a
-                            href="/logout"
+                            href="/"
                             className="cursor-pointer flex items-center p-2 w-full text-left transition duration-300 ease-in-out rounded-md hover:bg-slate-200/60 dark:bg-darkmode-600 dark:hover:bg-darkmode-400 dropdown-item hover:bg-white/5"
                         >
                             <ToggleRight className="stroke-1.5 mr-2 h-4 w-4" />

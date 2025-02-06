@@ -1,9 +1,6 @@
 import axios from 'axios';
 
-const baseURL =
-    import.meta.env.MODE === 'production'
-        ? import.meta.env.VITE_API_BASE_URL_PROD
-        : import.meta.env.VITE_API_BASE_URL;
+const baseURL = 'https://www.api.icotrix.com/api';
 
 const apiClient = axios.create({
     baseURL,

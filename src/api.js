@@ -1,463 +1,309 @@
 import axios from 'axios';
 
+<<<<<<< HEAD
 const API_BASE_URL =
     window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'
         ? 'http://127.0.0.1:8000/api'
         : 'https://www.api.icotrix.com/api';
+=======
+const baseURL =
+    import.meta.env.MODE === 'production'
+        ? import.meta.env.VITE_API_BASE_URL_PROD
+        : import.meta.env.VITE_API_BASE_URL;
+>>>>>>> ff45a93864a223852b44ef5853823cccc4aaec79
 
-const api = axios.create({
-    baseURL: API_BASE_URL,
-    headers: {
-        'Content-Type': 'application/json',
-    },
+const apiClient = axios.create({
+    baseURL,
 });
 
-export const login = async (email, password) => {
-    try {
-        const response = await api.post('/auth/login/', { email, password });
-        return {
-            success: true,
-            data: response.data,
-        };
-    } catch (error) {
-        let message = 'An error occurred during login. Please try again.';
-        if (error.response) {
-            message = error.response.data.error || error.response.data.detail || message;
+apiClient.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            config.headers.Authorization = `Token ${token}`;
         }
-        return {
-            success: false,
-            message,
-        };
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
     }
-};
+);
 
-export const logout = async (token) => {
-    try {
-        const response = await api.post(
-            '/auth/logout/',
-            {},
-            {
-                headers: {
-                    Authorization: `Token ${token}`,
-                },
-            }
-        );
-        return {
-            success: true,
-            message: response.data.message,
-        };
-    } catch (error) {
-        let message = 'An error occurred during logout. Please try again.';
-        if (error.response) {
-            message = error.response.data.error || error.response.data.detail || message;
-        }
-        return {
-            success: false,
-            message,
-        };
+apiClient.interceptors.response.use(
+    (response) => {
+        return response;
+    },
+    (error) => {
+        return Promise.reject(error);
     }
-};
+);
 
-export const updateUser = async (data) => {
-    console.log('Incoming data:', data);
-
-    const sanitizedData = {
-        email: data.email,
-        name: data.name,
-        password: data.password,
-        phone_number: data.phone_number,
-        role: data.role,
-        status: data.status,
-    };
-
-    console.log('Sanitized data to be sent:', sanitizedData);
+export const loginUser = async (email, password) => {
     try {
-        const response = await api.put('/auth/profile-update/', sanitizedData, {
-            headers: {
-                Authorization: `Token ${localStorage.getItem('token')}`,
-            },
-        });
+        const response = await apiClient.post('/auth/login/', { email, password });
         return response.data;
     } catch (error) {
-        console.log('Error response from server:', error.response);
-        throw error.response ? error.response.data : new Error('Failed to update account.');
+        throw error;
+    }
+};
+
+export const logoutUser = async () => {
+    try {
+        const response = await apiClient.post('/auth/logout/')
+        return response.data
+    } catch (error) {
+        throw error
+    }
+}
+
+export const updateUserProfile = async (updateData) => {
+    try {
+        const response = await apiClient.put('/auth/profile-update/', updateData);
+        return response.data;
+    } catch (error) {
+        throw error;
     }
 };
 
 export const fetchUsers = async () => {
     try {
-        const response = await api.get('/users/', {
-            headers: {
-                Authorization: `Token ${localStorage.getItem('token')}`,
-            },
-        });
+        const response = await apiClient.get('/users/');
         return response.data;
     } catch (error) {
-        throw error.response 
-            ? error.response.data 
-            : new Error('An error occurred while fetching users.');
+        throw error;
     }
 };
 
-export const addUser = async (data) => {
+export const createUser = async (userData) => {
     try {
-        const response = await api.post('/auth/register/', data, {
-            headers: {
-                Authorization: `Token ${localStorage.getItem('token')}`,
-            },
-        });
+        const response = await apiClient.post('/auth/register/', userData);
         return response.data;
     } catch (error) {
-        throw error.response
-            ? error.response.data
-            : new Error('An error occurred while adding the user.');
+        throw error;
     }
 };
 
-export const fetchEmployees = async () => {
+export const fetchUserDetails = async (userId) => {
     try {
-        const response = await api.get('/employees/', {
-            headers: {
-                Authorization: `Token ${localStorage.getItem('token')}`,
-            },
-        });
+        const response = await apiClient.get(`/user/${userId}/`);
         return response.data;
     } catch (error) {
-        throw error.response 
-            ? error.response.data 
-            : new Error('An error occurred while fetching employees.');
+        throw error;
     }
 };
 
-export const addEmployee = async (data) => {
+export const updateUser = async (userId, userData) => {
     try {
-        const response = await api.post('/employees/', data, {
-            headers: {
-                Authorization: `Token ${localStorage.getItem('token')}`,
-            },
-        });
+        const response = await apiClient.put(`/user/${userId}/update/`, userData);
         return response.data;
     } catch (error) {
-        throw error.response
-            ? error.response.data
-            : new Error('An error occurred while adding the employee.');
+        throw error;
     }
 };
 
-export const fetchEmployeeById = async (id) => {
+export const deleteUser = async (userId) => {
     try {
-        const response = await api.get(`/employee/${id}/`, {
-            headers: {
-                Authorization: `Token ${localStorage.getItem('token')}`,
-            },
-        });
+        const response = await apiClient.delete(`/user/${userId}/delete/`);
         return response.data;
     } catch (error) {
-        if (error.response && error.response.data) {
-            throw error.response.data;
-        }
-        throw new Error('An error occurred while fetching the employee.');
-    }
-};
-
-export const updateEmployee = async (id, data) => {
-    try {
-        const response = await api.put(`/employee/${id}/`, data, {
-            headers: {
-                Authorization: `Token ${localStorage.getItem('token')}`,
-            },
-        });
-        return response.data;
-    } catch (error) {
-        if (error.response && error.response.data) {
-            throw error.response.data;
-        }
-        throw new Error('An error occurred while updating the employee.');
-    }
-};
-
-export const deleteEmployee = async (id) => {
-    try {
-        const response = await api.delete(`/employee/${id}/`, {
-            headers: {
-                Authorization: `Token ${localStorage.getItem('token')}`,
-            },
-        });
-        return response.data;
-    } catch (error) {
-        throw error.response 
-        ? error.response.data 
-        : new Error('An error occurred while deleting the employee.');
+        throw error;
     }
 };
 
 export const fetchFields = async () => {
     try {
-        const response = await api.get('/fields/', {
-            headers: {
-                Authorization: `Token ${localStorage.getItem('token')}`,
-            },
-        });
+        const response = await apiClient.get('/fields/');
         return response.data;
     } catch (error) {
-        throw error.response 
-            ? error.response.data 
-            : new Error('An error occurred while fetching fields.');
+        throw error;
     }
 };
 
-export const addField = async (data) => {
+export const createField = async (fieldData) => {
     try {
-        const response = await api.post('/fields/', data, {
-            headers: {
-                Authorization: `Token ${localStorage.getItem('token')}`,
-            },
-        });
+        const response = await apiClient.post('/field/create/', fieldData);
         return response.data;
     } catch (error) {
-        throw error.response
-            ? error.response.data
-            : new Error('An error occurred while adding the field.');
+        throw error;
     }
 };
 
-export const fetchFieldById = async (id) => {
+export const fetchFieldDetails = async (fieldId) => {
     try {
-        const response = await api.get(`/field/${id}/`, {
-            headers: {
-                Authorization: `Token ${localStorage.getItem('token')}`,
-            },
-        });
+        const response = await apiClient.get(`/field/${fieldId}/`);
         return response.data;
     } catch (error) {
-        throw error.response
-            ? error.response.data
-            : new Error('An error occurred while fetching the field.');
+        throw error;
     }
 };
 
-export const updateField = async (id, data) => {
+export const updateField = async (fieldId, fieldData) => {
     try {
-        const response = await api.put(`/field/${id}/`, data, {
-            headers: {
-                Authorization: `Token ${localStorage.getItem('token')}`,
-            },
-        });
+        const response = await apiClient.put(`/field/${fieldId}/update/`, fieldData);
         return response.data;
     } catch (error) {
-        throw error.response
-            ? error.response.data
-            : new Error('An error occurred while updating the field.');
+        throw error;
     }
 };
 
-export const deleteField = async (id) => {
+export const deleteField = async (fieldId) => {
     try {
-        const response = await api.delete(`/field/${id}/`, {
-            headers: {
-                Authorization: `Token ${localStorage.getItem('token')}`,
-            },
-        });
+        const response = await apiClient.delete(`/field/${fieldId}/delete/`);
         return response.data;
     } catch (error) {
-        throw error.response 
-        ? error.response.data 
-        : new Error('An error occurred while deleting the field.');
+        throw error;
     }
 };
 
 export const fetchDepartments = async () => {
     try {
-        const response = await api.get('/departments/', {
-            headers: {
-                Authorization: `Token ${localStorage.getItem('token')}`,
-            },
-        });
+        const response = await apiClient.get('/departments/');
         return response.data;
     } catch (error) {
-        throw error.response 
-            ? error.response.data 
-            : new Error('An error occurred while fetching departments.');
+        throw error;
     }
 };
 
-export const addDepartment = async (data) => {
+export const createDepartment = async (departmentData) => {
     try {
-        const response = await api.post('/departments/', data, {
-            headers: {
-                Authorization: `Token ${localStorage.getItem('token')}`,
-            },
-        });
+        const response = await apiClient.post('/department/create/', departmentData);
         return response.data;
     } catch (error) {
-        throw error.response
-            ? error.response.data
-            : new Error('An error occurred while adding the department.');
+        throw error;
     }
 };
 
-export const fetchDepartmentById = async (id) => {
+export const fetchDepartmentDetails = async (departmentId) => {
     try {
-        const response = await api.get(`/department/${id}/`, {
-            headers: {
-                Authorization: `Token ${localStorage.getItem('token')}`,
-            },
-        });
+        const response = await apiClient.get(`/department/${departmentId}/`);
         return response.data;
     } catch (error) {
-        throw error.response
-            ? error.response.data
-            : new Error('An error occurred while fetching the department.');
+        throw error;
     }
 };
 
-export const updateDepartment = async (id, data) => {
+export const updateDepartment = async (departmentId, departmentData) => {
     try {
-        const response = await api.put(`/department/${id}/`, data, {
-            headers: {
-                Authorization: `Token ${localStorage.getItem('token')}`,
-            },
-        });
+        const response = await apiClient.put(`/department/${departmentId}/update/`, departmentData);
         return response.data;
     } catch (error) {
-        throw error.response
-            ? error.response.data
-            : new Error('An error occurred while updating the department.');
+        throw error;
     }
 };
 
-export const deleteDepartment = async (id) => {
+export const deleteDepartment = async (departmentId) => {
     try {
-        const response = await api.delete(`/department/${id}/`, {
-            headers: {
-                Authorization: `Token ${localStorage.getItem('token')}`,
-            },
-        });
+        const response = await apiClient.delete(`/department/${departmentId}/delete/`);
         return response.data;
     } catch (error) {
-        throw error.response 
-        ? error.response.data 
-        : new Error('An error occurred while deleting the department.');
+        throw error;
+    }
+};
+
+export const fetchEmployees = async () => {
+    try {
+        const response = await apiClient.get('/employees/');
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const createEmployee = async (employeeData) => {
+    try {
+        const response = await apiClient.post('/employee/create/', employeeData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const fetchEmployeeDetails = async (employeeId) => {
+    try {
+        const response = await apiClient.get(`/employee/${employeeId}/`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const updateEmployee = async (employeeId, employeeData) => {
+    try {
+        const response = await apiClient.put(`/employee/${employeeId}/update/`, employeeData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const deleteEmployee = async (employeeId) => {
+    try {
+        const response = await apiClient.delete(`/employee/${employeeId}/delete/`);
+        return response.data;
+    } catch (error) {
+        throw error;
     }
 };
 
 export const fetchAssignments = async () => {
     try {
-        const response = await api.get('/assignments/', {
-            headers: {
-                Authorization: `Token ${localStorage.getItem('token')}`,
-            },
-        });
+        const response = await apiClient.get('/assignments/');
         return response.data;
     } catch (error) {
-        throw error.response
-            ? error.response.data 
-            : new Error('An error occurred while fetching assignments.');
+        throw error;
     }
 };
 
-export const addAssignment = async (data) => {
+export const createAssignment = async (assignmentData) => {
     try {
-        const response = await api.post('/assignments/', data, {
-            headers: {
-                Authorization: `Token ${localStorage.getItem('token')}`,
-            },
-        });
+        const response = await apiClient.post('/assignment/create/', assignmentData);
         return response.data;
     } catch (error) {
-        throw error.response
-            ? error.response.data
-            : new Error('An error occurred while adding the assignment.');
+        throw error;
     }
 };
 
-export const fetchAssignmentById = async (id) => {
+export const fetchAssignmentDetails = async (assignmentId) => {
     try {
-        const response = await api.get(`/assignment/${id}/`, {
-            headers: {
-                Authorization: `Token ${localStorage.getItem('token')}`,
-            },
-        });
+        const response = await apiClient.get(`/assignment/${assignmentId}/`);
         return response.data;
     } catch (error) {
-        throw error.response
-            ? error.response.data
-            : new Error('An error occurred while fetching the assignment.');
+        throw error;
     }
 };
 
-export const endAssignmentById = async (id, data) => {
+export const updateAssignment = async (assignmentId, assignmentData) => {
     try {
-        const response = await api.post(`/assignment/${id}/end/`, data, {
-            headers: {
-                Authorization: `Token ${localStorage.getItem('token')}`,
-            },
-        });
+        const response = await apiClient.put(`/assignment/${assignmentId}/update/`, assignmentData);
         return response.data;
     } catch (error) {
-        console.error("End Assignment Error:", error); // Add this line
-        throw error.response
-            ? error.response.data
-            : new Error('An error occurred while ending the assignment.');
+        throw error;
     }
 };
 
-export const fetchAttendance = async () => {
+export const deleteAssignment = async (assignmentId) => {
     try {
-        const response = await api.get('/attendances/', {
-            headers: {
-                Authorization: `Token ${localStorage.getItem('token')}`,
-            },
-        });
+        const response = await apiClient.delete(`/assignment/${assignmentId}/delete/`);
         return response.data;
     } catch (error) {
-        throw error.response
-            ? error.response.data 
-            : new Error('An error occurred while fetching attendances.');
+        throw error;
     }
 };
 
-export const fetchTodayAttendance = async () => {
+export const FinishAssignment = async (assignmentId, assignmentData) => {
     try {
-        const response = await api.get('/today-attendance/', {
-            headers: {
-                Authorization: `Token ${localStorage.getItem('token')}`,
-            },
-        });
+        const response = await apiClient.post(`/assignment/${assignmentId}/end/`, assignmentData);
         return response.data;
     } catch (error) {
-        throw error.response
-            ? error.response.data
-            : new Error('An error occurred while fetching today\'s attendance.');
+        throw error;
     }
 };
 
-export const fetchDepartmentAttendance = async (departmentId) => {
+export const fetchAttendances = async () => {
     try {
-        const response = await api.get(`/department-attendance/${departmentId}/`, {
-            headers: {
-                Authorization: `Token ${localStorage.getItem('token')}`,
-            },
-        });
+        const response = await apiClient.get('/attendances/');
         return response.data;
     } catch (error) {
-        throw error.response
-            ? error.response.data
-            : new Error('An error occurred while fetching department attendance.');
-    }
-};
-
-export const fetchEmployeeAttendance = async (employeeId) => {
-    try {
-        const response = await api.get(`/employee-attendance/${employeeId}/`, {
-            headers: {
-                Authorization: `Token ${localStorage.getItem('token')}`,
-            },
-        });
-        return response.data;
-    } catch (error) {
-        throw error.response
-            ? error.response.data
-            : new Error('An error occurred while fetching employee attendance history.');
+        throw error;
     }
 };

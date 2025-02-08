@@ -1,88 +1,125 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Briefcase, FileUser, House, Megaphone, Pickaxe, Tractor, User } from 'lucide-react';
+import React from 'react'
+import { Binoculars, CalendarClock, House, Sofa, Speaker, UserCheck, UsersRound } from 'lucide-react'
+import { useLocation, NavLink } from 'react-router-dom'
 
 const Sidebar = () => {
-    const location = useLocation();
+    const { pathname } = useLocation()
 
-    // Function to check if a route is active
-    const isActive = (path) => location.pathname === path;
-
-    const user = JSON.parse(localStorage.getItem('user'));  // Get the user object
-    const userPermissions = user?.user_permissions || [];  // Retrieve user permissions
-
-    // Function to check if a permission is available in either user or role permissions
-    const hasPermission = (permission) => {
-        // Check for both "users.permission" and "permission"
-        const prefixedPermission = `users.${permission}`;
-
-        return (
-            userPermissions.includes(prefixedPermission) || 
-            userPermissions.includes(permission)
-        );
-    };
+    // Check active state for each sidebar item.
+    const isDashboardActive = pathname === '/dashboard'
+    const isUsersActive = pathname.startsWith('/users') || pathname.startsWith('/user')
+    const isFieldsActive = pathname.startsWith('/fields') || pathname.startsWith('/field')
+    const isDepartmentsActive = pathname.startsWith('/departments') || pathname.startsWith('/department')
+    const isEmployeesActive = pathname.startsWith('/employees') || pathname.startsWith('/employee')
+    const isAssignmentsActive = pathname.startsWith('/assignments') || pathname.startsWith('/assignment')
+    const isAttendanceActive = pathname === '/attendance'
 
     return (
-        <>
-            <div className="flex-none hidden xl:flex items-center z-10 px-5 h-[65px] w-[275px] overflow-hidden relative duration-300 group-[.side-menu--collapsed]:xl:w-[91px] group-[.side-menu--collapsed.side-menu--on-hover]:xl:w-[275px]">
-                <Link className="flex items-center transition-[margin] duration-300 group-[.side-menu--collapsed.side-menu--on-hover]:xl:ml-0 group-[.side-menu--collapsed]:xl:ml-2" to="/dashboard">
-                    <div className="flex h-[40px] w-[40px] items-center justify-center rounded-lg bg-white transition-transform ease-in-out group-[.side-menu--collapsed.side-menu--on-hover]:xl:-rotate-180">
-                        <img src='https://static.vecteezy.com/system/resources/thumbnails/002/318/271/small/user-profile-icon-free-vector.jpg' alt="EPS Logo" />
-                    </div>
-                    <div className="ml-3.5 font-medium transition-opacity group-[.side-menu--collapsed.side-menu--on-hover]:xl:opacity-100 group-[.side-menu--collapsed]:xl:opacity-0">
-                        CAPS
-                    </div>
-                </Link>
-            </div>
+        <nav className="side-nav hidden w-[80px] overflow-x-hidden pb-16 pr-5 md:block xl:w-[230px]">
+            <NavLink className="flex items-center pt-4 pl-5 intro-x" to="/dashboard">
+                <img
+                    className="w-6"
+                    src="https://midone-html.left4code.com/dist/images/logo.svg"
+                    alt="Logo"
+                />
+                <span className="hidden ml-3 text-lg text-white xl:block">CAPS</span>
+            </NavLink>
+            <div className="my-6 side-nav__divider"></div>
+            <ul>
+                <li>
+                    <NavLink
+                        to="/dashboard"
+                        className={() =>
+                            `side-menu ${isDashboardActive ? 'side-menu--active' : ''}`
+                        }
+                    >
+                        <div className="side-menu__icon">
+                            <House className="stroke-1.5 w-5 h-5" />
+                        </div>
+                        <div className="side-menu__title">Dashboard</div>
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink
+                        to="/users"
+                        className={() =>
+                            `side-menu ${isUsersActive ? 'side-menu--active' : ''}`
+                        }
+                    >
+                        <div className="side-menu__icon">
+                            <UserCheck className="stroke-1.5 w-5 h-5" />
+                        </div>
+                        <div className="side-menu__title">Users</div>
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink
+                        to="/fields"
+                        className={() =>
+                            `side-menu ${isFieldsActive ? 'side-menu--active' : ''}`
+                        }
+                    >
+                        <div className="side-menu__icon">
+                            <Binoculars className="stroke-1.5 w-5 h-5" />
+                        </div>
+                        <div className="side-menu__title">Fields</div>
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink
+                        to="/departments"
+                        className={() =>
+                            `side-menu ${isDepartmentsActive ? 'side-menu--active' : ''}`
+                        }
+                    >
+                        <div className="side-menu__icon">
+                            <Sofa className="stroke-1.5 w-5 h-5" />
+                        </div>
+                        <div className="side-menu__title">Departments</div>
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink
+                        to="/employees"
+                        className={() =>
+                            `side-menu ${isEmployeesActive ? 'side-menu--active' : ''}`
+                        }
+                    >
+                        <div className="side-menu__icon">
+                            <UsersRound className="stroke-1.5 w-5 h-5" />
+                        </div>
+                        <div className="side-menu__title">Employees</div>
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink
+                        to="/assignments"
+                        className={() =>
+                            `side-menu ${isAssignmentsActive ? 'side-menu--active' : ''}`
+                        }
+                    >
+                        <div className="side-menu__icon">
+                            <CalendarClock className="stroke-1.5 w-5 h-5" />
+                        </div>
+                        <div className="side-menu__title">Assignments</div>
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink
+                        to="/attendance"
+                        className={() =>
+                            `side-menu ${isAttendanceActive ? 'side-menu--active' : ''}`
+                        }
+                    >
+                        <div className="side-menu__icon">
+                            <Speaker className="stroke-1.5 w-5 h-5" />
+                        </div>
+                        <div className="side-menu__title">Attendance</div>
+                    </NavLink>
+                </li>
+            </ul>
+        </nav>
+    )
+}
 
-            <div className="scrollable-ref w-full h-full z-20 px-5 overflow-y-auto overflow-x-hidden pb-3 [-webkit-mask-image:-webkit-linear-gradient(top,rgba(0,0,0,0),black_30px)] [&:-webkit-scrollbar]:w-0 [&:-webkit-scrollbar]:bg-transparent [&_.simplebar-content]:p-0 [&_.simplebar-track.simplebar-vertical]:w-[10px] [&_.simplebar-track.simplebar-vertical]:mr-0.5 [&_.simplebar-track.simplebar-vertical_.simplebar-scrollbar]:before:bg-slate-400/30">
-                <ul className="scrollable">
-                    <li className={isActive('/dashboard') ? 'bg-white text-primary/10 border rounded-lg border-primary/10' : ''}>
-                        <Link to="/dashboard" className="side-menu__link">
-                            <House className="stroke-[1] w-5 h-5 side-menu__link__icon" />
-                            <div className="side-menu__link__title">Dashboard</div>
-                        </Link>
-                    </li>
-                    <li className={isActive('/users') ? 'bg-white text-primary/10 border rounded-lg border-primary/10' : ''}>
-                        <Link to="/users" className="side-menu__link">
-                            <User className="stroke-[1] w-5 h-5 side-menu__link__icon" />
-                            <div className="side-menu__link__title">User</div>
-                        </Link>
-                    </li>
-                    <li className={isActive('/employees') ? 'bg-white text-primary/10 border rounded-lg border-primary/10' : ''}>
-                        <Link to="/employees" className="side-menu__link">
-                            <FileUser className="stroke-[1] w-5 h-5 side-menu__link__icon" />
-                            <div className="side-menu__link__title">Employees</div>
-                        </Link>
-                    </li>
-                    <li className={isActive('/departments') ? 'bg-white text-primary/10 border rounded-lg border-primary/10' : ''}>
-                        <Link to="/departments" className="side-menu__link">
-                            <Briefcase className="stroke-[1] w-5 h-5 side-menu__link__icon" />
-                            <div className="side-menu__link__title">Departments</div>
-                        </Link>
-                    </li>
-                    <li className={isActive('/fields') ? 'bg-white text-primary/10 border rounded-lg border-primary/10' : ''}>
-                        <Link to="/fields" className="side-menu__link">
-                            <Tractor className="stroke-[1] w-5 h-5 side-menu__link__icon" />
-                            <div className="side-menu__link__title">Fields</div>
-                        </Link>
-                    </li>
-                    <li className={isActive('/assignments') ? 'bg-white text-primary/10 border rounded-lg border-primary/10' : ''}>
-                        <Link to="/assignments" className="side-menu__link">
-                            <Pickaxe className="stroke-[1] w-5 h-5 side-menu__link__icon" />
-                            <div className="side-menu__link__title">Assignments</div>
-                        </Link>
-                    </li>
-                    <li className={isActive('/attendance') ? 'bg-white text-primary/10 border rounded-lg border-primary/10' : ''}>
-                        <Link to="/attendance" className="side-menu__link">
-                            <Megaphone className="stroke-[1] w-5 h-5 side-menu__link__icon" />
-                            <div className="side-menu__link__title">Attendance</div>
-                        </Link>
-                    </li>
-                </ul>
-            </div>
-        </>
-    );
-};
-
-export default Sidebar;
+export default Sidebar

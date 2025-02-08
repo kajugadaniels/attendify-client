@@ -1,320 +1,347 @@
-import React, { useState, useEffect } from 'react'
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, EllipsisVertical, Eye, Hourglass, KeySquare, ListChecks, PenLine, Search, Trash2, User2 } from 'lucide-react'
-import { Link, useNavigate } from 'react-router-dom'
-import { fetchAssignments } from '../../api'
-import { toast } from 'react-toastify'
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+    ChevronLeft,
+    ChevronRight,
+    ChevronsRight,
+    Eye,
+    Plus,
+    Search,
+    Trash2,
+    Edit,
+    StopCircle,
+    Handshake,
+    CheckSquare
+} from 'lucide-react';
+import Select from 'react-select';
+import { toast } from 'react-toastify';
+import {
+    fetchAssignments,
+    deleteAssignment,
+    fetchFields,
+    fetchDepartments
+} from '../../api';
 
 const GetAssignments = () => {
-    const [assignments, setAssignments] = useState([]);
-    const [filteredAssignments, setFilteredAssignments] = useState([]);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [currentPage, setCurrentPage] = useState(1);
-    const [assignmentsPerPage] = useState(10);
-    const [loading, setLoading] = useState(false);
-    const [dropdownOpen, setDropdownOpen] = useState(null);
     const navigate = useNavigate();
+    const [assignments, setAssignments] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [sortOrder, setSortOrder] = useState('newest');
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
 
+    // Additional filters state
+    const [fieldFilter, setFieldFilter] = useState(null);
+    const [departmentFilter, setDepartmentFilter] = useState(null);
+    const [fieldOptions, setFieldOptions] = useState([]);
+    const [departmentOptions, setDepartmentOptions] = useState([]);
+
+    // Load assignments on mount
     useEffect(() => {
         const loadAssignments = async () => {
-            setLoading(true);
             try {
                 const data = await fetchAssignments();
-                // Ensure data is an array
-                const assignmentsArray = Array.isArray(data) ? data :
-                    Array.isArray(data.results) ? data.results : [];
-
-                setAssignments(assignmentsArray);
-                setFilteredAssignments(assignmentsArray);
+                setAssignments(data.results);
             } catch (error) {
-                console.error('Error loading assignments:', error);
-                toast.error('Failed to load assignments.');
-                setAssignments([]);
-                setFilteredAssignments([]);
-            } finally {
-                setLoading(false);
+                toast.error('Failed to fetch assignments.');
             }
         };
         loadAssignments();
     }, []);
 
-    const handleSearch = (e) => {
-        const term = e.target.value;
-        setSearchTerm(term);
+    // Load filter options on mount
+    useEffect(() => {
+        const loadFilters = async () => {
+            try {
+                const fieldsData = await fetchFields();
+                const departmentsData = await fetchDepartments();
+                setFieldOptions(fieldsData.map(field => ({ value: field.id, label: field.name })));
+                setDepartmentOptions(departmentsData.map(dept => ({ value: dept.id, label: dept.name })));
+            } catch (error) {
+                toast.error('Failed to load filter options.');
+            }
+        };
+        loadFilters();
+    }, []);
 
-        if (!Array.isArray(assignments)) {
-            console.error('Assignments is not an array');
-            return;
-        }
+    // Filter assignments based on search term, field, and department filters
+    const filteredAssignments = assignments.filter(a => {
+        const term = searchTerm.toLowerCase();
+        const matchesSearch =
+            a.name.toLowerCase().includes(term) ||
+            (a.field_name && a.field_name.toLowerCase().includes(term)) ||
+            (a.department_name && a.department_name.toLowerCase().includes(term));
+        const matchesField = fieldFilter ? a.field === fieldFilter.value : true;
+        const matchesDepartment = departmentFilter ? a.department === departmentFilter.value : true;
+        return matchesSearch && matchesField && matchesDepartment;
+    });
 
-        if (term) {
-            const filtered = assignments.filter((assignment) =>
-                (assignment?.name || '').toLowerCase().includes(term.toLowerCase()) ||
-                (assignment?.supervisor_name || '').toLowerCase().includes(term.toLowerCase()) ||
-                (assignment?.field_name || '').toLowerCase().includes(term.toLowerCase()) ||
-                (assignment?.department_name || '').toLowerCase().includes(term.toLowerCase()) ||
-                (assignment?.employee_assignments || []).some((employee) =>
-                    (employee?.employee_name || '').toLowerCase().includes(term.toLowerCase())
-                )
-            );
-            setFilteredAssignments(filtered);
-            setCurrentPage(1);
-        } else {
-            setFilteredAssignments(assignments);
-        }
+    // Sort assignments by created_date
+    const sortedAssignments = filteredAssignments.sort((a, b) => {
+        const aDate = new Date(a.created_date);
+        const bDate = new Date(b.created_date);
+        return sortOrder === 'newest' ? bDate - aDate : aDate - bDate;
+    });
+
+    // Pagination
+    const totalPages = Math.ceil(sortedAssignments.length / itemsPerPage);
+    const currentAssignments = sortedAssignments.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+
+    // Event handlers
+    const handleAddAssignment = () => {
+        navigate('/assignment/add');
     };
 
-    const toggleDropdown = (assignmentId) => {
-        setDropdownOpen(dropdownOpen === assignmentId ? null : assignmentId);
+    const handleShowAssignment = (id) => {
+        navigate(`/assignment/${id}`);
     };
 
-    const handleEdit = (assignmentId) => {
-        navigate(`/assignment/edit/${assignmentId}`);
+    const handleEditAssignment = (id) => {
+        navigate(`/assignment/${id}/edit`);
     };
 
-    const handleEndAssignment = (assignmentId) => {
-        navigate(`/assignment/${assignmentId}/end`);
+    const handleEndAssignment = (id) => {
+        navigate(`/assignment/${id}/end`);
     };
 
-    const handleView = (assignmentId) => {
-        navigate(`/assignment/${assignmentId}/`);
-    };
-
-    const handleDelete = async (assignmentId) => {
+    const handleDeleteAssignment = async (id) => {
         if (window.confirm('Are you sure you want to delete this assignment?')) {
             try {
-                await deleteAssignment(assignmentId);
-                setAssignments(prev => prev.filter(assignment => assignment.id !== assignmentId));
-                setFilteredAssignments(prev => prev.filter(assignment => assignment.id !== assignmentId));
+                await deleteAssignment(id);
                 toast.success('Assignment deleted successfully.');
+                setAssignments(prev => prev.filter(a => a.id !== id));
             } catch (error) {
-                console.error('Error deleting assignment:', error);
                 toast.error('Failed to delete assignment.');
             }
         }
     };
 
-    // Ensure filteredAssignments is an array before pagination
-    const safeFilteredAssignments = Array.isArray(filteredAssignments) ? filteredAssignments : [];
-
-    // Pagination logic
-    const indexOfLastAssignment = currentPage * assignmentsPerPage;
-    const indexOfFirstAssignment = indexOfLastAssignment - assignmentsPerPage;
-    const currentAssignments = safeFilteredAssignments.slice(indexOfFirstAssignment, indexOfLastAssignment);
-
-    const totalPages = Math.ceil(safeFilteredAssignments.length / assignmentsPerPage);
-
-    const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
     return (
-        <div className="px-5 mt-16">
-            <div className="container">
-                <div className="grid grid-cols-12 gap-x-6 gap-y-10">
-                    <div className="col-span-12">
-                        <div className="flex flex-col gap-y-3 md:h-10 md:flex-row md:items-center">
-                            <div className="text-base font-medium group-[.mode--light]:text-white">
-                                Assignments
-                            </div>
-                            <div className="flex flex-col gap-x-3 gap-y-2 sm:flex-row md:ml-auto">
-                                <Link to='/assignment/add' className="inline-flex items-center justify-center px-3 py-2 font-medium text-white transition duration-200 border rounded-md shadow-sm cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 bg-primary border-primary">
-                                    <PenLine className='mr-2 h-4 w-4 stroke-[1.3]' />
-                                    Add New Assignment
-                                </Link>
-                            </div>
-                        </div>
-                        <div className="mt-3.5 flex flex-col gap-8">
-                            <div className="flex flex-col box box--stacked">
-                                <div className="flex flex-col p-5 gap-y-2 sm:flex-row sm:items-center">
-                                    <div>
-                                        <div className="relative">
-                                            <Search className="absolute inset-y-0 left-0 z-10 my-auto ml-3 h-4 w-4 stroke-[1.3] text-slate-500" />
-                                            <input
-                                                type="text"
-                                                value={searchTerm}
-                                                onChange={handleSearch}
-                                                placeholder="Search assignments..."
-                                                className="disabled:bg-slate-100 disabled:cursor-not-allowed dark:disabled:bg-darkmode-800/50 dark:disabled:border-transparent [&[readonly]]:bg-slate-100 [&[readonly]]:cursor-not-allowed [&[readonly]]:dark:bg-darkmode-800/50 [&[readonly]]:dark:border-transparent transition duration-200 ease-in-out w-full text-sm border-slate-200 shadow-sm placeholder:text-slate-400/90 focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus:border-primary focus:border-opacity-40 dark:bg-darkmode-800 dark:border-transparent dark:focus:ring-slate-700 dark:focus:ring-opacity-50 dark:placeholder:text-slate-500/80 [&[type='file']]:border file:mr-4 file:py-2 file:px-4 file:rounded-l-md file:border-0 file:border-r-[1px] file:border-slate-100/10 file:text-sm file:font-semibold file:bg-slate-100 file:text-slate-500/70 hover:file:bg-200 group-[.form-inline]:flex-1 group-[.input-group]:rounded-none group-[.input-group]:[&:not(:first-child)]:border-l-transparent group-[.input-group]:first:rounded-l group-[.input-group]:last:rounded-r group-[.input-group]:z-10 rounded-[0.5rem] pl-9 sm:w-64"
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="overflow-auto xl:overflow-visible">
-                                    {loading ? (
-                                        <div className="py-5 text-center">Loading assignments...</div>
-                                    ) : (
-                                        <table className="w-full text-left border-b border-slate-200/60">
-                                            <thead>
-                                                <tr>
-                                                    <td className="w-5 px-5 py-4 font-medium border-t border-b bg-slate-50 text-slate-500">
-                                                        <input type="checkbox" className="transition-all duration-100 ease-in-out rounded shadow-sm cursor-pointer border-slate-200 focus:ring-4 focus:ring-primary focus:ring-opacity-20" />
-                                                    </td>
-                                                    <td className="px-5 py-4 font-medium border-t border-b bg-slate-50 text-slate-500">
-                                                        Name
-                                                    </td>
-                                                    <td className="px-5 py-4 font-medium border-t border-b bg-slate-50 text-slate-500">
-                                                        Supervisor
-                                                    </td>
-                                                    <td className="px-5 py-4 font-medium border-t border-b bg-slate-50 text-slate-500">
-                                                        Field Name
-                                                    </td>
-                                                    <td className="px-5 py-4 font-medium border-t border-b bg-slate-50 text-slate-500">
-                                                        Department Name
-                                                    </td>
-                                                    <td className="px-5 py-4 font-medium border-t border-b bg-slate-50 text-slate-500">
-                                                        Employees
-                                                    </td>
-                                                    <td className="px-5 py-4 font-medium border-t border-b bg-slate-50 text-slate-500">
-                                                        Status
-                                                    </td>
-                                                    <td className="w-20 px-5 py-4 font-medium text-center border-t border-b bg-slate-50 text-slate-500">
-                                                        Action
-                                                    </td>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {currentAssignments.map((assignment) => (
-                                                    <tr key={assignment.id} className="[&_td]:last:border-b-0">
-                                                        <td className="px-5 py-4 border-b border-dashed">
-                                                            <input type="checkbox" className="transition-all duration-100 ease-in-out rounded shadow-sm cursor-pointer border-slate-200 focus:ring-4 focus:ring-primary focus:ring-opacity-20" />
-                                                        </td>
-                                                        <td className="px-5 py-4 border-b border-dashed">
-                                                            {assignment.name || 'N/A'}
-                                                        </td>
-                                                        <td className="px-5 py-4 border-b border-dashed">
-                                                            {assignment.supervisor_name || 'N/A'}
-                                                        </td>
-                                                        <td className="px-5 py-4 border-b border-dashed">
-                                                            {assignment.field_name || 'N/A'}
-                                                        </td>
-                                                        <td className="px-5 py-4 border-b border-dashed">
-                                                            {assignment.department_name || 'N/A'}
-                                                        </td>
-                                                        <td className="px-5 py-4 border-b border-dashed">
-                                                            <div className="flex text-success">
-                                                                <User2 className="h-3.5 w-3.5 stroke-[1.7]" />
-                                                                <div className="ml-1.5 max-w-[200px] overflow-hidden whitespace-normal">
-                                                                    {assignment.employee_assignments.map((employee) => employee.employee_name).join(', ')}
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td className="px-5 py-4 border-b border-dashed">
-                                                            <div className={`px-2 py-1 rounded-full text-xs font-medium inline-block ${assignment.is_active
-                                                                    ? 'bg-success/20 text-success'
-                                                                    : 'bg-danger/20 text-danger'
-                                                                }`}>
-                                                                {assignment.is_active ? 'In Progress' : 'Ended'}
-                                                            </div>
-                                                        </td>
-                                                        <td className="relative px-5 py-4 border-b border-dashed">
-                                                            <div className="flex items-center justify-center">
-                                                                <div className="relative h-5">
-                                                                    <button
-                                                                        className="w-5 h-5 cursor-pointer text-slate-500"
-                                                                        onClick={() => toggleDropdown(assignment.id)}
-                                                                    >
-                                                                        <EllipsisVertical className="stroke-[1] w-5 h-5 fill-slate-400/70 stroke-slate-400/70" />
-                                                                    </button>
-                                                                    <div className={`dropdown-menu absolute right-0 mt-2 z-[9999] ${dropdownOpen === assignment.id ? 'block' : 'hidden'}`}>
-                                                                        <div className="w-40 p-2 bg-white rounded-md shadow-lg dropdown-content">
-                                                                        {assignment.is_active && (
-                                                                            <>
-                                                                                <button
-                                                                                    onClick={() => handleEndAssignment(assignment.id)}
-                                                                                    className="flex items-center p-2 transition duration-300 ease-in-out rounded-md cursor-pointer hover:bg-slate-200/60 text-warning"
-                                                                                >
-                                                                                    <Hourglass className="stroke-[1] mr-2 h-4 w-4" />
-                                                                                    End Task
-                                                                                </button>
-                                                                                {/**
-                                                                                    <button
-                                                                                        onClick={() => handleEdit(assignment.id)}
-                                                                                        className="flex items-center p-2 transition duration-300 ease-in-out rounded-md cursor-pointer hover:bg-slate-200/60 text-primary"
-                                                                                    >
-                                                                                        <ListChecks className="stroke-[1] mr-2 h-4 w-4" />
-                                                                                        Edit
-                                                                                    </button>
-                                                                                    <button
-                                                                                        onClick={() => handleDelete(assignment.id)}
-                                                                                        className="flex items-center p-2 transition duration-300 ease-in-out rounded-md cursor-pointer hover:bg-slate-200/60 text-danger"
-                                                                                    >
-                                                                                        <Trash2 className="stroke-[1] mr-2 h-4 w-4" />
-                                                                                        Delete
-                                                                                    </button>
-                                                                                **/}
-                                                                            </>
-                                                                        )}
-                                                                        {/**
-                                                                        <button
-                                                                            onClick={() => handleView(assignment.id)}
-                                                                            className="flex items-center p-2 transition duration-300 ease-in-out rounded-md cursor-pointer hover:bg-slate-200/60 text-success"
-                                                                        >
-                                                                            <Eye className="stroke-[1] mr-2 h-4 w-4" />
-                                                                            View
-                                                                        </button>
-                                                                        **/}
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    )}
-                                </div>
-                                <div className="flex flex-col-reverse flex-wrap items-center p-5 flex-reverse gap-y-2 sm:flex-row">
-                                    <nav className="flex-1 w-full mr-auto sm:w-auto">
-                                        <ul className="flex w-full mr-0 sm:mr-auto sm:w-auto">
-                                            <li className="flex-1 sm:flex-initial">
-                                                <button
-                                                    onClick={() => paginate(1)}
-                                                    disabled={currentPage === 1}
-                                                    className="transition duration-200 border items-center justify-center py-2 rounded-md cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 hover:bg-opacity-90 hover:border-opacity-90 text-center disabled:opacity-70 disabled:cursor-not-allowed min-w-0 sm:min-w-[40px] shadow-none font-normal flex border-transparent text-slate-800 sm:mr-2 dark:text-slate-300 px-1 sm:px-3"
-                                                >
-                                                    <ChevronsLeft className="stroke-[1] h-4 w-4" />
-                                                </button>
-                                            </li>
-                                            <li className="flex-1 sm:flex-initial">
-                                                <button
-                                                    onClick={() => paginate(currentPage - 1)}
-                                                    disabled={currentPage === 1}
-                                                    className="transition duration-200 border items-center justify-center py-2 rounded-md cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 hover:bg-opacity-90 hover:border-opacity-90 text-center disabled:opacity-70 disabled:cursor-not-allowed min-w-0 sm:min-w-[40px] shadow-none font-normal flex border-transparent text-slate-800 sm:mr-2 dark:text-slate-300 px-1 sm:px-3"
-                                                >
-                                                    <ChevronLeft className="stroke-[1] h-4 w-4" />
-                                                </button>
-                                            </li>
-                                            <li className="flex-1 sm:flex-initial">
-                                                <span className="transition duration-200 border items-center justify-center py-2 rounded-md min-w-0 sm:min-w-[40px] shadow-none font-normal flex border-transparent text-slate-800 sm:mr-2 dark:text-slate-300 px-1 sm:px-3">
-                                                    Page {currentPage} of {totalPages}
-                                                </span>
-                                            </li>
-                                            <li className="flex-1 sm:flex-initial">
-                                                <button
-                                                    onClick={() => paginate(currentPage + 1)}
-                                                    disabled={currentPage === totalPages}
-                                                    className="transition duration-200 border items-center justify-center py-2 rounded-md cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 hover:bg-opacity-90 hover:border-opacity-90 text-center disabled:opacity-70 disabled:cursor-not-allowed min-w-0 sm:min-w-[40px] shadow-none font-normal flex border-transparent text-slate-800 sm:mr-2 dark:text-slate-300 px-1 sm:px-3"
-                                                >
-                                                    <ChevronRight className="stroke-[1] h-4 w-4" />
-                                                </button>
-                                            </li>
-                                            <li className="flex-1 sm:flex-initial">
-                                                <button
-                                                    onClick={() => paginate(totalPages)}
-                                                    disabled={currentPage === totalPages}
-                                                    className="transition duration-200 border items-center justify-center py-2 rounded-md cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 hover:bg-opacity-90 hover:border-opacity-90 text-center disabled:opacity-70 disabled:cursor-not-allowed min-w-0 sm:min-w-[40px] shadow-none font-normal flex border-transparent text-slate-800 sm:mr-2 dark:text-slate-300 px-1 sm:px-3"
-                                                >
-                                                    <ChevronsRight className="stroke-[1] h-4 w-4" />
-                                                </button>
-                                            </li>
-                                        </ul>
-                                    </nav>
-                                </div>
-                            </div>
-                        </div>
+        <>
+            <div className="intro-y col-span-12 mt-8 flex flex-wrap items-center xl:flex-nowrap">
+                <h2 className="mr-auto text-lg font-medium">Users</h2>
+                <button
+                    onClick={handleAddAssignment}
+                    className="transition duration-200 border inline-flex items-center justify-center py-2 px-3 rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 [&:hover:not(:disabled)]:bg-opacity-90 [&:hover:not(:disabled)]:border-opacity-90 [&:not(button)]:text-center disabled:opacity-70 disabled:cursor-not-allowed bg-primary border-primary text-white dark:border-primary mr-2 shadow-md"
+                >
+                    Add New User
+                    <span className="flex h-5 w-5 items-center justify-center ml-1">
+                        <Plus className="stroke-1.5 h-4 w-4" />
+                    </span>
+                </button>
+            </div>
+
+            <div className="mt-5 grid grid-cols-12 gap-6">
+                {/* SEARCH & FILTERS */}
+                <div className="intro-y col-span-12 mt-2 flex flex-wrap items-center gap-2 xl:flex-nowrap">
+                    <div className="relative w-56 text-slate-500">
+                        <input
+                            type="text"
+                            placeholder="Search assignments..."
+                            className="disabled:bg-slate-100 disabled:cursor-not-allowed dark:disabled:bg-800/50 dark:disabled:border-transparent [&[readonly]]:bg-slate-100 [&[readonly]]:cursor-not-allowed [&[readonly]]:dark:bg-800/50 [&[readonly]]:dark:border-transparent transition duration-200 ease-in-out text-sm border-slate-200 shadow-sm rounded-md placeholder:text-slate-400/90 focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus:border-primary focus:border-opacity-40 dark:bg-800 dark:border-transparent dark:focus:ring-slate-700 dark:focus:ring-opacity-50 !box w-56 pr-10"
+                            value={searchTerm}
+                            onChange={(e) => {
+                                setSearchTerm(e.target.value);
+                                setCurrentPage(1);
+                            }}
+                        />
+                        <Search className="stroke-1.5 absolute inset-y-0 right-0 my-auto mr-3 h-4 w-4" />
                     </div>
+                    <select
+                        className="disabled:bg-slate-100 disabled:cursor-not-allowed dark:disabled:bg-800/50 transition duration-200 ease-in-out text-sm border-slate-200 shadow-sm rounded-md py-2 px-3 pr-8 focus:ring-4 focus:ring-primary focus:ring-opacity-20 dark:bg-800 dark:border-transparent dark:focus:ring-slate-700 dark:focus:ring-opacity-50 !box w-48"
+                        value={sortOrder}
+                        onChange={(e) => {
+                            setSortOrder(e.target.value);
+                            setCurrentPage(1);
+                        }}
+                    >
+                        <option value="newest">Newest</option>
+                        <option value="oldest">Oldest</option>
+                    </select>
+                    <Select
+                        options={fieldOptions}
+                        value={fieldFilter}
+                        onChange={(option) => {
+                            setFieldFilter(option);
+                            setCurrentPage(1);
+                        }}
+                        placeholder="Filter by Field"
+                        isClearable
+                    />
+                    <Select
+                        options={departmentOptions}
+                        value={departmentFilter}
+                        onChange={(option) => {
+                            setDepartmentFilter(option);
+                            setCurrentPage(1);
+                        }}
+                        placeholder="Filter by Department"
+                        isClearable
+                    />
+                </div>
+
+                <div className="intro-y col-span-12 overflow-auto 2xl:overflow-visible">
+                    <table className="w-full text-left -mt-2 border-separate border-spacing-y-[10px]">
+                        <thead>
+                            <tr>
+                                <th className="font-medium px-5 py-3 dark:border-300 whitespace-nowrap border-b-0">
+                                    <input
+                                        type="checkbox"
+                                        className="transition-all duration-100 ease-in-out shadow-sm border-slate-200 cursor-pointer rounded focus:ring-4 focus:ring-offset-0 focus:ring-primary focus:ring-opacity-20 dark:bg-800 dark:border-transparent dark:focus:ring-slate-700 dark:focus:ring-opacity-50"
+                                    />
+                                </th>
+                                <th className="font-medium px-5 py-3 dark:border-300 whitespace-nowrap border-b-0">
+                                    Assignment
+                                </th>
+                                <th className="font-medium px-5 py-3 dark:border-300 whitespace-nowrap border-b-0 text-center">
+                                    Field
+                                </th>
+                                <th className="font-medium px-5 py-3 dark:border-300 whitespace-nowrap border-b-0 text-center">
+                                    Department
+                                </th>
+                                <th className="font-medium px-5 py-3 dark:border-300 whitespace-nowrap border-b-0 text-center">
+                                    Supervisor
+                                </th>
+                                <th className="font-medium px-5 py-3 dark:border-300 whitespace-nowrap border-b-0 text-center">
+                                    Started On
+                                </th>
+                                <th className="font-medium px-5 py-3 dark:border-300 whitespace-nowrap border-b-0 text-center">
+                                    Ended On
+                                </th>
+                                <th className="font-medium px-5 py-3 dark:border-300 whitespace-nowrap border-b-0 text-center">
+                                    Action
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {currentAssignments.map(a => (
+                                <tr key={a.id} className="intro-x">
+                                    <td className="px-5 py-3 border-b dark:border-300 box w-10 whitespace-nowrap border-x-0 shadow-[5px_3px_5px_#00000005] dark:bg-600">
+                                        <input
+                                            type="checkbox"
+                                            className="transition-all duration-100 ease-in-out shadow-sm border-slate-200 cursor-pointer rounded focus:ring-4 focus:ring-offset-0 focus:ring-primary focus:ring-opacity-20 dark:bg-800 dark:border-transparent dark:focus:ring-slate-700 dark:focus:ring-opacity-50"
+                                        />
+                                    </td>
+                                    <td className="px-5 py-3 border-b dark:border-300 box whitespace-nowrap border-x-0 !py-3.5 shadow-[5px_3px_5px_#00000005] dark:bg-600">
+                                        <div className="flex items-center">
+                                            <div className="image-fit zoom-in h-9 w-9">
+                                                <img
+                                                    src={a.avatar || 'https://cdn-icons-png.flaticon.com/512/10337/10337609.png'}
+                                                    className="tooltip cursor-pointer rounded-lg border-white shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
+                                                    alt="User avatar"
+                                                />
+                                            </div>
+                                            <div className="ml-4">
+                                                <span className="whitespace-nowrap font-medium">
+                                                    {a.name || 'N/A'}
+                                                </span>
+                                                <div className="mt-0.5 whitespace-nowrap text-xs text-slate-500">
+                                                    Employees: {a.total_employees || 'N/A'}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="px-5 py-3 border-b dark:border-300 box whitespace-nowrap border-x-0 text-center shadow-[5px_3px_5px_#00000005] dark:bg-600">
+                                        {a.field_name || 'N/A'}
+                                    </td>
+                                    <td className="px-5 py-3 border-b dark:border-300 box whitespace-nowrap border-x-0 text-center shadow-[5px_3px_5px_#00000005] dark:bg-600">
+                                        {a.department_name || 'N/A'}
+                                    </td>
+                                    <td className="px-5 py-3 border-b dark:border-300 box whitespace-nowrap border-x-0 text-center shadow-[5px_3px_5px_#00000005] dark:bg-600">
+                                        {a.supervisor_name || 'N/A'}
+                                    </td>
+                                    <td className="px-5 py-3 border-b dark:border-300 box whitespace-nowrap border-x-0 text-center shadow-[5px_3px_5px_#00000005] dark:bg-600">
+                                        {new Date(a.created_date).toLocaleDateString() || 'N/A'}
+                                    </td>
+                                    <td className="px-5 py-3 border-b dark:border-300 box whitespace-nowrap border-x-0 text-center shadow-[5px_3px_5px_#00000005] dark:bg-600">
+                                        {a.end_date || 'Still working'}
+                                    </td>
+                                    <td className="px-5 py-3 border-b dark:border-300 box w-56 border-x-0 shadow-[5px_3px_5px_#00000005] dark:bg-600">
+                                        <div className="flex items-center justify-center">
+                                            <button
+                                                className="mr-3 flex items-center text-blue-600"
+                                                onClick={() => handleShowAssignment(a.id)}
+                                            >
+                                                <Eye className="stroke-1.5 mr-1 h-4 w-4" />
+                                                View
+                                            </button>
+                                            <button
+                                                className="mr-3 flex items-center text-green-600"
+                                                onClick={() => handleEditAssignment(a.id)}
+                                            >
+                                                <CheckSquare className="stroke-1.5 mr-1 h-4 w-4" />
+                                                Edit
+                                            </button>
+                                            <button
+                                                className="mr-3 flex items-center text-green-600"
+                                                onClick={() => handleEndAssignment(a.id)}
+                                            >
+                                                <Handshake className="stroke-1.5 mr-1 h-4 w-4" />
+                                                End
+                                            </button>
+                                            <button
+                                                className="flex items-center text-danger"
+                                                onClick={() => handleDeleteAssignment(a.id)}
+                                            >
+                                                <Trash2 className="stroke-1.5 mr-1 h-4 w-4" />
+                                                Delete
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* Pagination area */}
+                <div className="intro-y col-span-12 flex flex-wrap items-center sm:flex-row sm:flex-nowrap mt-4">
+                    <nav className="w-full sm:mr-auto sm:w-auto">
+                        <ul className="flex w-full mr-0 sm:mr-auto sm:w-auto gap-2">
+                            <li>
+                                <button
+                                    className="transition duration-200 border items-center justify-center py-2 px-2 rounded-md cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 dark:focus:ring-slate-700 text-slate-800 dark:text-slate-300 border-transparent disabled:opacity-50"
+                                >
+                                    First
+                                </button>
+                            </li>
+                            <li>
+                                <button
+                                    className="transition duration-200 border items-center justify-center py-2 px-2 rounded-md cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 dark:focus:ring-slate-700 text-slate-800 dark:text-slate-300 border-transparent disabled:opacity-50"
+                                >
+                                    <ChevronLeft className="stroke-1.5 h-4 w-4" />
+                                </button>
+                            </li>
+
+                            {/* Page indicator */}
+                            <li>
+                                <span className="px-3 py-2 text-slate-700 dark:text-slate-300">
+                                    Page 1 of 1
+                                </span>
+                            </li>
+
+                            <li>
+                                <button
+                                    className="transition duration-200 border items-center justify-center py-2 px-2 rounded-md cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 dark:focus:ring-slate-700 text-slate-800 dark:text-slate-300 border-transparent disabled:opacity-50"
+                                >
+                                    <ChevronRight className="stroke-1.5 h-4 w-4" />
+                                </button>
+                            </li>
+                            <li>
+                                <button
+                                    className="transition duration-200 border items-center justify-center py-2 px-2 rounded-md cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 dark:focus:ring-slate-700 text-slate-800 dark:text-slate-300 border-transparent disabled:opacity-50"
+                                >
+                                    <ChevronsRight className="stroke-1.5 h-4 w-4" />
+                                </button>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
-        </div>
+        </>
     )
 }
 

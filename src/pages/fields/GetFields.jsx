@@ -1,235 +1,263 @@
-import React, { useState, useEffect } from 'react'
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, EllipsisVertical, KeySquare, ListChecks, PenLine, Search, Trash2 } from 'lucide-react'
-import { Link, useNavigate } from 'react-router-dom'
-import { deleteField, fetchFields } from '../../api'
-import { toast } from 'react-toastify'
+import React, { useState, useEffect } from 'react';
+import {
+    CheckSquare,
+    ChevronLeft,
+    ChevronRight,
+    ChevronsRight,
+    Eye,
+    Plus,
+    Search,
+    Trash2
+} from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { fetchFields, deleteField } from '../../api';
 
 const GetFields = () => {
-    const [fields, setFields] = useState([]);
-    const [filteredFields, setFilteredFields] = useState([]);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [currentPage, setCurrentPage] = useState(1);
-    const [fieldsPerPage] = useState(10);
-    const [loading, setLoading] = useState(false);
-    const [dropdownOpen, setDropdownOpen] = useState(null);
     const navigate = useNavigate();
+    const [fields, setFields] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [sortOrder, setSortOrder] = useState('newest');
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
 
+    // Fetch fields from the API on component mount
     useEffect(() => {
         const loadFields = async () => {
-            setLoading(true);
             try {
                 const data = await fetchFields();
                 setFields(data);
-                setFilteredFields(data);
             } catch (error) {
-                toast.error('Failed to load fields.');
-            } finally {
-                setLoading(false);
+                toast.error('Failed to fetch fields');
             }
         };
         loadFields();
     }, []);
 
-    const handleSearch = (e) => {
-        const term = e.target.value;
-        setSearchTerm(term);
-        if (term) {
-            const filtered = fields.filter((field) =>
-                field.name.toLowerCase().includes(term.toLowerCase()) ||
-                field.address?.toLowerCase().includes(term.toLowerCase())
-            );
-            setFilteredFields(filtered);
-            setCurrentPage(1); // Reset to the first page when searching
-        } else {
-            setFilteredFields(fields);
-        }
+    // Filter fields based on search term (searching in name and address)
+    const filteredFields = fields.filter(field => {
+        const term = searchTerm.toLowerCase();
+        return (
+            (field.name || '').toLowerCase().includes(term) ||
+            (field.address || '').toLowerCase().includes(term)
+        );
+    });
+
+    // Sort fields by ID (assuming higher ID means newer)
+    const sortedFields = filteredFields.sort((a, b) => {
+        return sortOrder === 'newest' ? b.id - a.id : a.id - b.id;
+    });
+
+    const totalPages = Math.ceil(sortedFields.length / itemsPerPage);
+    const currentFields = sortedFields.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+
+    // Event handlers
+    const handleAddField = () => {
+        navigate('/field/add');
     };
 
-    const toggleDropdown = (fieldId) => {
-        setDropdownOpen(dropdownOpen === fieldId ? null : fieldId);
+    const handleShowField = (fieldId) => {
+        navigate(`/field/${fieldId}`);
     };
 
-    const handleEdit = (fieldId) => {
-        navigate(`/field/edit/${fieldId}`);
+    const handleEditField = (fieldId) => {
+        navigate(`/field/${fieldId}/edit`);
     };
 
-    const handleDelete = async (fieldId) => {
+    const handleDeleteField = async (fieldId) => {
         if (window.confirm('Are you sure you want to delete this field?')) {
             try {
                 await deleteField(fieldId);
-                setFields(fields.filter((field) => field.id !== fieldId));
-                setFilteredFields(filteredFields.filter((field) => field.id !== fieldId));
-                toast.success('field deleted successfully.');
+                toast.success('Field deleted successfully');
+                setFields(prev => prev.filter(field => field.id !== fieldId));
             } catch (error) {
                 toast.error('Failed to delete field.');
             }
         }
     };
 
-    // Pagination logic
-    const indexOfLastField = currentPage * fieldsPerPage;
-    const indexOfFirstField = indexOfLastField - fieldsPerPage;
-    const currentFields = filteredFields.slice(indexOfFirstField, indexOfLastField);
-
-    const totalPages = Math.ceil(filteredFields.length / fieldsPerPage);
-
-    const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
     return (
-        <div className="px-5 mt-16">
-            <div className="container">
-                <div className="grid grid-cols-12 gap-x-6 gap-y-10">
-                    <div className="col-span-12">
-                        <div className="flex flex-col gap-y-3 md:h-10 md:flex-row md:items-center">
-                            <div className="text-base font-medium group-[.mode--light]:text-white">
-                                Fields
-                            </div>
-                            <div className="flex flex-col gap-x-3 gap-y-2 sm:flex-row md:ml-auto">
-                                <Link to='/field/add' className="inline-flex items-center justify-center px-3 py-2 font-medium text-white transition duration-200 border rounded-md shadow-sm cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 bg-primary border-primary">
-                                    <PenLine className='mr-2 h-4 w-4 stroke-[1.3]' />
-                                    Add New Field
-                                </Link>
-                            </div>
-                        </div>
-                        <div className="mt-3.5 flex flex-col gap-8">
-                            <div className="flex flex-col box box--stacked">
-                                <div className="flex flex-col p-5 gap-y-2 sm:flex-row sm:items-center">
-                                    <div>
-                                        <div className="relative">
-                                            <Search className="absolute inset-y-0 left-0 z-10 my-auto ml-3 h-4 w-4 stroke-[1.3] text-slate-500" />
-                                            <input
-                                                type="text"
-                                                value={searchTerm}
-                                                onChange={handleSearch}
-                                                placeholder="Search fields..."
-                                                className="disabled:bg-slate-100 disabled:cursor-not-allowed dark:disabled:bg-darkmode-800/50 dark:disabled:border-transparent [&[readonly]]:bg-slate-100 [&[readonly]]:cursor-not-allowed [&[readonly]]:dark:bg-darkmode-800/50 [&[readonly]]:dark:border-transparent transition duration-200 ease-in-out w-full text-sm border-slate-200 shadow-sm placeholder:text-slate-400/90 focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus:border-primary focus:border-opacity-40 dark:bg-darkmode-800 dark:border-transparent dark:focus:ring-slate-700 dark:focus:ring-opacity-50 dark:placeholder:text-slate-500/80 [&[type='file']]:border file:mr-4 file:py-2 file:px-4 file:rounded-l-md file:border-0 file:border-r-[1px] file:border-slate-100/10 file:text-sm file:font-semibold file:bg-slate-100 file:text-slate-500/70 hover:file:bg-200 group-[.form-inline]:flex-1 group-[.input-group]:rounded-none group-[.input-group]:[&:not(:first-child)]:border-l-transparent group-[.input-group]:first:rounded-l group-[.input-group]:last:rounded-r group-[.input-group]:z-10 rounded-[0.5rem] pl-9 sm:w-64"
+        <>
+            {/* Header */}
+            <div className="intro-y col-span-12 mt-8 flex flex-wrap items-center xl:flex-nowrap">
+                <h2 className="mr-auto text-lg font-medium">Fields</h2>
+                <button
+                    onClick={handleAddField}
+                    className="transition duration-200 border inline-flex items-center justify-center py-2 px-3 rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 dark:focus:ring-slate-700 dark:focus:ring-opacity-50 bg-primary border-primary text-white dark:border-primary mr-2 shadow-md"
+                >
+                    Add New Field
+                    <span className="flex h-5 w-5 items-center justify-center ml-1">
+                        <Plus className="stroke-1.5 h-4 w-4" />
+                    </span>
+                </button>
+            </div>
+
+            {/* SEARCH & SORT */}
+            <div className="intro-y col-span-12 mt-2 flex flex-wrap items-center gap-2 xl:flex-nowrap">
+                <div className="relative w-56 text-slate-500">
+                    <input
+                        type="text"
+                        placeholder="Search name or address..."
+                        className="disabled:bg-slate-100 disabled:cursor-not-allowed dark:disabled:bg-800/50 dark:disabled:border-transparent transition duration-200 ease-in-out text-sm border-slate-200 shadow-sm rounded-md placeholder:text-slate-400/90 focus:ring-4 focus:ring-primary focus:border-primary focus:border-opacity-40 dark:bg-800 dark:border-transparent dark:focus:ring-slate-700 dark:focus:ring-opacity-50 !box w-56 pr-10"
+                        value={searchTerm}
+                        onChange={(e) => {
+                            setSearchTerm(e.target.value);
+                            setCurrentPage(1);
+                        }}
+                    />
+                    <Search className="stroke-1.5 absolute inset-y-0 right-0 my-auto mr-3 h-4 w-4" />
+                </div>
+
+                <select
+                    className="disabled:bg-slate-100 disabled:cursor-not-allowed dark:disabled:bg-800/50 transition duration-200 ease-in-out text-sm border-slate-200 shadow-sm rounded-md py-2 px-3 pr-8 focus:ring-4 focus:ring-primary focus:ring-opacity-20 dark:bg-800 dark:border-transparent dark:focus:ring-slate-700 dark:focus:ring-opacity-50 !box w-48"
+                    value={sortOrder}
+                    onChange={(e) => {
+                        setSortOrder(e.target.value);
+                        setCurrentPage(1);
+                    }}
+                >
+                    <option value="newest">Newest</option>
+                    <option value="oldest">Oldest</option>
+                </select>
+            </div>
+
+            {/* TABLE */}
+            <div className="intro-y col-span-12 overflow-auto 2xl:overflow-visible">
+                <table className="w-full text-left -mt-2 border-separate border-spacing-y-[10px]">
+                    <thead>
+                        <tr>
+                            <th className="font-medium px-5 py-3 dark:border-300 whitespace-nowrap border-b-0">
+                                <input
+                                    type="checkbox"
+                                    className="transition-all duration-100 ease-in-out shadow-sm border-slate-200 cursor-pointer rounded focus:ring-4 focus:ring-offset-0 focus:ring-primary focus:ring-opacity-20 dark:bg-800 dark:border-transparent dark:focus:ring-slate-700 dark:focus:ring-opacity-50"
+                                />
+                            </th>
+                            <th className="font-medium px-5 py-3 dark:border-300 whitespace-nowrap border-b-0">
+                                Name
+                            </th>
+                            <th className="font-medium px-5 py-3 dark:border-300 whitespace-nowrap border-b-0 text-center">
+                                Address
+                            </th>
+                            <th className="font-medium px-5 py-3 dark:border-300 whitespace-nowrap border-b-0 text-center">
+                                Action
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {currentFields.map(field => (
+                            <tr key={field.id} className="intro-x">
+                                <td className="px-5 py-3 border-b dark:border-300 box whitespace-nowrap border-x-0 shadow-[5px_3px_5px_#00000005] dark:bg-600">
+                                    <input
+                                        type="checkbox"
+                                        className="transition-all duration-100 ease-in-out shadow-sm border-slate-200 cursor-pointer rounded focus:ring-4 focus:ring-offset-0 focus:ring-primary focus:ring-opacity-20 dark:bg-800 dark:border-transparent dark:focus:ring-slate-700 dark:focus:ring-opacity-50"
+                                    />
+                                </td>
+                                <td className="px-5 py-3 border-b dark:border-300 box whitespace-nowrap border-x-0 shadow-[5px_3px_5px_#00000005] dark:bg-600">
+                                    <div className="flex items-center">
+                                        <div className="image-fit zoom-in h-9 w-9">
+                                            <img
+                                                src={
+                                                    field.avatar ||
+                                                    'https://cdn-icons-png.flaticon.com/512/10337/10337609.png'
+                                                }
+                                                className="tooltip cursor-pointer rounded-lg border-white shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)] dark:shadow-[0px_0px_0px_2px_#3f4865,_1px_1px_5px_rgba(0,0,0,0.32)]"
+                                                alt="Field avatar"
                                             />
                                         </div>
+                                        <div className="ml-4">
+                                            <span className="whitespace-nowrap font-medium">
+                                                {field.name || 'N/A'}
+                                            </span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="overflow-auto xl:overflow-visible">
-                                    {loading ? (
-                                        <div className="py-5 text-center">Loading fields...</div>
-                                    ) : (
-                                        <table className="w-full text-left border-b border-slate-200/60">
-                                            <thead>
-                                                <tr>
-                                                    <td className="w-5 px-5 py-4 font-medium border-t border-b bg-slate-50 text-slate-500">
-                                                        <input type="checkbox" className="transition-all duration-100 ease-in-out rounded shadow-sm cursor-pointer border-slate-200 focus:ring-4 focus:ring-primary focus:ring-opacity-20" />
-                                                    </td>
-                                                    <td className="px-5 py-4 font-medium border-t border-b bg-slate-50 text-slate-500">
-                                                        Name
-                                                    </td>
-                                                    <td className="px-5 py-4 font-medium border-t border-b bg-slate-50 text-slate-500">
-                                                        Address
-                                                    </td>
-                                                    <td className="w-20 px-5 py-4 font-medium text-center border-t border-b bg-slate-50 text-slate-500">
-                                                        Action
-                                                    </td>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {currentFields.map((field) => (
-                                                    <tr key={field.id} className="[&_td]:last:border-b-0">
-                                                        <td className="px-5 py-4 border-b border-dashed">
-                                                            <input type="checkbox" className="transition-all duration-100 ease-in-out rounded shadow-sm cursor-pointer border-slate-200 focus:ring-4 focus:ring-primary focus:ring-opacity-20" />
-                                                        </td>
-                                                        <td className="px-5 py-4 border-b border-dashed">
-                                                            {field.name || 'N/A'}
-                                                        </td>
-                                                        <td className="px-5 py-4 border-b border-dashed">
-                                                            {field.address || 'N/A'}
-                                                        </td>
-                                                        <td className="relative px-5 py-4 border-b border-dashed">
-                                                            <div className="flex items-center justify-center">
-                                                                <div className="relative h-5">
-                                                                    <button
-                                                                        className="w-5 h-5 cursor-pointer text-slate-500"
-                                                                        onClick={() => toggleDropdown(field.id)}
-                                                                    >
-                                                                        <EllipsisVertical className="stroke-[1] w-5 h-5 fill-slate-400/70 stroke-slate-400/70" />
-                                                                    </button>
-                                                                    <div className={`dropdown-menu absolute right-0 mt-2 z-[9999] ${dropdownOpen === field.id ? 'block' : 'hidden'}`}>
-                                                                        <div className="w-40 p-2 bg-white rounded-md shadow-lg dropdown-content">
-                                                                            <button
-                                                                                onClick={() => handleEdit(field.id)}
-                                                                                className="flex items-center p-2 transition duration-300 ease-in-out rounded-md cursor-pointer hover:bg-slate-200/60"
-                                                                            >
-                                                                                <ListChecks className="stroke-[1] mr-2 h-4 w-4" />
-                                                                                Edit
-                                                                            </button>
-                                                                            <button
-                                                                                onClick={() => handleDelete(field.id)}
-                                                                                className="flex items-center p-2 transition duration-300 ease-in-out rounded-md cursor-pointer hover:bg-slate-200/60 text-danger"
-                                                                            >
-                                                                                <Trash2 className="stroke-[1] mr-2 h-4 w-4" />
-                                                                                Delete
-                                                                            </button>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    )}
-                                </div>
-                                <div className="flex flex-col-reverse flex-wrap items-center p-5 flex-reverse gap-y-2 sm:flex-row">
-                                    <nav className="flex-1 w-full mr-auto sm:w-auto">
-                                        <ul className="flex w-full mr-0 sm:mr-auto sm:w-auto">
-                                            <li className="flex-1 sm:flex-initial">
-                                                <button
-                                                    onClick={() => paginate(1)}
-                                                    disabled={currentPage === 1}
-                                                    className="transition duration-200 border items-center justify-center py-2 rounded-md cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 hover:bg-opacity-90 hover:border-opacity-90 text-center disabled:opacity-70 disabled:cursor-not-allowed min-w-0 sm:min-w-[40px] shadow-none font-normal flex border-transparent text-slate-800 sm:mr-2 dark:text-slate-300 px-1 sm:px-3"
-                                                >
-                                                    <ChevronsLeft className="stroke-[1] h-4 w-4" />
-                                                </button>
-                                            </li>
-                                            <li className="flex-1 sm:flex-initial">
-                                                <button
-                                                    onClick={() => paginate(currentPage - 1)}
-                                                    disabled={currentPage === 1}
-                                                    className="transition duration-200 border items-center justify-center py-2 rounded-md cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 hover:bg-opacity-90 hover:border-opacity-90 text-center disabled:opacity-70 disabled:cursor-not-allowed min-w-0 sm:min-w-[40px] shadow-none font-normal flex border-transparent text-slate-800 sm:mr-2 dark:text-slate-300 px-1 sm:px-3"
-                                                >
-                                                    <ChevronLeft className="stroke-[1] h-4 w-4" />
-                                                </button>
-                                            </li>
-                                            <li className="flex-1 sm:flex-initial">
-                                                <span className="transition duration-200 border items-center justify-center py-2 rounded-md min-w-0 sm:min-w-[40px] shadow-none font-normal flex border-transparent text-slate-800 sm:mr-2 dark:text-slate-300 px-1 sm:px-3">
-                                                    Page {currentPage} of {totalPages}
-                                                </span>
-                                            </li>
-                                            <li className="flex-1 sm:flex-initial">
-                                                <button
-                                                    onClick={() => paginate(currentPage + 1)}
-                                                    disabled={currentPage === totalPages}
-                                                    className="transition duration-200 border items-center justify-center py-2 rounded-md cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 hover:bg-opacity-90 hover:border-opacity-90 text-center disabled:opacity-70 disabled:cursor-not-allowed min-w-0 sm:min-w-[40px] shadow-none font-normal flex border-transparent text-slate-800 sm:mr-2 dark:text-slate-300 px-1 sm:px-3"
-                                                >
-                                                    <ChevronRight className="stroke-[1] h-4 w-4" />
-                                                </button>
-                                            </li>
-                                            <li className="flex-1 sm:flex-initial">
-                                                <button
-                                                    onClick={() => paginate(totalPages)}
-                                                    disabled={currentPage === totalPages}
-                                                    className="transition duration-200 border items-center justify-center py-2 rounded-md cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 hover:bg-opacity-90 hover:border-opacity-90 text-center disabled:opacity-70 disabled:cursor-not-allowed min-w-0 sm:min-w-[40px] shadow-none font-normal flex border-transparent text-slate-800 sm:mr-2 dark:text-slate-300 px-1 sm:px-3"
-                                                >
-                                                    <ChevronsRight className="stroke-[1] h-4 w-4" />
-                                                </button>
-                                            </li>
-                                        </ul>
-                                    </nav>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                                </td>
+                                <td className="px-5 py-3 border-b dark:border-300 box whitespace-nowrap border-x-0 text-center shadow-[5px_3px_5px_#00000005] dark:bg-600">
+                                    {field.address || 'N/A'}
+                                </td>
+                                <td className="px-5 py-3 border-b dark:border-300 box w-56 border-x-0 text-center shadow-[5px_3px_5px_#00000005] dark:bg-600">
+                                    <div className="flex items-center justify-center">
+                                        <button
+                                            onClick={() => handleShowField(field.id)}
+                                            className="mr-3 flex items-center text-blue-600"
+                                        >
+                                            <Eye className="stroke-1.5 mr-1 h-4 w-4" />
+                                            View
+                                        </button>
+                                        <button
+                                            onClick={() => handleEditField(field.id)}
+                                            className="mr-3 flex items-center text-green-600"
+                                        >
+                                            <CheckSquare className="stroke-1.5 mr-1 h-4 w-4" />
+                                            Edit
+                                        </button>
+                                        <button
+                                            onClick={() => handleDeleteField(field.id)}
+                                            className="flex items-center text-danger"
+                                        >
+                                            <Trash2 className="stroke-1.5 mr-1 h-4 w-4" />
+                                            Delete
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
-        </div>
-    )
-}
 
-export default GetFields
+            {/* PAGINATION */}
+            <div className="intro-y col-span-12 flex flex-wrap items-center sm:flex-row sm:flex-nowrap mt-4">
+                <nav className="w-full sm:mr-auto sm:w-auto">
+                    <ul className="flex w-full mr-0 sm:mr-auto sm:w-auto gap-2">
+                        <li>
+                            <button
+                                onClick={() => setCurrentPage(1)}
+                                disabled={currentPage === 1}
+                                className="transition duration-200 border items-center justify-center py-2 px-2 rounded-md cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 dark:focus:ring-slate-700 text-slate-800 dark:text-slate-300 border-transparent disabled:opacity-50"
+                            >
+                                First
+                            </button>
+                        </li>
+                        <li>
+                            <button
+                                onClick={() => setCurrentPage(currentPage - 1)}
+                                disabled={currentPage === 1}
+                                className="transition duration-200 border items-center justify-center py-2 px-2 rounded-md cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 dark:focus:ring-slate-700 text-slate-800 dark:text-slate-300 border-transparent disabled:opacity-50"
+                            >
+                                <ChevronLeft className="stroke-1.5 h-4 w-4" />
+                            </button>
+                        </li>
+                        <li>
+                            <span className="px-3 py-2 text-slate-700 dark:text-slate-300">
+                                Page {currentPage} of {totalPages}
+                            </span>
+                        </li>
+                        <li>
+                            <button
+                                onClick={() => setCurrentPage(currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                                className="transition duration-200 border items-center justify-center py-2 px-2 rounded-md cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 dark:focus:ring-slate-700 text-slate-800 dark:text-slate-300 border-transparent disabled:opacity-50"
+                            >
+                                <ChevronRight className="stroke-1.5 h-4 w-4" />
+                            </button>
+                        </li>
+                        <li>
+                            <button
+                                onClick={() => setCurrentPage(totalPages)}
+                                disabled={currentPage === totalPages}
+                                className="transition duration-200 border items-center justify-center py-2 px-2 rounded-md cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 dark:focus:ring-slate-700 text-slate-800 dark:text-slate-300 border-transparent disabled:opacity-50"
+                            >
+                                <ChevronsRight className="stroke-1.5 h-4 w-4" />
+                            </button>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </>
+    );
+};
+
+export default GetFields;

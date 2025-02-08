@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-const baseURL = 'https://eps-api.onrender.com/api';
+const baseURL =
+    import.meta.env.MODE === 'production'
+        ? import.meta.env.VITE_API_BASE_URL_PROD
+        : import.meta.env.VITE_API_BASE_URL;
 
 const apiClient = axios.create({
     baseURL,

@@ -241,7 +241,7 @@ const GetAttendances = () => {
                                             </div>
                                             <div className="ml-4">
                                                 <span className="whitespace-nowrap font-medium">{emp.name}</span>
-                                                <div className="mt-0.5 text-xs text-slate-500">ID: {emp.id}</div>
+                                                <div className="mt-0.5 text-xs text-slate-500">TAG ID: {emp.tag_id}</div>
                                             </div>
                                         </div>
                                     </td>

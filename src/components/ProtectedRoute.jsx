@@ -7,13 +7,22 @@ const ProtectedRoute = () => {
     const location = useLocation()
 
     if (!token) {
-        // Show toast error (or add your own logic)
+        // If no token found, redirect to login page
         toast.error('Unauthorized user cannot access that page.')
-        // Redirect to login with optional query param for further logic
         return <Navigate to="/?error=unauthorized" state={{ from: location }} replace />
     }
 
-    // If user is logged in, render child routes
+    // Check if the token has expired
+    const expirationTime = localStorage.getItem('tokenExpiration') || 0;
+    if (Date.now() > expirationTime) {
+        // If token expired, remove token and user data
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
+        toast.error('Session expired. Please log in again.')
+
+        return <Navigate to="/?error=session_expired" state={{ from: location }} replace />
+    }
+
     return <Outlet />
 }
 

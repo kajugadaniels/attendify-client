@@ -34,9 +34,19 @@ apiClient.interceptors.response.use(
 export const loginUser = async (email, password) => {
     try {
         const response = await apiClient.post('/auth/login/', { email, password });
-        return response.data;
+        const { token, user, message, expires_in } = response.data;
+
+        // Store token and user data
+        localStorage.setItem('token', token)
+        localStorage.setItem('user', JSON.stringify(user))
+
+        // Set expiration time (e.g., expires_in is in seconds)
+        const expirationTime = Date.now() + expires_in * 1000;
+        localStorage.setItem('tokenExpiration', expirationTime)
+
+        return { token, user, message }
     } catch (error) {
-        throw error;
+        throw error
     }
 };
 

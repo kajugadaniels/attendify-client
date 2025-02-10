@@ -46,19 +46,20 @@ const Header = () => {
 
     const handleLogout = async () => {
         try {
-            // (Optional) If you want to notify the backend to delete the token:
+            // Optional: If you want to notify the backend to delete the token
             await logoutUser()
-
-            // Clear local storage
+    
+            // Clear local storage and token
             localStorage.removeItem('token')
             localStorage.removeItem('user')
-
+            localStorage.removeItem('tokenExpiration')
+    
             toast.success('You have successfully logged out.')
             navigate('/')
         } catch (error) {
             toast.error('An error occurred during logout. Please try again.')
         }
-    }
+    }    
 
     return (
         <div className="relative z-[51] flex h-[67px] items-center border-b border-slate-200">

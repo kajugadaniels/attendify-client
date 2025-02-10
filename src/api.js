@@ -1,9 +1,16 @@
 import axios from 'axios';
 
+<<<<<<< HEAD
+const API_BASE_URL =
+    window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost'
+        ? 'http://127.0.0.1:8000/api'
+        : 'https://www.api.icotrix.com/api';
+=======
 const baseURL =
     import.meta.env.MODE === 'production'
         ? import.meta.env.VITE_API_BASE_URL_PROD
         : import.meta.env.VITE_API_BASE_URL;
+>>>>>>> ff45a93864a223852b44ef5853823cccc4aaec79
 
 const apiClient = axios.create({
     baseURL,

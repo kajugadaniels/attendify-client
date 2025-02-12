@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ToggleRight, UserCircle } from 'lucide-react'
 import { toast } from 'react-toastify'
-import { logoutUser } from '../api'
+import { logoutUser } from '../api' // <--- Make sure your logoutUser function is imported
 
 const Header = () => {
     const [dropdownOpen, setDropdownOpen] = useState(false)
@@ -107,7 +107,6 @@ const Header = () => {
                             Profile
                         </a>
                         <div className="h-px my-2 -mx-2 bg-slate-200/60 dark:bg-darkmode-400 bg-white/[0.08]" />
-                        
                         <button
                             type="button"
                             onClick={handleLogout}

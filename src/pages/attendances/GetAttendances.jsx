@@ -142,11 +142,17 @@ const GetAttendances = () => {
     // Handler for marking attendance for an employee using his tag_id
     const handleMarkAttendance = async (emp) => {
         try {
-            await markAttendance([emp.tag_id]);
-            toast.success(`Attendance marked for ${emp.name}`);
-            // Optionally, refresh attendances or update state locally:
-            const attendanceData = await fetchAttendances();
-            setAttendances(attendanceData);
+            const response = await markAttendance([emp.tag_id]);
+            // Check if backend returned errors
+            if (response.errors && Object.keys(response.errors).length > 0) {
+                const errorMsg = response.errors[emp.tag_id] || "Attendance error.";
+                toast.error(errorMsg);
+            } else {
+                toast.success(response.message);
+                // Optionally, refresh attendances after marking
+                const attendanceData = await fetchAttendances();
+                setAttendances(attendanceData);
+            }
         } catch (error) {
             console.error('Error marking attendance:', error);
             toast.error('Failed to mark attendance.');

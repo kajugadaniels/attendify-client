@@ -2,16 +2,16 @@ import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
 import {
-    Calendar,
     ChevronLeft,
     ChevronRight,
     ChevronsRight,
     Eye,
-    Search
+    Search,
+    Calendar
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { format, isSameDay } from 'date-fns';
-import { fetchAssignments, fetchAttendances } from '../../api';
+import { fetchAssignments, fetchAttendances, markAttendance } from '../../api';
 
 const GetAttendances = () => {
     const navigate = useNavigate();
@@ -137,6 +137,20 @@ const GetAttendances = () => {
 
     const handleShowEmployee = (employeeId) => {
         navigate(`/employee/${employeeId}`);
+    };
+
+    // Handler for marking attendance for an employee using his tag_id
+    const handleMarkAttendance = async (emp) => {
+        try {
+            await markAttendance([emp.tag_id]);
+            toast.success(`Attendance marked for ${emp.name}`);
+            // Optionally, refresh attendances or update state locally:
+            const attendanceData = await fetchAttendances();
+            setAttendances(attendanceData);
+        } catch (error) {
+            console.error('Error marking attendance:', error);
+            toast.error('Failed to mark attendance.');
+        }
     };
 
     const formatDate = (dateObj) => dateObj.toISOString().split('T')[0];
@@ -303,6 +317,7 @@ const GetAttendances = () => {
                                                 <Eye className="stroke-1.5 mr-1 h-4 w-4" /> View
                                             </button>
                                             <button
+                                                onClick={() => handleMarkAttendance(emp)}
                                                 className="mr-3 flex items-center text-success"
                                             >
                                                 <Calendar className="stroke-1.5 mr-1 h-4 w-4" /> Mark Attendance

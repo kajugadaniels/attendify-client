@@ -1,7 +1,7 @@
 import React from 'react'
 import { Route, Routes } from 'react-router-dom'
 import AppLayout from './layouts/AppLayout'
-import { AddAssignment, AddDepartment, AddEmployee, AddField, AddUser, Dashboard, EditAssignment, EditDepartment, EditEmployee, EditField, EditUser, EndAssignment, GetAssignments, GetAttendances, GetDepartments, GetEmployees, GetFields, GetUsers, Login, NotFound, Profile, ShowAssignment, ShowDepartment, ShowEmployee, ShowField, ShowUser } from './pages'
+import { AddAssignment, AddDepartment, AddEmployee, AddField, AddUser, Dashboard, EditAssignment, EditDepartment, EditEmployee, EditField, EditUser, EmployeeDetails, EndAssignment, GetAssignments, GetAttendances, GetDepartments, GetEmployees, GetFields, GetUsers, Login, NotFound, Profile, ShowAssignment, ShowDepartment, ShowEmployee, ShowField, ShowUser } from './pages'
 import ProtectedRoute from './components/ProtectedRoute'
 
 const AppRoutes = () => {
@@ -33,6 +33,7 @@ const AppRoutes = () => {
                     <Route path="/employee/add" element={<AddEmployee />} />
                     <Route path="/employee/:id" element={<ShowEmployee />} />
                     <Route path="/employee/:id/edit" element={<EditEmployee />} />
+                    <Route path="/employee/:id/details" element={<EmployeeDetails />} />
 
                     <Route path="/assignments" element={<GetAssignments />} />
                     <Route path="/assignment/add" element={<AddAssignment />} />

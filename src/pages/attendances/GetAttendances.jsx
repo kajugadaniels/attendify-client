@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import { toast } from 'react-toastify';
 import {
+    Calendar,
     ChevronLeft,
     ChevronRight,
     ChevronsRight,
@@ -300,6 +301,11 @@ const GetAttendances = () => {
                                                 className="mr-3 flex items-center text-blue-600"
                                             >
                                                 <Eye className="stroke-1.5 mr-1 h-4 w-4" /> View
+                                            </button>
+                                            <button
+                                                className="mr-3 flex items-center text-success"
+                                            >
+                                                <Calendar className="stroke-1.5 mr-1 h-4 w-4" /> Mark Attendance
                                             </button>
                                         </div>
                                     </td>

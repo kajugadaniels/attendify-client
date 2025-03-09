@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchEmployeeDetails, deleteEmployee } from '../../api';
 import { toast } from 'react-toastify';
 import { Edit, Trash2, Eye, ChevronRight, ChevronLeft } from 'lucide-react';
+import QRCode from 'react-qr-code';
+import { toPng } from 'html-to-image';
 
 const ShowEmployee = () => {
     const { id } = useParams();
@@ -20,6 +22,9 @@ const ShowEmployee = () => {
     // Pagination states
     const [currentPage, setCurrentPage] = useState(1);
     const pageSize = 10;
+
+    // Ref for QR code download
+    const qrCodeRef = useRef();
 
     // Load employee details and attendance history from API
     useEffect(() => {
@@ -84,6 +89,26 @@ const ShowEmployee = () => {
 
     const totalSalary = computeTotalSalary(filteredAttendance);
 
+    // Generate QR code value based on employee id
+    const qrCodeValue = `https://www.fastfast.nexcodes.dev/employee/${employee.id}/details`;
+
+    // Handler to download the generated QR code as an image
+    const downloadQRCode = () => {
+        if (qrCodeRef.current) {
+            toPng(qrCodeRef.current)
+                .then((dataUrl) => {
+                    const link = document.createElement('a');
+                    link.download = `employee_${employee.name}_qr_code.png`;
+                    link.href = dataUrl;
+                    link.click();
+                })
+                .catch((error) => {
+                    console.error('Error generating QR code image:', error);
+                    toast.error('Failed to download QR code.');
+                });
+        }
+    };
+
     return (
         <div className="p-6">
             {/* Header */}
@@ -91,9 +116,9 @@ const ShowEmployee = () => {
                 <h2 className="mr-auto text-lg font-medium">Employee Details</h2>
             </div>
 
-            {/* BEGIN: Employee Details */}
+            {/* Employee & Attendance Details */}
             <div className="intro-y mt-5 grid grid-cols-11 gap-5">
-                {/* Left Column: Employee Details */}
+                {/* Left Column: Employee Details & QR Code */}
                 <div className="col-span-12 lg:col-span-4 2xl:col-span-3">
                     <div className="box rounded-md p-5">
                         <div className="mb-5 flex items-center border-b border-slate-200/60 pb-5 dark:border-darkmode-400">
@@ -131,15 +156,17 @@ const ShowEmployee = () => {
                             <span className="font-medium">Tag ID:</span>
                             <span className="ml-1">{employee.tag_id || 'N/A'}</span>
                         </div>
-                        <div className="mt-3 flex items-center">
-                            <i data-lucide="credit-card" className="stroke-1.5 mr-2 h-4 w-4 text-slate-500"></i>
-                            <span className="font-medium">National ID:</span>
-                            <span className="ml-1">{employee.nid || 'N/A'}</span>
-                        </div>
-                        <div className="mt-3 flex items-center">
-                            <i data-lucide="dollar-sign" className="stroke-1.5 mr-2 h-4 w-4 text-slate-500"></i>
-                            <span className="font-medium">RSSB Number:</span>
-                            <span className="ml-1">{employee.rssb_number || 'N/A'}</span>
+                        {/* QR Code Section */}
+                        <div className="mt-6 flex flex-col items-center">
+                            <div ref={qrCodeRef} className="p-4 bg-white rounded shadow">
+                                <QRCode value={qrCodeValue} size={128} />
+                            </div>
+                            <button
+                                onClick={downloadQRCode}
+                                className="mt-4 transition duration-200 border shadow-sm inline-flex items-center justify-center py-2 px-3 rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 bg-primary border-primary text-white"
+                            >
+                                Download QR Code
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -186,63 +213,38 @@ const ShowEmployee = () => {
                         <div className="-mt-3 overflow-auto lg:overflow-visible">
                             <table className="w-full text-left">
                                 <thead>
-                                    <tr className="[&:nth-of-type(odd)_td]:bg-slate-100 [&:nth-of-type(odd)_td]:dark:bg-darkmode-300 [&:nth-of-type(odd)_td]:dark:bg-opacity-50">
-                                        <th className="font-medium px-5 py-3 border-b-2 dark:border-darkmode-300 whitespace-nowrap !py-5">
-                                            Date
-                                        </th>
-                                        <th className="font-medium px-5 py-3 border-b-2 dark:border-darkmode-300 whitespace-nowrap">
-                                            Department
-                                        </th>
-                                        <th className="font-medium px-5 py-3 border-b-2 dark:border-darkmode-300 whitespace-nowrap text-center">
-                                            Attended
-                                        </th>
-                                        <th className="font-medium px-5 py-3 border-b-2 dark:border-darkmode-300 whitespace-nowrap text-right">
-                                            Day Salary
-                                        </th>
+                                    <tr className="[&:nth-of-type(odd)_td]:bg-slate-100 [&:nth-of-type(odd)_td]:dark:bg-darkmode-300">
+                                        <th className="font-medium px-5 py-3 border-b-2 dark:border-darkmode-300 whitespace-nowrap">Date</th>
+                                        <th className="font-medium px-5 py-3 border-b-2 dark:border-darkmode-300 whitespace-nowrap">Department</th>
+                                        <th className="font-medium px-5 py-3 border-b-2 dark:border-darkmode-300 whitespace-nowrap text-center">Attended</th>
+                                        <th className="font-medium px-5 py-3 border-b-2 dark:border-darkmode-300 whitespace-nowrap text-right">Day Salary</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {paginatedAttendance.map((record) => (
-                                        <tr
-                                            key={record.id}
-                                            className="[&:nth-of-type(odd)_td]:bg-slate-100 [&:nth-of-type(odd)_td]:dark:bg-darkmode-300 [&:nth-of-type(odd)_td]:dark:bg-opacity-50"
-                                        >
-                                            <td className="px-5 py-3 border-b dark:border-darkmode-300 !py-4">
-                                                {record.date || 'N/A'}
-                                            </td>
-                                            <td className="px-5 py-3 border-b dark:border-darkmode-300">
-                                                {record.department_name || 'N/A'}
-                                            </td>
-                                            <td className="px-5 py-3 border-b dark:border-darkmode-300 text-center">
-                                                {record.attended ? 'Yes' : 'No'}
-                                            </td>
-                                            <td className="px-5 py-3 border-b dark:border-darkmode-300 text-right">
-                                                {record.day_salary || 'N/A'}
-                                            </td>
+                                        <tr key={record.id} className="border-t">
+                                            <td className="px-5 py-3">{record.date || 'N/A'}</td>
+                                            <td className="px-5 py-3">{record.department_name || 'N/A'}</td>
+                                            <td className="px-5 py-3 text-center">{record.attended ? 'Yes' : 'No'}</td>
+                                            <td className="px-5 py-3 text-right">{record.day_salary || 'N/A'}</td>
                                         </tr>
                                     ))}
                                 </tbody>
                                 {paginatedAttendance.length > 0 && (
                                     <tfoot>
                                         <tr>
-                                            <td colSpan="3" className="font-medium px-5 py-3 border-t dark:border-darkmode-300 text-right">
-                                                Total Salary:
-                                            </td>
-                                            <td className="font-medium px-5 py-3 border-t dark:border-darkmode-300 text-right">
-                                                {totalSalary}
-                                            </td>
+                                            <td colSpan="3" className="font-medium px-5 py-3 border-t text-right">Total Salary:</td>
+                                            <td className="font-medium px-5 py-3 border-t text-right">{totalSalary}</td>
                                         </tr>
                                     </tfoot>
                                 )}
                             </table>
-
                             {filteredAttendance.length === 0 && (
                                 <div className="text-center py-4 text-slate-500">
                                     No attendance records found for the selected date range.
                                 </div>
                             )}
                         </div>
-
                         {/* Pagination Controls */}
                         {totalRecords > pageSize && (
                             <div className="mt-4 flex justify-center">
@@ -267,9 +269,7 @@ const ShowEmployee = () => {
                                             </button>
                                         </li>
                                         <li>
-                                            <span className="px-3 py-2">
-                                                Page {currentPage} of {totalPages}
-                                            </span>
+                                            <span className="px-3 py-2">Page {currentPage} of {totalPages}</span>
                                         </li>
                                         <li>
                                             <button
@@ -296,7 +296,6 @@ const ShowEmployee = () => {
                     </div>
                 </div>
             </div>
-            {/* END: Employee & Attendance Details */}
 
             {/* Action Buttons */}
             <div className="mt-6 flex justify-end space-x-4">

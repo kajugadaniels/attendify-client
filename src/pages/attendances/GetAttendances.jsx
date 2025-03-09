@@ -105,7 +105,7 @@ const GetAttendances = () => {
             const record = empAttendances.find(r => isSameDay(new Date(r.date), day));
             if (record) return "Present";
             else {
-                if (day > new Date()) return format(day, "MMM dd");
+                if (day > new Date()) return "Future";
                 else return "Absent";
             }
         });
@@ -160,9 +160,6 @@ const GetAttendances = () => {
                 <h2 className="mr-auto text-lg font-medium">
                     Employee Attendance (7-Day Window)
                 </h2>
-                {/* The old design had additional buttons here.
-                    Since the new functionality does not include "Today Attendance" or "Download PDF",
-                    we leave these out to preserve the new file’s logic. */}
             </div>
 
             <div className="mt-5 grid grid-cols-12 gap-6">
@@ -287,9 +284,10 @@ const GetAttendances = () => {
                                         let bgColor = 'bg-slate-400';
                                         if (status === 'Present') bgColor = 'bg-success';
                                         else if (status === 'Absent') bgColor = 'bg-danger';
+                                        else if (status === 'Future') bgColor = 'bg-warning';
                                         return (
                                             <td key={dayIdx} className="px-5 py-3 border-b dark:border-300 box text-center">
-                                                <span className={`px-3 py-1 inline-block rounded-full text-xs text-dark ${bgColor}`}>
+                                                <span className={`px-3 py-1 inline-block rounded-full text-xs text-white ${bgColor}`}>
                                                     {status}
                                                 </span>
                                             </td>

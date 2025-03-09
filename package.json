@@ -15,10 +15,12 @@
     "@tinymce/tinymce-react": "^5.1.1",
     "axios": "^1.7.7",
     "date-fns": "^4.1.0",
+    "html-to-image": "^1.11.13",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.453.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-qr-code": "^2.0.15",
     "react-router-dom": "^6.27.0",
     "react-select": "^5.10.0",
     "react-toastify": "^10.0.6"

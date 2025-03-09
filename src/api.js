@@ -310,3 +310,12 @@ export const fetchAttendances = async () => {
         throw error;
     }
 };
+
+export const markAttendance = async (tag_ids) => {
+    try {
+        const response = await apiClient.post('/mark-attendance/', { tag_ids });
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};

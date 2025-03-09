@@ -90,7 +90,7 @@ const ShowEmployee = () => {
     const totalSalary = computeTotalSalary(filteredAttendance);
 
     // Generate QR code value based on employee id
-    const qrCodeValue = `https://www.fastfast.nexcodes.dev/employee/${employee.id}/details`;
+    const qrCodeValue = `https://eps-client.vercel.app/employee/${employee.id}/details`;
 
     // Handler to download the generated QR code as an image
     const downloadQRCode = () => {

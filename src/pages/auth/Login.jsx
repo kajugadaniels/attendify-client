@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { loginUser } from '../../api'
+import { LogoWhite, Welcome } from '../../assets/img'
 
 const Login = () => {
     const navigate = useNavigate()
@@ -59,24 +60,22 @@ const Login = () => {
                     <div className="hidden min-h-screen flex-col xl:flex">
                         <a className="-intro-x flex items-center pt-5" href="/">
                             <img
-                                className="w-6"
-                                src="https://midone-html.left4code.com/dist/images/logo.svg"
-                                alt="CAPS"
+                                className="w-48"
+                                src={LogoWhite}
+                                alt="Attendify"
                             />
-                            <span className="ml-3 text-lg text-white">Midone </span>
                         </a>
                         <div className="my-auto">
                             <img
                                 className="-intro-x -mt-16 w-1/2"
-                                src="https://midone-html.left4code.com/dist/images/illustration.svg"
-                                alt="CAPS"
+                                src={Welcome}
+                                alt="Attendify"
                             />
                             <div className="-intro-x mt-10 text-4xl font-medium leading-tight text-white">
-                                A few more clicks to <br />
-                                sign in to your account.
+                                Smart Attendance
                             </div>
                             <div className="-intro-x mt-5 text-lg text-white text-opacity-70 dark:text-slate-400">
-                                Casual Attendance
+                                A cutting-edge system that leverages QR-coded student cards for instant, secure attendance tracking.
                             </div>
                         </div>
                     </div>

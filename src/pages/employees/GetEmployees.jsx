@@ -143,7 +143,7 @@ const GetEmployees = () => {
                                 Phone
                             </th>
                             <th className="font-medium px-5 py-3 dark:border-300 whitespace-nowrap border-b-0 text-center">
-                                RSSB Number
+                                School Name
                             </th>
                             <th className="font-medium px-5 py-3 dark:border-300 whitespace-nowrap border-b-0 text-center">
                                 Action
@@ -188,7 +188,7 @@ const GetEmployees = () => {
                                     {employee.phone_number || 'N/A'}
                                 </td>
                                 <td className="px-5 py-3 border-b dark:border-300 box whitespace-nowrap border-x-0 text-center shadow-[5px_3px_5px_#00000005] dark:bg-600">
-                                    {employee.rssb_number || 'N/A'}
+                                    {employee.school_name || 'N/A'}
                                 </td>
                                 <td className="px-5 py-3 border-b dark:border-300 box w-56 border-x-0 text-center shadow-[5px_3px_5px_#00000005] dark:bg-600">
                                     <div className="flex items-center justify-center">

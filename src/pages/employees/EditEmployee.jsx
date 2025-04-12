@@ -9,12 +9,12 @@ const EditEmployee = () => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         name: '',
-        nid: '',
+        nid: null,
         tag_id: '',
         email: '',
         phone_number: '',
         address: '',
-        rssb_number: ''
+        school_name: ''
     });
     const [loading, setLoading] = useState(false);
     const [dataLoading, setDataLoading] = useState(true);
@@ -31,7 +31,7 @@ const EditEmployee = () => {
                     email: data.employee.email || '',
                     phone_number: data.employee.phone_number || '',
                     address: data.employee.address || '',
-                    rssb_number: data.employee.rssb_number || ''
+                    school_name: data.employee.school_name || ''
                 });
             } catch (error) {
                 toast.error('Failed to load employee details.');
@@ -109,11 +109,10 @@ const EditEmployee = () => {
                                             <input
                                                 type="number"
                                                 name="nid"
-                                                placeholder="Enter National ID"
+                                                placeholder="Enter National ID (Optional)"
                                                 value={formData.nid}
                                                 onChange={handleChange}
                                                 className="w-full text-sm border-slate-200 shadow-sm rounded-md focus:ring-4 focus:ring-primary"
-                                                required
                                             />
                                             <input
                                                 type="number"
@@ -159,13 +158,13 @@ const EditEmployee = () => {
                                         </div>
                                     </div>
 
-                                    {/* Address & RSSB Number */}
+                                    {/* Address & School Name */}
                                     <div className="block sm:flex flex-col items-start pt-5 xl:flex-row">
                                         <label className="inline-block mb-2 xl:mr-10 xl:w-64">
                                             <div className="text-left">
-                                                <div className="font-medium">Address & RSSB Number</div>
+                                                <div className="font-medium">Address & School Name</div>
                                                 <div className="mt-3 text-xs leading-relaxed text-slate-500">
-                                                    Please enter the employee address and RSSB number.
+                                                    Please enter the employee address and School Name.
                                                 </div>
                                             </div>
                                         </label>
@@ -180,10 +179,10 @@ const EditEmployee = () => {
                                                 required
                                             />
                                             <input
-                                                type="number"
-                                                name="rssb_number"
-                                                placeholder="Enter RSSB Number"
-                                                value={formData.rssb_number}
+                                                type="text"
+                                                name="school_name"
+                                                placeholder="Enter School Name"
+                                                value={formData.school_name}
                                                 onChange={handleChange}
                                                 className="w-full text-sm border-slate-200 shadow-sm rounded-md focus:ring-4 focus:ring-primary"
                                                 required

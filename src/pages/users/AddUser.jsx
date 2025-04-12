@@ -7,8 +7,7 @@ import { createUser } from '../../api';
 
 const roleOptions = [
     { value: 'Admin', label: 'Admin' },
-    { value: 'User', label: 'User' },
-    // Add more role options here if needed
+    { value: 'Teacher', label: 'Teacher' },
 ];
 
 const AddUser = () => {

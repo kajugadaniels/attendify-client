@@ -7,7 +7,7 @@ import { fetchUserDetails, updateUser } from '../../api';
 
 const roleOptions = [
     { value: 'Admin', label: 'Admin' },
-    { value: 'User', label: 'User' },
+    { value: 'Teacher', label: 'Teacher' },
     // Add more role options as needed
 ];
 

@@ -132,7 +132,7 @@ const GetUsers = () => {
                 >
                     <option value="">All Roles</option>
                     <option value="Admin">Admin</option>
-                    <option value="User">User</option>
+                    <option value="Teacher">Teacher</option>
                 </select>
 
                 {/* Sorting dropdown using created_at date */}

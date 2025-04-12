@@ -1,6 +1,7 @@
 import React from 'react'
 import { Binoculars, CalendarClock, House, Sofa, Speaker, UserCheck, UsersRound } from 'lucide-react'
 import { useLocation, NavLink } from 'react-router-dom'
+import { LogoWhite } from '../assets/img'
 
 const Sidebar = () => {
     const { pathname } = useLocation()
@@ -18,11 +19,10 @@ const Sidebar = () => {
         <nav className="side-nav hidden w-[80px] overflow-x-hidden pb-16 pr-5 md:block xl:w-[230px]">
             <NavLink className="flex items-center pt-4 pl-5 intro-x" to="/dashboard">
                 <img
-                    className="w-6"
-                    src="https://midone-html.left4code.com/dist/images/logo.svg"
-                    alt="Logo"
+                    className="w-48"
+                    src={LogoWhite}
+                    alt="Attendify"
                 />
-                <span className="hidden ml-3 text-lg text-white xl:block">CAPS</span>
             </NavLink>
             <div className="my-6 side-nav__divider"></div>
             <ul>

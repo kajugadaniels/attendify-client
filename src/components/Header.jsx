@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ToggleRight, UserCircle } from 'lucide-react'
 import { toast } from 'react-toastify'
-import { logoutUser } from '../api' // <--- Make sure your logoutUser function is imported
+import { logoutUser } from '../api'
 
 const Header = () => {
     const [dropdownOpen, setDropdownOpen] = useState(false)
@@ -78,7 +78,7 @@ const Header = () => {
                     onClick={handleToggleDropdown}
                 >
                     <img
-                        src="https://midone-html.left4code.com/dist/images/fakers/profile-6.jpg"
+                        src="https://thumbs.dreamstime.com/b/default-avatar-profile-vector-user-profile-default-avatar-profile-vector-user-profile-profile-179376714.jpg"
                         alt=""
                     />
                 </button>

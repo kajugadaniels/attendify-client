@@ -104,13 +104,6 @@ const ShowDepartment = () => {
                             <span className="font-medium">Name:</span>
                             <span className="ml-1">{department.name || 'N/A'}</span>
                         </div>
-                        <div className="mt-3 flex items-center">
-                            <i data-lucide="dollar-sign" className="stroke-1.5 mr-2 h-4 w-4 text-slate-500"></i>
-                            <span className="font-medium">Day Salary:</span>
-                            <span className="ml-1">
-                                {department.day_salary ? `${department.day_salary} RWF` : 'N/A'}
-                            </span>
-                        </div>
                     </div>
                 </div>
 

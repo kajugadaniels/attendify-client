@@ -127,16 +127,7 @@ const GetDepartments = () => {
                     <thead>
                         <tr>
                             <th className="font-medium px-5 py-3 dark:border-300 whitespace-nowrap border-b-0">
-                                <input
-                                    type="checkbox"
-                                    className="transition-all duration-100 ease-in-out shadow-sm border-slate-200 cursor-pointer rounded focus:ring-4 focus:ring-offset-0 focus:ring-primary focus:ring-opacity-20 dark:bg-800 dark:border-transparent dark:focus:ring-slate-700"
-                                />
-                            </th>
-                            <th className="font-medium px-5 py-3 dark:border-300 whitespace-nowrap border-b-0">
                                 Name
-                            </th>
-                            <th className="font-medium px-5 py-3 dark:border-300 whitespace-nowrap border-b-0 text-center">
-                                Day Salary
                             </th>
                             <th className="font-medium px-5 py-3 dark:border-300 whitespace-nowrap border-b-0 text-center">
                                 Action
@@ -146,12 +137,6 @@ const GetDepartments = () => {
                     <tbody>
                         {currentDepartments.map(department => (
                             <tr key={department.id} className="intro-x">
-                                <td className="px-5 py-3 border-b dark:border-300 box whitespace-nowrap border-x-0 shadow-[5px_3px_5px_#00000005] dark:bg-600">
-                                    <input
-                                        type="checkbox"
-                                        className="transition-all duration-100 ease-in-out shadow-sm border-slate-200 cursor-pointer rounded focus:ring-4 focus:ring-offset-0 focus:ring-primary focus:ring-opacity-20 dark:bg-800 dark:border-transparent dark:focus:ring-slate-700"
-                                    />
-                                </td>
                                 <td className="px-5 py-3 border-b dark:border-300 box whitespace-nowrap border-x-0 shadow-[5px_3px_5px_#00000005] dark:bg-600">
                                     <div className="flex items-center">
                                         <div className="image-fit zoom-in h-9 w-9">
@@ -170,9 +155,6 @@ const GetDepartments = () => {
                                             </span>
                                         </div>
                                     </div>
-                                </td>
-                                <td className="px-5 py-3 border-b dark:border-300 box whitespace-nowrap border-x-0 text-center shadow-[5px_3px_5px_#00000005] dark:bg-600">
-                                    {department.day_salary ? `${department.day_salary} RWF` : 'N/A'}
                                 </td>
                                 <td className="px-5 py-3 border-b dark:border-300 box w-56 border-x-0 text-center shadow-[5px_3px_5px_#00000005] dark:bg-600">
                                     <div className="flex items-center justify-center">

@@ -6,7 +6,7 @@ import { createDepartment } from '../../api';
 
 const AddDepartment = () => {
     const navigate = useNavigate();
-    const [formData, setFormData] = useState({ name: '', day_salary: '' });
+    const [formData, setFormData] = useState({ name: '' });
     const [loading, setLoading] = useState(false);
 
     const handleChange = (e) => {
@@ -54,32 +54,21 @@ const AddDepartment = () => {
                                     <div className="block sm:flex flex-col items-start pt-5 xl:flex-row">
                                         <label className="inline-block mb-2 xl:mr-10 xl:w-64">
                                             <div className="text-left">
-                                                <div className="font-medium">Name & Day Salary</div>
+                                                <div className="font-medium">Department Name</div>
                                                 <div className="mt-3 text-xs leading-relaxed text-slate-500">
-                                                    Please enter the department name and its day salary.
+                                                    Please enter the department name.
                                                 </div>
                                             </div>
                                         </label>
-                                        <div className="mt-3 w-full grid grid-cols-2 gap-3">
-                                            <input
-                                                type="text"
-                                                name="name"
-                                                placeholder="Enter department name"
-                                                value={formData.name}
-                                                onChange={handleChange}
-                                                className="w-full text-sm border-slate-200 shadow-sm rounded-md focus:ring-4 focus:ring-primary"
-                                                required
-                                            />
-                                            <input
-                                                type="number"
-                                                name="day_salary"
-                                                placeholder="Enter day salary"
-                                                value={formData.day_salary}
-                                                onChange={handleChange}
-                                                className="w-full text-sm border-slate-200 shadow-sm rounded-md focus:ring-4 focus:ring-primary"
-                                                required
-                                            />
-                                        </div>
+                                        <input
+                                            type="text"
+                                            name="name"
+                                            placeholder="Enter department name"
+                                            value={formData.name}
+                                            onChange={handleChange}
+                                            className="w-full text-sm border-slate-200 shadow-sm rounded-md focus:ring-4 focus:ring-primary"
+                                            required
+                                        />
                                     </div>
                                 </div>
                             </div>

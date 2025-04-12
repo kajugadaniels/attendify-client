@@ -27,6 +27,13 @@ apiClient.interceptors.response.use(
         return response;
     },
     (error) => {
+        if (error.response && error.response.status === 401) {
+            // Handle invalid token scenario
+            console.error('Unauthorized access. Please log in again.');
+            // Optionally, clear the token and redirect to login page
+            localStorage.removeItem('token');
+            window.location.href = '/';
+        }
         return Promise.reject(error);
     }
 );
@@ -34,19 +41,9 @@ apiClient.interceptors.response.use(
 export const loginUser = async (email, password) => {
     try {
         const response = await apiClient.post('/auth/login/', { email, password });
-        const { token, user, message, expires_in } = response.data;
-
-        // Store token and user data
-        localStorage.setItem('token', token)
-        localStorage.setItem('user', JSON.stringify(user))
-
-        // Set expiration time (e.g., expires_in is in seconds)
-        const expirationTime = Date.now() + expires_in * 1000;
-        localStorage.setItem('tokenExpiration', expirationTime)
-
-        return { token, user, message }
+        return response.data;
     } catch (error) {
-        throw error
+        throw error;
     }
 };
 

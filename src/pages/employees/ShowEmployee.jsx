@@ -34,7 +34,7 @@ const ShowEmployee = () => {
                 setEmployee(data.employee);
                 setAttendanceHistory(data.attendance_history || []);
             } catch (error) {
-                toast.error('Failed to load employee details.');
+                toast.error('Failed to load student details.');
             } finally {
                 setLoading(false);
             }
@@ -44,13 +44,13 @@ const ShowEmployee = () => {
 
     // Handler for deletion
     const handleDelete = async () => {
-        if (window.confirm('Are you sure you want to delete this employee?')) {
+        if (window.confirm('Are you sure you want to delete this student?')) {
             try {
                 await deleteEmployee(id);
-                toast.success('Employee deleted successfully!');
+                toast.success('Student deleted successfully!');
                 navigate('/students');
             } catch (error) {
-                toast.error('Failed to delete employee.');
+                toast.error('Failed to delete student.');
             }
         }
     };
@@ -84,13 +84,13 @@ const ShowEmployee = () => {
         }
     };
 
-    if (loading) return <div>Loading employee details...</div>;
-    if (!employee) return <div>No employee found.</div>;
+    if (loading) return <div>Loading student details...</div>;
+    if (!employee) return <div>No student found.</div>;
 
     const totalSalary = computeTotalSalary(filteredAttendance);
 
-    // Generate QR code value based on employee id
-    const qrCodeValue = `https://eps-client.vercel.app/employee/${employee.id}/details`;
+    // Generate QR code value based on student id
+    const qrCodeValue = `https://eps-client.vercel.app/student/${employee.id}/details`;
 
     // Handler to download the generated QR code as an image
     const downloadQRCode = () => {
@@ -98,7 +98,7 @@ const ShowEmployee = () => {
             toPng(qrCodeRef.current)
                 .then((dataUrl) => {
                     const link = document.createElement('a');
-                    link.download = `employee_${employee.name}_qr_code.png`;
+                    link.download = `student_${employee.name}_qr_code.png`;
                     link.href = dataUrl;
                     link.click();
                 })
@@ -113,7 +113,7 @@ const ShowEmployee = () => {
         <div className="p-6">
             {/* Header */}
             <div className="intro-y mt-8 flex flex-col items-center sm:flex-row">
-                <h2 className="mr-auto text-lg font-medium">Employee Details</h2>
+                <h2 className="mr-auto text-lg font-medium">Student Details</h2>
             </div>
 
             {/* Employee & Attendance Details */}
@@ -122,13 +122,13 @@ const ShowEmployee = () => {
                 <div className="col-span-12 lg:col-span-4 2xl:col-span-3">
                     <div className="box rounded-md p-5">
                         <div className="mb-5 flex items-center border-b border-slate-200/60 pb-5 dark:border-darkmode-400">
-                            <div className="truncate text-base font-medium">Employee Details</div>
+                            <div className="truncate text-base font-medium">Student Details</div>
                             <button
                                 onClick={() => navigate(`/student/${id}/edit`)}
                                 className="ml-auto flex items-center text-primary hover:underline"
                             >
                                 <Edit className="stroke-1.5 mr-2 h-4 w-4" />
-                                Edit Employee
+                                Edit Student
                             </button>
                         </div>
                         <div className="flex items-center">
@@ -311,7 +311,7 @@ const ShowEmployee = () => {
                     className="flex items-center px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700 transition"
                 >
                     <Eye className="mr-2 h-4 w-4" />
-                    Back to Employees
+                    Back to Student
                 </button>
             </div>
         </div>

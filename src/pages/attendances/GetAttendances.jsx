@@ -169,7 +169,7 @@ const GetAttendances = () => {
             <div className="text-center py-10">
                 <h3 className="text-lg font-medium">No Attendance Found</h3>
                 <p className="mt-2 text-slate-500">
-                    Looks like no employees match your criteria.
+                    Looks like no students match your criteria.
                 </p>
             </div>
         );
@@ -179,7 +179,7 @@ const GetAttendances = () => {
             {/* Header */}
             <div className="intro-y col-span-12 mt-8 flex flex-wrap items-center xl:flex-nowrap">
                 <h2 className="mr-auto text-lg font-medium">
-                    Employee Attendance (7-Day Window)
+                    Student Attendance (7-Day Window)
                 </h2>
             </div>
 
@@ -287,7 +287,7 @@ const GetAttendances = () => {
                                             <div className="image-fit zoom-in h-9 w-9">
                                                 <img
                                                     src="https://cdn-icons-png.flaticon.com/512/10337/10337609.png"
-                                                    alt="employee avatar"
+                                                    alt="student avatar"
                                                     className="tooltip cursor-pointer rounded-lg shadow-[0px_0px_0px_2px_#fff,_1px_1px_5px_rgba(0,0,0,0.32)]"
                                                 />
                                             </div>

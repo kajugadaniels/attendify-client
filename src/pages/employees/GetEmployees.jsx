@@ -27,7 +27,7 @@ const GetEmployees = () => {
                 const data = await fetchEmployees();
                 setEmployees(data);
             } catch (error) {
-                toast.error('Failed to fetch employees');
+                toast.error('Failed to fetch students');
             }
         };
         loadEmployees();
@@ -66,13 +66,13 @@ const GetEmployees = () => {
     };
 
     const handleDeleteEmployee = async (employeeId) => {
-        if (window.confirm('Are you sure you want to delete this employee?')) {
+        if (window.confirm('Are you sure you want to delete this student?')) {
             try {
                 await deleteEmployee(employeeId);
-                toast.success('Employee deleted successfully');
+                toast.success('Student deleted successfully');
                 setEmployees(prev => prev.filter(emp => emp.id !== employeeId));
             } catch (error) {
-                toast.error('Failed to delete employee');
+                toast.error('Failed to delete student');
             }
         }
     };
@@ -81,12 +81,12 @@ const GetEmployees = () => {
         <>
             {/* Header */}
             <div className="intro-y col-span-12 mt-8 flex flex-wrap items-center xl:flex-nowrap">
-                <h2 className="mr-auto text-lg font-medium">Employees</h2>
+                <h2 className="mr-auto text-lg font-medium">Students</h2>
                 <button
                     onClick={handleAddEmployee}
                     className="transition duration-200 border inline-flex items-center justify-center py-2 px-3 rounded-md font-medium dark:focus:ring-slate-700 dark:focus:ring-opacity-50 bg-primary border-primary text-white dark:border-primary mr-2 shadow-md"
                 >
-                    Add New Employee
+                    Add New Student
                     <span className="flex h-5 w-5 items-center justify-center ml-1">
                         <Plus className="stroke-1.5 h-4 w-4" />
                     </span>

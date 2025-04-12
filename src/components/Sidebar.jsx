@@ -11,7 +11,7 @@ const Sidebar = () => {
     const isUsersActive = pathname.startsWith('/users') || pathname.startsWith('/user')
     const isFieldsActive = pathname.startsWith('/fields') || pathname.startsWith('/field')
     const isDepartmentsActive = pathname.startsWith('/departments') || pathname.startsWith('/department')
-    const isStudentsActive = pathname.startsWith('/studentss') || pathname.startsWith('/students')
+    const isStudentsActive = pathname.startsWith('/students') || pathname.startsWith('/student')
     const isAssignmentsActive = pathname.startsWith('/assignments') || pathname.startsWith('/assignment')
     const isAttendanceActive = pathname === '/attendance'
 

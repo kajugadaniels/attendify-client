@@ -32,7 +32,7 @@ const EditEmployee = () => {
                     school_name: data.employee.school_name || ''
                 });
             } catch (error) {
-                toast.error('Failed to load employee details.');
+                toast.error('Failed to load student details.');
             } finally {
                 setDataLoading(false);
             }
@@ -50,21 +50,21 @@ const EditEmployee = () => {
         try {
             setLoading(true);
             await updateEmployee(id, formData);
-            toast.success('Employee updated successfully!');
+            toast.success('Student updated successfully!');
             navigate('/students');
         } catch (error) {
-            toast.error('Failed to update employee.');
+            toast.error('Failed to update student.');
         } finally {
             setLoading(false);
         }
     };
 
-    if (dataLoading) return <div>Loading employee details...</div>;
+    if (dataLoading) return <div>Loading student details...</div>;
 
     return (
         <>
             <div className="intro-y col-span-12 mt-8 flex flex-wrap items-center xl:flex-nowrap">
-                <h2 className="mr-auto text-lg font-medium">Edit Employee</h2>
+                <h2 className="mr-auto text-lg font-medium">Edit Student</h2>
                 <a
                     href="/students"
                     className="transition duration-200 border inline-flex items-center justify-center py-2 px-3 rounded-md font-medium bg-primary border-primary text-white mr-2 shadow-md"
@@ -81,7 +81,7 @@ const EditEmployee = () => {
                         <div className="intro-y box mt-5 p-5">
                             <div className="rounded-md border border-slate-200/60 p-5">
                                 <div className="flex items-center border-b pb-5 text-base font-medium">
-                                    Edit Employee
+                                    Edit Student
                                 </div>
                                 <div className="mt-5">
                                     {/* Name, National ID, Tag ID */}
@@ -90,7 +90,7 @@ const EditEmployee = () => {
                                             <div className="text-left">
                                                 <div className="font-medium">Name & National ID</div>
                                                 <div className="mt-3 text-xs leading-relaxed text-slate-500">
-                                                    Please enter the employee name and national ID.
+                                                    Please enter the student name and national ID.
                                                 </div>
                                             </div>
                                         </label>
@@ -121,7 +121,7 @@ const EditEmployee = () => {
                                             <div className="text-left">
                                                 <div className="font-medium">Email & Phone</div>
                                                 <div className="mt-3 text-xs leading-relaxed text-slate-500">
-                                                    Please enter the employee email and phone number.
+                                                    Please enter the student email and phone number.
                                                 </div>
                                             </div>
                                         </label>
@@ -153,7 +153,7 @@ const EditEmployee = () => {
                                             <div className="text-left">
                                                 <div className="font-medium">Address & School Name</div>
                                                 <div className="mt-3 text-xs leading-relaxed text-slate-500">
-                                                    Please enter the employee address and School Name.
+                                                    Please enter the student address and School Name.
                                                 </div>
                                             </div>
                                         </label>

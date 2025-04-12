@@ -10,7 +10,6 @@ const EditEmployee = () => {
     const [formData, setFormData] = useState({
         name: '',
         nid: null,
-        tag_id: '',
         email: '',
         phone_number: '',
         address: '',
@@ -27,7 +26,6 @@ const EditEmployee = () => {
                 setFormData({
                     name: data.employee.name || '',
                     nid: data.employee.nid || '',
-                    tag_id: data.employee.tag_id || '',
                     email: data.employee.email || '',
                     phone_number: data.employee.phone_number || '',
                     address: data.employee.address || '',
@@ -113,15 +111,6 @@ const EditEmployee = () => {
                                                 value={formData.nid}
                                                 onChange={handleChange}
                                                 className="w-full text-sm border-slate-200 shadow-sm rounded-md focus:ring-4 focus:ring-primary"
-                                            />
-                                            <input
-                                                type="number"
-                                                name="tag_id"
-                                                placeholder="Enter Tag ID"
-                                                value={formData.tag_id}
-                                                onChange={handleChange}
-                                                className="w-full text-sm border-slate-200 shadow-sm rounded-md focus:ring-4 focus:ring-primary"
-                                                required
                                             />
                                         </div>
                                     </div>

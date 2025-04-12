@@ -35,13 +35,13 @@ const ShowAssignment = () => {
     }, [id]);
 
     const handleDelete = async () => {
-        if (window.confirm('Are you sure you want to delete this assignment?')) {
+        if (window.confirm('Are you sure you want to delete this class?')) {
             try {
                 await deleteAssignment(id);
-                toast.success('Assignment deleted successfully!');
-                navigate('/assignments');
+                toast.success('Class deleted successfully!');
+                navigate('/classes');
             } catch (error) {
-                toast.error('Failed to delete assignment.');
+                toast.error('Failed to delete class.');
             }
         }
     };
@@ -68,14 +68,14 @@ const ShowAssignment = () => {
         }
     };
 
-    if (loading) return <div>Loading assignment details...</div>;
-    if (!assignment) return <div>No assignment found.</div>;
+    if (loading) return <div>Loading class details...</div>;
+    if (!assignment) return <div>No class found.</div>;
 
     return (
         <div className="p-6">
             {/* Header */}
             <div className="intro-y mt-8 flex flex-col items-center sm:flex-row">
-                <h2 className="mr-auto text-lg font-medium">Assignment Details</h2>
+                <h2 className="mr-auto text-lg font-medium">Class Details</h2>
             </div>
 
             {/* BEGIN: Assignment & Attendance Details */}
@@ -84,13 +84,13 @@ const ShowAssignment = () => {
                 <div className="col-span-12 lg:col-span-4 2xl:col-span-3">
                     <div className="box rounded-md p-5">
                         <div className="mb-5 flex items-center border-b border-slate-200/60 pb-5 dark:border-darkmode-400">
-                            <div className="truncate text-base font-medium">Assignment Details</div>
+                            <div className="truncate text-base font-medium">Class Details</div>
                             <button
-                                onClick={() => navigate(`/assignment/${id}/edit`)}
+                                onClick={() => navigate(`/class/${id}/edit`)}
                                 className="ml-auto flex items-center text-primary hover:underline"
                             >
                                 <Edit className="stroke-1.5 mr-2 h-4 w-4" />
-                                Edit Assignment
+                                Edit Class
                             </button>
                         </div>
                         <div className="flex items-center">
@@ -110,7 +110,7 @@ const ShowAssignment = () => {
                         </div>
                         <div className="mt-3 flex items-center">
                             <i data-lucide="user-check" className="stroke-1.5 mr-2 h-4 w-4 text-slate-500"></i>
-                            <span className="font-medium">Supervisor:</span>
+                            <span className="font-medium">Teacher:</span>
                             <span className="ml-1">{assignment.supervisor_name || 'N/A'}</span>
                         </div>
                         <div className="mt-3 flex items-center">
@@ -169,7 +169,7 @@ const ShowAssignment = () => {
                                 <thead>
                                     <tr className="[&:nth-of-type(odd)_td]:bg-slate-100 [&:nth-of-type(odd)_td]:dark:bg-darkmode-300 [&:nth-of-type(odd)_td]:dark:bg-opacity-50">
                                         <th className="font-medium px-5 py-3 border-b-2 dark:border-darkmode-300 whitespace-nowrap !py-5">
-                                            Employee
+                                            Student
                                         </th>
                                         <th className="font-medium px-5 py-3 border-b-2 dark:border-darkmode-300 whitespace-nowrap">
                                             Tag ID
@@ -270,39 +270,6 @@ const ShowAssignment = () => {
                         )}
                     </div>
                 </div>
-            </div>
-            {/* END: Assignment & Attendance Details */}
-
-            {/* Action Buttons */}
-            <div className="mt-6 flex justify-end space-x-4">
-                <button
-                    onClick={() => navigate(`/assignment/${id}/edit`)}
-                    className="flex items-center px-4 py-2 text-white bg-green-600 rounded hover:bg-green-700 transition"
-                >
-                    <Edit className="mr-2 h-4 w-4" />
-                    Edit
-                </button>
-                <button
-                    onClick={() => navigate(`/assignment/${id}/end`)}
-                    className="flex items-center px-4 py-2 text-white bg-yellow-500 rounded hover:bg-yellow-600 transition"
-                >
-                    <StopCircle className="mr-2 h-4 w-4" />
-                    End
-                </button>
-                <button
-                    onClick={handleDelete}
-                    className="flex items-center px-4 py-2 text-white bg-red-600 rounded hover:bg-red-700 transition"
-                >
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Delete
-                </button>
-                <button
-                    onClick={() => navigate('/assignments')}
-                    className="flex items-center px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700 transition"
-                >
-                    <Eye className="mr-2 h-4 w-4" />
-                    Back to Assignments
-                </button>
             </div>
         </div>
     );

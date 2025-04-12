@@ -43,7 +43,7 @@ const GetAssignments = () => {
                 const data = await fetchAssignments();
                 setAssignments(data.results);
             } catch (error) {
-                toast.error('Failed to fetch assignments.');
+                toast.error('Failed to fetch classes.');
             }
         };
         loadAssignments();
@@ -92,29 +92,29 @@ const GetAssignments = () => {
 
     // Event handlers
     const handleAddAssignment = () => {
-        navigate('/assignment/add');
+        navigate('/class/add');
     };
 
     const handleShowAssignment = (id) => {
-        navigate(`/assignment/${id}`);
+        navigate(`/class/${id}`);
     };
 
     const handleEditAssignment = (id) => {
-        navigate(`/assignment/${id}/edit`);
+        navigate(`/class/${id}/edit`);
     };
 
     const handleEndAssignment = (id) => {
-        navigate(`/assignment/${id}/end`);
+        navigate(`/class/${id}/end`);
     };
 
     const handleDeleteAssignment = async (id) => {
-        if (window.confirm('Are you sure you want to delete this assignment?')) {
+        if (window.confirm('Are you sure you want to delete this class?')) {
             try {
                 await deleteAssignment(id);
-                toast.success('Assignment deleted successfully.');
+                toast.success('Class deleted successfully.');
                 setAssignments(prev => prev.filter(a => a.id !== id));
             } catch (error) {
-                toast.error('Failed to delete assignment.');
+                toast.error('Failed to delete class.');
             }
         }
     };
@@ -122,12 +122,12 @@ const GetAssignments = () => {
     return (
         <>
             <div className="intro-y col-span-12 mt-8 flex flex-wrap items-center xl:flex-nowrap">
-                <h2 className="mr-auto text-lg font-medium">Users</h2>
+                <h2 className="mr-auto text-lg font-medium">Classes</h2>
                 <button
                     onClick={handleAddAssignment}
                     className="transition duration-200 border inline-flex items-center justify-center py-2 px-3 rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus-visible:outline-none dark:focus:ring-slate-700 dark:focus:ring-opacity-50 [&:hover:not(:disabled)]:bg-opacity-90 [&:hover:not(:disabled)]:border-opacity-90 [&:not(button)]:text-center disabled:opacity-70 disabled:cursor-not-allowed bg-primary border-primary text-white dark:border-primary mr-2 shadow-md"
                 >
-                    Add New User
+                    Add New Class
                     <span className="flex h-5 w-5 items-center justify-center ml-1">
                         <Plus className="stroke-1.5 h-4 w-4" />
                     </span>
@@ -140,7 +140,7 @@ const GetAssignments = () => {
                     <div className="relative w-56 text-slate-500">
                         <input
                             type="text"
-                            placeholder="Search assignments..."
+                            placeholder="Search classes..."
                             className="disabled:bg-slate-100 disabled:cursor-not-allowed dark:disabled:bg-800/50 dark:disabled:border-transparent [&[readonly]]:bg-slate-100 [&[readonly]]:cursor-not-allowed [&[readonly]]:dark:bg-800/50 [&[readonly]]:dark:border-transparent transition duration-200 ease-in-out text-sm border-slate-200 shadow-sm rounded-md placeholder:text-slate-400/90 focus:ring-4 focus:ring-primary focus:ring-opacity-20 focus:border-primary focus:border-opacity-40 dark:bg-800 dark:border-transparent dark:focus:ring-slate-700 dark:focus:ring-opacity-50 !box w-56 pr-10"
                             value={searchTerm}
                             onChange={(e) => {
@@ -194,7 +194,7 @@ const GetAssignments = () => {
                                     />
                                 </th>
                                 <th className="font-medium px-5 py-3 dark:border-300 whitespace-nowrap border-b-0">
-                                    Assignment
+                                    Class Name
                                 </th>
                                 <th className="font-medium px-5 py-3 dark:border-300 whitespace-nowrap border-b-0 text-center">
                                     Field
@@ -239,7 +239,7 @@ const GetAssignments = () => {
                                                     {a.name || 'N/A'}
                                                 </span>
                                                 <div className="mt-0.5 whitespace-nowrap text-xs text-slate-500">
-                                                    Employees: {a.total_employees || 'N/A'}
+                                                    Students: {a.total_employees || 'N/A'}
                                                 </div>
                                             </div>
                                         </div>

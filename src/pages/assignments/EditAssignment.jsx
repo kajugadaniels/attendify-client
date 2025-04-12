@@ -62,7 +62,7 @@ const EditAssignment = () => {
                     notes: assignmentData.notes || ''
                 });
             } catch (error) {
-                toast.error('Failed to load assignment details');
+                toast.error('Failed to load class details');
             } finally {
                 setDataLoading(false);
             }
@@ -92,26 +92,26 @@ const EditAssignment = () => {
         try {
             setLoading(true);
             await updateAssignment(id, payload);
-            toast.success('Assignment updated successfully!');
-            navigate('/assignments');
+            toast.success('Class updated successfully!');
+            navigate('/classes');
         } catch (error) {
-            toast.error('Failed to update assignment. Please check your details.');
+            toast.error('Failed to update class. Please check your details.');
         } finally {
             setLoading(false);
         }
     };
 
     if (dataLoading) {
-        return <div className="text-center py-10">Loading assignment details...</div>;
+        return <div className="text-center py-10">Loading class details...</div>;
     }
 
     return (
         <>
             {/* Header Section */}
             <div className="intro-y col-span-12 mt-8 flex flex-wrap items-center xl:flex-nowrap">
-                <h2 className="mr-auto text-lg font-medium">Edit Assignment</h2>
+                <h2 className="mr-auto text-lg font-medium">Edit Class</h2>
                 <a
-                    href="/assignments"
+                    href="/classes"
                     className="transition duration-200 border inline-flex items-center justify-center py-2 px-3 rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 dark:focus:ring-slate-700 dark:focus:ring-opacity-50 bg-primary border-primary text-white dark:border-primary mr-2 shadow-md"
                 >
                     Go Back
@@ -124,11 +124,11 @@ const EditAssignment = () => {
             {/* Form Section */}
             <form onSubmit={handleSubmit}>
                 <div className="mt-5 grid grid-cols-11 gap-x-6 pb-20">
-                    <div className="intro-y col-span-11 2xl:col-span-9">
+                    <div className="intro-y col-span-12 2xl:col-span-12">
                         <div className="intro-y box mt-5 p-5">
                             <div className="rounded-md border border-slate-200/60 p-5 dark:border-darkmode-400">
                                 <div className="flex items-center border-b border-slate-200/60 pb-5 text-base font-medium dark:border-darkmode-400">
-                                    Edit Assignment Details
+                                    Edit Class Details
                                 </div>
                                 <div className="mt-5">
                                     {/* Assignment Name & Field */}
@@ -136,13 +136,13 @@ const EditAssignment = () => {
                                         <label className="inline-block mb-2 xl:!mr-10 xl:w-64">
                                             <div className="text-left">
                                                 <div className="flex items-center">
-                                                    <div className="font-medium">Assignment Name &amp; Field</div>
+                                                    <div className="font-medium">Class Name &amp; Field</div>
                                                     <div className="ml-2 rounded-md bg-slate-200 px-2 py-0.5 text-xs text-slate-600 dark:bg-darkmode-300 dark:text-slate-400">
                                                         Required
                                                     </div>
                                                 </div>
                                                 <div className="mt-3 text-xs leading-relaxed text-slate-500">
-                                                    Provide the assignment title and select a field.
+                                                    Provide the class title and select a field.
                                                 </div>
                                             </div>
                                         </label>
@@ -150,7 +150,7 @@ const EditAssignment = () => {
                                             <input
                                                 type="text"
                                                 name="name"
-                                                placeholder="Enter assignment name"
+                                                placeholder="Enter class name"
                                                 value={formData.name}
                                                 onChange={handleChange}
                                                 className="disabled:bg-slate-100 dark:disabled:bg-darkmode-800/50 transition duration-200 ease-in-out w-full text-sm border-slate-200 shadow-sm rounded-md placeholder:text-slate-400/90 focus:ring-4 focus:ring-primary dark:bg-darkmode-800"
@@ -174,13 +174,13 @@ const EditAssignment = () => {
                                         <label className="inline-block mb-2 xl:!mr-10 xl:w-64">
                                             <div className="text-left">
                                                 <div className="flex items-center">
-                                                    <div className="font-medium">Department &amp; Supervisor</div>
+                                                    <div className="font-medium">Department &amp; Teacher</div>
                                                     <div className="ml-2 rounded-md bg-slate-200 px-2 py-0.5 text-xs text-slate-600 dark:bg-darkmode-300 dark:text-slate-400">
                                                         Optional
                                                     </div>
                                                 </div>
                                                 <div className="mt-3 text-xs leading-relaxed text-slate-500">
-                                                    Choose the department and supervisor for this assignment.
+                                                    Choose the department and teacher for this class.
                                                 </div>
                                             </div>
                                         </label>
@@ -202,7 +202,7 @@ const EditAssignment = () => {
                                                 onChange={(option) => handleSelectChange('supervisor', option)}
                                                 className="react-select-container"
                                                 classNamePrefix="react-select"
-                                                placeholder="Select Supervisor"
+                                                placeholder="Select Teacher (Optional)"
                                                 isClearable
                                             />
                                         </div>
@@ -213,13 +213,13 @@ const EditAssignment = () => {
                                         <label className="inline-block mb-2 xl:!mr-10 xl:w-64">
                                             <div className="text-left">
                                                 <div className="flex items-center">
-                                                    <div className="font-medium">Employees &amp; Notes</div>
+                                                    <div className="font-medium">Students</div>
                                                     <div className="ml-2 rounded-md bg-slate-200 px-2 py-0.5 text-xs text-slate-600 dark:bg-darkmode-300 dark:text-slate-400">
                                                         Required
                                                     </div>
                                                 </div>
                                                 <div className="mt-3 text-xs leading-relaxed text-slate-500">
-                                                    Assign employees to this assignment.
+                                                    Assign employees to this class.
                                                 </div>
                                             </div>
                                         </label>
@@ -231,7 +231,7 @@ const EditAssignment = () => {
                                                 onChange={(option) => handleSelectChange('employees', option)}
                                                 className="react-select-container"
                                                 classNamePrefix="react-select"
-                                                placeholder="Select Employees"
+                                                placeholder="Select Students"
                                                 isMulti
                                                 isClearable
                                             />
@@ -269,7 +269,7 @@ const EditAssignment = () => {
                             {/* Action Buttons */}
                             <div className="mt-5 flex flex-col justify-end gap-2 md:flex-row">
                                 <a
-                                    href="/assignments"
+                                    href="/classes"
                                     type="button"
                                     className="transition duration-200 border shadow-sm inline-flex items-center justify-center px-3 rounded-md font-medium cursor-pointer focus:ring-4 focus:ring-primary focus:ring-opacity-20 bg-white dark:bg-darkmode-800 text-slate-500 dark:text-slate-300 dark:focus:ring-slate-700 w-full py-3 md:w-52"
                                 >
@@ -316,20 +316,6 @@ const EditAssignment = () => {
                                         'Save'
                                     )}
                                 </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Tips Section */}
-                    <div className="intro-y col-span-2 hidden 2xl:block">
-                        <div className="sticky top-0">
-                            <div className="relative mt-6 rounded-md border border-warning bg-warning/20 p-5 dark:border-0 dark:bg-darkmode-600">
-                                <Lightbulb className="stroke-1.5 absolute right-0 top-0 mr-3 mt-5 h-12 w-12 text-warning/80" />
-                                <h2 className="text-lg font-medium">Tips</h2>
-                                <div className="mt-5 font-medium">Assignment</div>
-                                <div className="mt-2 text-xs leading-relaxed text-slate-600 dark:text-slate-500">
-                                    Ensure the assignment details are correct. Verify the assignment name, field, department, supervisor, and employees before saving any changes.
-                                </div>
                             </div>
                         </div>
                     </div>

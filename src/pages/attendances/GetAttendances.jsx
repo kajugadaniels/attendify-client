@@ -136,7 +136,7 @@ const GetAttendances = () => {
     };
 
     const handleShowEmployee = (employeeId) => {
-        navigate(`/employee/${employeeId}`);
+        navigate(`/student/${employeeId}`);
     };
 
     // Handler for marking attendance for an employee using his tag_id

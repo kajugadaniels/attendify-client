@@ -27,7 +27,7 @@ const AddEmployee = () => {
             setLoading(true);
             await createEmployee(formData);
             toast.success('Employee created successfully!');
-            navigate('/employees');
+            navigate('/students');
         } catch (error) {
             toast.error('Failed to create employee. Please check your details.');
         } finally {
@@ -40,7 +40,7 @@ const AddEmployee = () => {
             <div className="intro-y col-span-12 mt-8 flex flex-wrap items-center xl:flex-nowrap">
                 <h2 className="mr-auto text-lg font-medium">Add Employee</h2>
                 <a
-                    href="/employees"
+                    href="/students"
                     className="transition duration-200 border inline-flex items-center justify-center py-2 px-3 rounded-md font-medium bg-primary border-primary text-white mr-2 shadow-md"
                 >
                     Go Back
@@ -156,7 +156,7 @@ const AddEmployee = () => {
                             </div>
                             <div className="mt-5 flex flex-col md:flex-row justify-end gap-2">
                                 <a
-                                    href="/employees"
+                                    href="/students"
                                     className="transition duration-200 border shadow-sm inline-flex items-center justify-center px-3 rounded-md font-medium bg-white text-slate-500 w-full py-3 md:w-52"
                                 >
                                     Cancel

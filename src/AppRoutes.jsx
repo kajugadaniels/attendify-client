@@ -8,7 +8,7 @@ const AppRoutes = () => {
     return (
         <Routes>
             <Route path='/' element={<Login />} />
-            <Route path="/employee/:id/details" element={<EmployeeDetails />} />
+            <Route path="/student/:id/details" element={<EmployeeDetails />} />
 
             <Route element={<ProtectedRoute />}>
                 <Route element={<AppLayout />}>
@@ -30,10 +30,10 @@ const AppRoutes = () => {
                     <Route path="/department/:id" element={<ShowDepartment />} />
                     <Route path="/department/:id/edit" element={<EditDepartment />} />
 
-                    <Route path="/employees" element={<GetEmployees />} />
-                    <Route path="/employee/add" element={<AddEmployee />} />
-                    <Route path="/employee/:id" element={<ShowEmployee />} />
-                    <Route path="/employee/:id/edit" element={<EditEmployee />} />
+                    <Route path="/students" element={<GetEmployees />} />
+                    <Route path="/student/add" element={<AddEmployee />} />
+                    <Route path="/student/:id" element={<ShowEmployee />} />
+                    <Route path="/student/:id/edit" element={<EditEmployee />} />
 
                     <Route path="/assignments" element={<GetAssignments />} />
                     <Route path="/assignment/add" element={<AddAssignment />} />

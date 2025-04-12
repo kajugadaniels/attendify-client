@@ -11,7 +11,7 @@ const Sidebar = () => {
     const isUsersActive = pathname.startsWith('/users') || pathname.startsWith('/user')
     const isFieldsActive = pathname.startsWith('/fields') || pathname.startsWith('/field')
     const isDepartmentsActive = pathname.startsWith('/departments') || pathname.startsWith('/department')
-    const isEmployeesActive = pathname.startsWith('/employees') || pathname.startsWith('/employee')
+    const isStudentsActive = pathname.startsWith('/studentss') || pathname.startsWith('/students')
     const isAssignmentsActive = pathname.startsWith('/assignments') || pathname.startsWith('/assignment')
     const isAttendanceActive = pathname === '/attendance'
 
@@ -80,15 +80,15 @@ const Sidebar = () => {
                 </li>
                 <li>
                     <NavLink
-                        to="/employees"
+                        to="/students"
                         className={() =>
-                            `side-menu ${isEmployeesActive ? 'side-menu--active' : ''}`
+                            `side-menu ${isStudentsActive ? 'side-menu--active' : ''}`
                         }
                     >
                         <div className="side-menu__icon">
                             <UsersRound className="stroke-1.5 w-5 h-5" />
                         </div>
-                        <div className="side-menu__title">Employees</div>
+                        <div className="side-menu__title">Students</div>
                     </NavLink>
                 </li>
                 <li>

@@ -48,7 +48,7 @@ const ShowEmployee = () => {
             try {
                 await deleteEmployee(id);
                 toast.success('Employee deleted successfully!');
-                navigate('/employees');
+                navigate('/students');
             } catch (error) {
                 toast.error('Failed to delete employee.');
             }
@@ -124,7 +124,7 @@ const ShowEmployee = () => {
                         <div className="mb-5 flex items-center border-b border-slate-200/60 pb-5 dark:border-darkmode-400">
                             <div className="truncate text-base font-medium">Employee Details</div>
                             <button
-                                onClick={() => navigate(`/employee/${id}/edit`)}
+                                onClick={() => navigate(`/student/${id}/edit`)}
                                 className="ml-auto flex items-center text-primary hover:underline"
                             >
                                 <Edit className="stroke-1.5 mr-2 h-4 w-4" />
@@ -307,7 +307,7 @@ const ShowEmployee = () => {
                     Delete
                 </button>
                 <button
-                    onClick={() => navigate('/employees')}
+                    onClick={() => navigate('/students')}
                     className="flex items-center px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700 transition"
                 >
                     <Eye className="mr-2 h-4 w-4" />

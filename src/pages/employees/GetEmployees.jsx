@@ -54,15 +54,15 @@ const GetEmployees = () => {
     );
 
     const handleAddEmployee = () => {
-        navigate('/employee/add');
+        navigate('/student/add');
     };
 
     const handleShowEmployee = (employeeId) => {
-        navigate(`/employee/${employeeId}`);
+        navigate(`/student/${employeeId}`);
     };
 
     const handleEditEmployee = (employeeId) => {
-        navigate(`/employee/${employeeId}/edit`);
+        navigate(`/student/${employeeId}/edit`);
     };
 
     const handleDeleteEmployee = async (employeeId) => {

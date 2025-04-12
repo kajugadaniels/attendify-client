@@ -12,7 +12,7 @@ const Sidebar = () => {
     const isFieldsActive = pathname.startsWith('/fields') || pathname.startsWith('/field')
     const isDepartmentsActive = pathname.startsWith('/departments') || pathname.startsWith('/department')
     const isStudentsActive = pathname.startsWith('/students') || pathname.startsWith('/student')
-    const isAssignmentsActive = pathname.startsWith('/assignments') || pathname.startsWith('/assignment')
+    const isClassesActive = pathname.startsWith('/classes') || pathname.startsWith('/class')
     const isAttendanceActive = pathname === '/attendance'
 
     return (
@@ -93,15 +93,15 @@ const Sidebar = () => {
                 </li>
                 <li>
                     <NavLink
-                        to="/assignments"
+                        to="/classes"
                         className={() =>
-                            `side-menu ${isAssignmentsActive ? 'side-menu--active' : ''}`
+                            `side-menu ${isClassesActive ? 'side-menu--active' : ''}`
                         }
                     >
                         <div className="side-menu__icon">
                             <CalendarClock className="stroke-1.5 w-5 h-5" />
                         </div>
-                        <div className="side-menu__title">Assignments</div>
+                        <div className="side-menu__title">Classes</div>
                     </NavLink>
                 </li>
                 <li>

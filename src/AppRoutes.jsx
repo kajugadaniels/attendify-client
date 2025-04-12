@@ -35,11 +35,11 @@ const AppRoutes = () => {
                     <Route path="/student/:id" element={<ShowEmployee />} />
                     <Route path="/student/:id/edit" element={<EditEmployee />} />
 
-                    <Route path="/assignments" element={<GetAssignments />} />
-                    <Route path="/assignment/add" element={<AddAssignment />} />
-                    <Route path="/assignment/:id" element={<ShowAssignment />} />
-                    <Route path="/assignment/:id/edit" element={<EditAssignment />} />
-                    <Route path="/assignment/:id/end" element={<EndAssignment />} />
+                    <Route path="/classes" element={<GetAssignments />} />
+                    <Route path="/class/add" element={<AddAssignment />} />
+                    <Route path="/class/:id" element={<ShowAssignment />} />
+                    <Route path="/class/:id/edit" element={<EditAssignment />} />
+                    <Route path="/class/:id/end" element={<EndAssignment />} />
 
                     <Route path="/attendance" element={<GetAttendances />} />
                 </Route>

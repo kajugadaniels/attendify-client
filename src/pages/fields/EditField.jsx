@@ -65,7 +65,7 @@ const EditField = () => {
             </div>
             <form onSubmit={handleSubmit}>
                 <div className="mt-5 grid grid-cols-11 gap-x-6 pb-20">
-                    <div className="intro-y col-span-11 2xl:col-span-9">
+                    <div className="intro-y col-span-12 2xl:col-span-12">
                         <div className="intro-y box mt-5 p-5">
                             <div className="rounded-md border border-slate-200/60 p-5">
                                 <div className="flex items-center border-b pb-5 text-base font-medium">
@@ -110,17 +110,6 @@ const EditField = () => {
                                 >
                                     {loading ? 'Saving' : 'Save'}
                                 </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="intro-y col-span-2 hidden 2xl:block">
-                        <div className="sticky top-0">
-                            <div className="relative mt-6 rounded-md border border-warning bg-warning/20 p-5">
-                                <div className="text-lg font-medium">Tips</div>
-                                <div className="mt-5 font-medium">Hiring</div>
-                                <div className="mt-2 text-xs leading-relaxed text-slate-600">
-                                    Provide correct details to ensure the system accurately manages attendance and payroll.
-                                </div>
                             </div>
                         </div>
                     </div>

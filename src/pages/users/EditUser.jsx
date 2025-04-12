@@ -168,7 +168,7 @@ const EditUser = () => {
 
             <form onSubmit={handleSubmit}>
                 <div className="mt-5 grid grid-cols-11 gap-x-6 pb-20">
-                    <div className="intro-y col-span-11 2xl:col-span-9">
+                    <div className="intro-y col-span-12 2xl:col-span-12">
                         <div className="intro-y box mt-5 p-5">
                             <div className="rounded-md border border-slate-200/60 p-5 dark:border-darkmode-400">
                                 <div className="flex items-center border-b border-slate-200/60 pb-5 text-base font-medium dark:border-darkmode-400">
@@ -342,20 +342,6 @@ const EditUser = () => {
                                         'Save'
                                     )}
                                 </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Tips Section */}
-                    <div className="intro-y col-span-2 hidden 2xl:block">
-                        <div className="sticky top-0">
-                            <div className="relative mt-6 rounded-md border border-warning bg-warning/20 p-5 dark:border-0 dark:bg-darkmode-600">
-                                <Lightbulb className="stroke-1.5 absolute right-0 top-0 mr-3 mt-5 h-12 w-12 text-warning/80" />
-                                <h2 className="text-lg font-medium">Tips</h2>
-                                <div className="mt-5 font-medium">Hiring</div>
-                                <div className="mt-2 text-xs leading-relaxed text-slate-600 dark:text-slate-500">
-                                    Ensure that all required fields are updated correctly. Leaving password fields blank will retain the current password.
-                                </div>
                             </div>
                         </div>
                     </div>

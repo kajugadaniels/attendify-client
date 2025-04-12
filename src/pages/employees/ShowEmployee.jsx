@@ -230,14 +230,14 @@ const ShowEmployee = () => {
                                         </tr>
                                     ))}
                                 </tbody>
-                                {paginatedAttendance.length > 0 && (
+                                {/*{paginatedAttendance.length > 0 && (
                                     <tfoot>
                                         <tr>
-                                            <td colSpan="3" className="font-medium px-5 py-3 border-t text-right">Total Salary:</td>
+                                            <td colSpan="3" className="font-medium px-5 py-3 border-t text-right"></td>
                                             <td className="font-medium px-5 py-3 border-t text-right">{totalSalary}</td>
                                         </tr>
                                     </tfoot>
-                                )}
+                                )}*/}
                             </table>
                             {filteredAttendance.length === 0 && (
                                 <div className="text-center py-4 text-slate-500">

@@ -90,7 +90,7 @@ const ShowEmployee = () => {
     const totalSalary = computeTotalSalary(filteredAttendance);
 
     // Generate QR code value based on student id
-    const qrCodeValue = `https://eps-client.vercel.app/student/${employee.id}/details`;
+    const qrCodeValue = `https://dynasoft-attendify.vercel.app/student/${employee.id}/details`;
 
     // Handler to download the generated QR code as an image
     const downloadQRCode = () => {

@@ -53,7 +53,23 @@ const EditEmployee = () => {
             toast.success('Student updated successfully!');
             navigate('/students');
         } catch (error) {
-            toast.error('Failed to update student.');
+            console.error("Error updating student:", error);
+            // Retrieve detailed error if available
+            let errorDetails = "Unknown error";
+            if (error.response && error.response.data) {
+                if (error.response.data.error) {
+                    errorDetails = error.response.data.error;
+                } else if (error.response.data.errors) {
+                    errorDetails = JSON.stringify(error.response.data.errors);
+                } else if (error.response.data.message) {
+                    errorDetails = error.response.data.message;
+                } else {
+                    errorDetails = JSON.stringify(error.response.data);
+                }
+            } else {
+                errorDetails = error.message;
+            }
+            toast.error(`Failed to update student: ${errorDetails}`);
         } finally {
             setLoading(false);
         }

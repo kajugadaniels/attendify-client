@@ -106,11 +106,6 @@ const ShowField = () => {
                             <span className="font-medium">Name:</span>
                             <span className="ml-1">{field.name || 'N/A'}</span>
                         </div>
-                        <div className="mt-3 flex items-center">
-                            <i data-lucide="map-pin" className="stroke-1.5 mr-2 h-4 w-4 text-slate-500"></i>
-                            <span className="font-medium">Address:</span>
-                            <span className="ml-1">{field.address || 'N/A'}</span>
-                        </div>
                     </div>
                 </div>
 

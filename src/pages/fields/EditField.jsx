@@ -7,7 +7,7 @@ import { fetchFieldDetails, updateField } from '../../api';
 const EditField = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const [formData, setFormData] = useState({ name: '', address: '' });
+    const [formData, setFormData] = useState({ name: '' });
     const [loading, setLoading] = useState(false);
     const [dataLoading, setDataLoading] = useState(true);
 
@@ -17,8 +17,7 @@ const EditField = () => {
             try {
                 const data = await fetchFieldDetails(id);
                 setFormData({
-                    name: data.field.name || '',
-                    address: data.field.address || ''
+                    name: data.field.name || ''
                 });
             } catch (error) {
                 toast.error('Failed to load field details');
@@ -76,32 +75,21 @@ const EditField = () => {
                                     <div className="block sm:flex flex-col items-start pt-5 xl:flex-row">
                                         <label className="inline-block mb-2 xl:mr-10 xl:w-64">
                                             <div className="text-left">
-                                                <div className="font-medium">Field Name & Address</div>
+                                                <div className="font-medium">Field Name</div>
                                                 <div className="mt-3 text-xs leading-relaxed text-slate-500">
-                                                    Please enter the field name and its address.
+                                                    Please enter the field name.
                                                 </div>
                                             </div>
                                         </label>
-                                        <div className="mt-3 w-full grid grid-cols-2 gap-3">
-                                            <input
-                                                type="text"
-                                                name="name"
-                                                placeholder="Enter field name"
-                                                value={formData.name}
-                                                onChange={handleChange}
-                                                className="w-full text-sm border-slate-200 shadow-sm rounded-md focus:ring-4 focus:ring-primary"
-                                                required
-                                            />
-                                            <input
-                                                type="text"
-                                                name="address"
-                                                placeholder="Enter field address"
-                                                value={formData.address}
-                                                onChange={handleChange}
-                                                className="w-full text-sm border-slate-200 shadow-sm rounded-md focus:ring-4 focus:ring-primary"
-                                                required
-                                            />
-                                        </div>
+                                        <input
+                                            type="text"
+                                            name="name"
+                                            placeholder="Enter field name"
+                                            value={formData.name}
+                                            onChange={handleChange}
+                                            className="w-full text-sm border-slate-200 shadow-sm rounded-md focus:ring-4 focus:ring-primary"
+                                            required
+                                        />
                                     </div>
                                 </div>
                             </div>

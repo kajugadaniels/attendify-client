@@ -54,19 +54,6 @@ const Sidebar = () => {
                 </li>
                 <li>
                     <NavLink
-                        to="/fields"
-                        className={() =>
-                            `side-menu ${isFieldsActive ? 'side-menu--active' : ''}`
-                        }
-                    >
-                        <div className="side-menu__icon">
-                            <Binoculars className="stroke-1.5 w-5 h-5" />
-                        </div>
-                        <div className="side-menu__title">Fields</div>
-                    </NavLink>
-                </li>
-                <li>
-                    <NavLink
                         to="/departments"
                         className={() =>
                             `side-menu ${isDepartmentsActive ? 'side-menu--active' : ''}`
@@ -76,6 +63,19 @@ const Sidebar = () => {
                             <Sofa className="stroke-1.5 w-5 h-5" />
                         </div>
                         <div className="side-menu__title">Departments</div>
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink
+                        to="/fields"
+                        className={() =>
+                            `side-menu ${isFieldsActive ? 'side-menu--active' : ''}`
+                        }
+                    >
+                        <div className="side-menu__icon">
+                            <Binoculars className="stroke-1.5 w-5 h-5" />
+                        </div>
+                        <div className="side-menu__title">Fields</div>
                     </NavLink>
                 </li>
                 <li>
